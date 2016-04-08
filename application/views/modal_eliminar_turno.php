@@ -9,7 +9,7 @@
                 <input type="hidden" name="id_turno">
             </form>
             <div class="modal-footer">
-                <button id = "ok_eliminar_turno" onclick="del_turno(event)"class="btn btn-default">Aceptar</button>
+                <button id = "ok_eliminar_turno" onclick="ok_eliminar_turno(event)"class="btn btn-default">Aceptar</button>
                 <button id = "cancelar" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
             </div>
         </div>

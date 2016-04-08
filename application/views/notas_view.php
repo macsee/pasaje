@@ -22,5 +22,8 @@
 
         echo '</ul>';
     }
+    else {
+    	echo '<i>No hay notas para fecha</i>';
+    }
     ?>
 </div>

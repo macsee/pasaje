@@ -259,7 +259,7 @@ class Main extends CI_Controller {
 	public function get_turnos_dia_esp($fecha, $especialista, $especialidad="")
 	{
 		$array['fecha'] = $fecha;
-		$horarios = array();
+		$horarios = null;
 
 		if ($especialidad != "")
 			$array['especialidad'] = $especialidad;
@@ -335,35 +335,61 @@ class Main extends CI_Controller {
 
 	public function get_dias_horarios($fecha, $id, $especialidad="")
 	{
-			// $esp = $this->get_especialidad($id,$especialidad)[];
-			$array['usuario'] = $id;
 
-			if ($especialidad != "")
-				$array['especialidad'] = $especialidad;
+			$horarios_esp = $this->main_model->get_horarios($id, $especialidad);
+			$agenda_extra = $this->get_agenda_extra_dia($fecha, $id, $especialidad);
 
 			$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
 			$day = $array_dias[date('w', strtotime($fecha))];
 
-			$esp = $this->main_model->get_data("especialistas_especialidades", null, $array)[0];
-			$duracion = $esp->duracion;
-			$dias = json_decode($esp->dias_horarios);
+			$turnos = array();
 
-			if (isset($dias->$day)) {
-				$horarios = $dias->$day;
-				$hora_hasta = strtotime($horarios->hasta);
-				$hora_desde = strtotime($horarios->desde);
-				$diff = abs($hora_hasta - $hora_desde)/60;
-				$cant_turnos = $diff/$duracion;
-
-				$horarios_esp = array();
-				for ($i=0; $i <= $cant_turnos ; $i++) {
-					$horarios_esp[date('H:i',$hora_desde+($i*$duracion*60))] = "";
+			if (isset($horarios_esp[$day])) {
+				if ($id != "todos") {
+					$turnos = $horarios_esp[$day][$id]->horarios;
 				}
-				return $horarios_esp;
+				else {
+					foreach ($horarios_esp[$day] as $key => $value) {
+						$turnos[] = $value->horarios;
+					}
+				}
+				return $turnos;
 			}
-			else {
+			else if ($agenda_extra != null) {
+				return $agenda_extra;
+			}
+			else
 				return null;
+
+	}
+
+	public function get_agenda_extra_dia($fecha, $id, $especialidad="")
+	{
+		$agenda_extra = $this->main_model->get_agenda_extra($id, $especialidad);
+		$turnos = null;
+
+		if ($agenda_extra != null) {
+			foreach ($agenda_extra as $key => $value) {
+				if($value->agenda_extra != "") {
+					$extra = json_decode($value->agenda_extra)[0];
+					if ( date('Y-m-d', strtotime($extra->fecha)) == date('Y-m-d', strtotime($fecha)) ) {
+						$hora_hasta = strtotime($extra->hora_hasta);
+						$hora_desde = strtotime($extra->hora_desde);
+						$diff = abs($hora_hasta - $hora_desde)/60;
+						$cant_turnos = $diff/$extra->duracion;
+
+						for ($i=0; $i <= $cant_turnos ; $i++) {
+							$turnos[date('H:i',$hora_desde+($i*$extra->duracion*60))] = "";
+						}
+					}
+
+				}
+
 			}
+
+		}
+
+		return $turnos;
 	}
 
 	public function am_turno()
@@ -522,136 +548,40 @@ class Main extends CI_Controller {
 
 	public function show_notas($fecha, $especialista_sel)
 	{
-		$notas = $this->get_notas($fecha);
-		$usuario = $this->session->userdata('usuario');
-		$result = "";
+		$data['notas'] = $this->get_notas($fecha);
+		$data['usuario'] = $this->session->userdata('usuario');
+		$data['especialista_sel'] = $especialista_sel;
 
-		if ($notas != null) {
-	        $result .= '<ul style = "margin-left:-25px">';
-
-	        foreach ($notas as $key => $value) {
-	            if ($value->destinatario == $especialista_sel || $value->destinatario == "todos" || $especialista_sel == "todos") {
-
-	                if ($usuario == $value->usuario) {
-	                    $onclick = "return editar_nota('".$value->id_nota."')";
-	                }
-	                else {
-	                    $onclick = 'return error_nota()';
-	                }
-
-	                $result .=	'<li style = "min-height:40px;margin-bottom:25px">
-	                            	<a onclick = "'.$onclick.'">'.$value->texto.'</a>
-	                            	<span class = "pull-right text-muted small" style = "width:100%"><i>'.$value->last_update.' - '.$value->nombre_usuario.'</i></span>
-	                        	</li>';
-	            }
-	        }
-
-	        $result .= '</ul>';
-	    }
-		else {
-			$result .= '<i>No hay notas para fecha</i>';
-		}
-
-		echo $result;
+		echo $this->load->view('notas_view',$data,true);
 
 	}
 
 	function show_turnos($fecha, $especialista_sel, $especialidad_sel="")
 	{
+		$data['turnos'] = $this->get_turnos_dia_esp($fecha,$especialista_sel,$especialidad_sel);
+		echo $this->load->view('turnos_view',$data,true);
+	}
 
-		$turnos = $this->get_turnos_dia_esp($fecha,$especialista_sel,$especialidad_sel);
-		$tabla = "";
-		$header_especialista = "";
+	function crear_agenda()
+	{
+		$extra = $this->main_model->get_data("especialistas_especialidades", null, array('usuario' => $_POST['crear_agenda_especialistas']))[0];
+		
+		$agenda = array(
+			"hora_desde" => $_POST['crear_agenda_hora_desde'],
+			"hora_hasta" => $_POST['crear_agenda_hora_hasta'],
+			"duracion" => $_POST['crear_agenda_duracion']
+		);
 
-		if ($especialista_sel == "todos")
-			$header_especialista = '<th>Especialista</th>';
+		$fecha = date('Y-m-d', strtotime($_POST['crear_agenda_fecha']));
 
-		if ($turnos != null) {
+		$array[$fecha] = $agenda;
 
-			$tabla = 	'<table class="table">
-							<thead class = "cabecera">
-								<tr>
-									<th>Hora</th>
-									<th>Paciente</th>
-									<th>Especialidad</th>'
-									.$header_especialista.
-									'<th>Acciones</th>
-									<th>Estado</th>
-								</tr>
-							</thead>
-							<tbody>';
+		$data = array(
+			"usuario" => $_POST['crear_agenda_especialistas'],
+			"agenda" => json_encode($array)
+		);
 
-			foreach ($turnos as $key => $value) {
-				$primera_vez = "";
-				$row_especialista = "";
-				$row_vacia = "";
-				$turno_vacio = "turno_vacio";
-				$estado = 'glyphicon glyphicon-unchecked';
-
-				if ($value != "") {
-
-					if (in_array("primera_vez", json_decode($value->data_extra)))
-						$primera_vez = "color:#d9534f";
-					// if (JSON.parse($value->data_extra).indexOf('primera_vez') >= 0)
-					// 	$primera_vez = "color:#d9534f";
-
-					if ($especialidad_sel == "todos")
-						$row_especialista = '<td>'.$value->especialista.'</td>';
-
-					if ($value->estado != "")
-						$estado = "glyphicon glyphicon-check";
-
-					$tabla .=
-						'<tr id = "'.$value->id_turno.'">
-							<td style = "font-size:16px;'.$primera_vez.'">'.$key.'</td>
-							<td>'.$value->paciente.'</td>
-							<td>'.$value->especialidad.'</td>'
-							.$row_especialista.
-							'<td>
-								<div class="dropdown">
-									<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><i class = "glyphicon glyphicon-th-list"></i><span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a href="#" onclick = "return editar_turno(\''.$value->id_turno.'\')" data-toggle="modal">Editar Turno</a></li>
-										<li><a href="#" onclick = "return eliminar_turno(\''.$value->id_turno.'\')" data-toggle="modal">Eliminar Turno</a></li>
-										<li><a href="#" onclick = "return cambiar_turno(\''.$value->id_turno.'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
-										<li><a href="#" onclick = "return proximo_turno(\''.$value->id_turno.'\')" data-toggle="modal">Nuevo Turno</a></li>
-									</ul>
-								</div>
-							</td>
-							<td><button onclick = "return confirmar_datos(\''.$value->id_turno.'\')" style = "font-size: 18px;padding: 3px 11px 3px 11px" class = "btn btn-default"><i class = "'.$estado.'"></i></button></td>
-						</tr>';
-				}
-				else {
-
-					if ($especialista_sel == "todos")
-						$row_vacia = '<td></td>';
-
-					// if ($cambio_turno != "")
-					// 	$turno_vacio = "turno_cambio";
-					//
-					// if ($prox_turno != "")
-					// 	$turno_vacio = "turno_prox";
-
-					$tabla .=
-						'<tr class = "'.$turno_vacio.'" id = "'.$key.'">
-							<td>'.$key.'</td>
-							<td></td>
-							<td></td>'
-							.$row_vacia.
-							'<td></td>
-							<td></td>
-						</tr>';
-				}
-
-			}
-
-
-			$tabla .=
-					'</tbody>
-				</table>';
-		}
-
-		echo $tabla;
+		$this->main_model->crear_agenda($data);
 	}
 
 }

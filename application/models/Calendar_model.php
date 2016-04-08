@@ -62,20 +62,55 @@ class Calendar_model extends CI_Model
 			$fecha = $year.'-'.$month.'-'.$dia;
 			$day_name = $array_dias[date('w', strtotime($fecha))];
 
+			$horarios_extra = $this->main_model->get_agenda_extra_dia($fecha, $especialista, $especialidad="");
+
 			// Cantidad de turnos dados para una fecha indicada para un especialista
 			// $cant = count($this->main_model->get_turnos($fecha, $especialista));
-			if ($especialista == "todos")
-				$cant = count($this->main_model->get_data("turnos", null, array('fecha' => $fecha)));
-			else
-				$cant = count($this->main_model->get_data("turnos", null, array('fecha' => $fecha, 'especialista' => $especialista)));
-
+			$cant_turnos = 0;
 			$factor = -1;
 
-			if (isset($horarios[$day_name])) {
-				$cant_turnos = $horarios[$day_name]->cant_turnos;
-				$factor = $cant/$cant_turnos;
+			if ($especialista == "todos") {
+
+				$cant = count($this->main_model->get_data("turnos", null, array('fecha' => $fecha)));
+
+				if (isset($horarios[$day_name])) {
+					foreach ($horarios[$day_name] as $key => $value) {
+						$cant_turnos += $value->cant_turnos;
+					}
+					$factor = $cant/$cant_turnos;
+				}
+				else if (isset($horarios_extra)) {
+					foreach ($horarios_extra as $key => $value) {
+						$cant_turnos += $value->cant_turnos;
+					}
+					$factor = $cant/$cant_turnos;
+				}
+
 			}
-			
+			else {
+
+				$cant = count($this->main_model->get_data("turnos", null, array('fecha' => $fecha, 'especialista' => $especialista)));
+
+				if (isset($horarios[$day_name][$especialista])) {
+					$cant_turnos += $horarios[$day_name][$especialista]->cant_turnos;
+					$factor = $cant/$cant_turnos;
+				}
+				else if (isset($horarios_extra[$especialista])) {
+					$cant_turnos += $horarios_extra[$especialista]->cant_turnos;
+					$factor = $cant/$cant_turnos;
+				}
+
+			}
+
+			// $factor = $cant/$cant_turnos;
+
+			// if (isset($horarios[$day_name])) {
+			// 	if ($especialista == "todos")
+			//
+			// 	$cant_turnos = $horarios[$day_name]->cant_turnos;
+			// 	$factor = $cant/$cant_turnos;
+			// }
+
 			switch (true) {
 				case ($factor == 0):
 					$tipo_celda = "celda_vacia";
