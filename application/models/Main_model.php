@@ -37,6 +37,20 @@ class Main_model extends CI_Model {
 		}
 	}
 
+	public function get_datos_especialista($id, $especialidad)
+	{
+		$like = null;
+		$where = null;
+
+		if ($id != "todos")
+			$where = array('usuario' => $id);
+
+		if ($especialidad != "")
+			$like = array('especialidad' => $especialidad);
+
+		return $this->main_model->get_data("especialistas_especialidades", $like, $where);
+	}
+
 	public function add_usuario($array)
 	{
 		$data = array(
@@ -176,23 +190,17 @@ class Main_model extends CI_Model {
 	public function get_horarios($id, $especialidad="")
 	{
 		$turnos = array();
-		$array = array();
 
-		if ($id != "todos")
-			$array['usuario'] = $id;
-
-		if ($especialidad != "")
-			$array['especialidad'] = $especialidad;
-
-		$especialidad_esp = $this->get_data("especialistas_especialidades", $array);
+		$especialidad_esp = $this->get_datos_especialista($id, $especialidad);
 
 		if ($especialidad_esp != null) {
 
-			foreach ($especialidad_esp as $esp) {
+			foreach ($especialidad_esp as $fila) {
 
-				$dias = json_decode($esp->dias_horarios);
-				$duracion = $esp->duracion;
-
+				$dias = json_decode($fila->dias_horarios);
+				$duracion = $fila->duracion;
+				$usuario = $fila->usuario;						// cbolzani -> [Reiki, Acupuntura] -> Lu, Ma
+																// cbolzani -> [Otra cosa] -> Ma, Mi
 				if ($dias != null) {
 
 					foreach ($dias as $key => $hora) {
@@ -211,7 +219,7 @@ class Main_model extends CI_Model {
 						// Agrego la clave usuario para poder sumar la cantidad de turnos de cada usuario en un mismo dia
 						// y asi no contar dos veces un mismo usuario con mas de una especialidad
 
-						$turnos[$key][$esp->usuario] = (object) array(
+						$turnos[$key][$usuario] = (object) array(
 							'horarios'		=>	$horarios_esp,
 							'cant_turnos' 	=> 	$cant_turnos
 						);
@@ -226,33 +234,23 @@ class Main_model extends CI_Model {
 		return $turnos;
 	}
 
-	public function get_agenda_extra($id, $especialidad="")
-	{
-		$array = null;
-
-		if ($especialidad != "")
-			$array['especialidad'] = $especialidad;
-
-		if ($id != "todos")
-			$array['usuario'] = $id	;
-
-		return $this->get_data("especialistas_especialidades", $array);
-	}
 
 	public function get_agenda_extra_dia($fecha, $id, $especialidad="")
 	{
 		$fecha = date('Y-m-d',strtotime($fecha));
-		$agenda_extra = $this->get_agenda_extra($id, $especialidad);
+		$datos = $this->get_datos_especialista($id, $especialidad);
 		$turnos = null;
 		$horarios_esp = null;
 
-		if ($agenda_extra != null) {
-			foreach ($agenda_extra as $key => $value) {
+		if ($datos != null) {
+			foreach ($datos as $key => $value) {
 
-					$x = json_decode($value->agenda_extra);
+					$usuario = $value->usuario;
+					$agenda_extra = json_decode($value->agenda_extra);
 
-					if (isset($x->$fecha)) {
-						$extra = $x->$fecha;
+					if (isset($agenda_extra->$fecha)) {
+
+						$extra = $agenda_extra->$fecha;
 						$hora_hasta = strtotime($extra->hora_hasta);
 						$hora_desde = strtotime($extra->hora_desde);
 						$diff = abs($hora_hasta - $hora_desde)/60;
@@ -264,7 +262,7 @@ class Main_model extends CI_Model {
 
 						// Horarios extra para la fecha $fecha y para el especialista $id
 						//
-						$turnos[$id] = (object) array(
+						$turnos[$usuario] = (object) array(
 							'horarios'		=>	$horarios_esp,
 							'cant_turnos' 	=> 	$cant_turnos
 						);
