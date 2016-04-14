@@ -98,7 +98,8 @@ switch (ENVIRONMENT)
  * Include the path if the folder is not in the same directory
  * as this file.
  */
-	$system_path = '/Applications/MAMP/htdocs/pasaje/system';
+	// $system_path = '/Applications/MAMP/htdocs/pasaje/system';
+	$system_path = 'system';
 
 /*
  *---------------------------------------------------------------
@@ -113,7 +114,8 @@ switch (ENVIRONMENT)
  *
  * NO TRAILING SLASH!
  */
-	$application_folder = '/Applications/MAMP/htdocs/pasaje/application';
+	// $application_folder = '/Applications/MAMP/htdocs/pasaje/application';
+	$application_folder = 'application';
 
 /*
  *---------------------------------------------------------------
