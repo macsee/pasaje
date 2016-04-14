@@ -9,7 +9,7 @@
                 <div class = "container-fluid">
                     <form method="post" class="row form-horizontal">
                         <div class="form-group">
-                            <?php //if ($especialistas != null) { ?>
+                            <?php if ($especialistas != null) { ?>
                                 <div class="col-sm-12">
                                     <label class="col-sm-1 control-label">Para</label>
                                     <div class="col-sm-4">
@@ -23,9 +23,9 @@
                                         </select>
                                     </div>
                                 </div>
-                            <?php //} ?>
+                            <?php } ?>
                             <input type="hidden" name="destinatario">
-                            <input type="hidden" name="fecha">
+                            <!-- <input type="hidden" name="fecha"> -->
                         </div>
                         <div class="form-group">
                             <div class="col-sm-12">

@@ -26,7 +26,7 @@
         cursor: pointer;
     }
 
-    .sel_especialista {
+    .sel_agenda {
         cursor: pointer;
     }
 
@@ -146,17 +146,21 @@
                         <div class="col-md-5"> -->
                             <label class="col-md-2 control-label">Usuario</label>
                             <div class="col-md-4">
-                                <input style = "text-transform:none" type="text" class="form-control" id = "esp_usuario" name = "esp_usuario" readonly required>
+                                <input style = "text-transform:none" type="text"    class="form-control"    id = "esp_usuario"  name = "esp_usuario" readonly required>
+                                <input style = "text-transform:none" type="hidden"  class="form-control"    id = "esp_id"       name = "esp_id">
                             </div>
-                            <div class ="col-md-3">
+                            <div class ="col-md-2">
                                 <button id = "nuevo" class="btn btn-default">Limpiar</button>
+                            </div>
+                            <div class ="col-md-2">
+                                <button id = "agregar" class="btn btn-default">Agregar</button>
                             </div>
                         <!-- </div> -->
                     </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">Especialidad</label>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" id = "esp_especialidad" name = "esp_especialidad" autocomplete="off" required>
+                        <div class="col-md-4 especialidades">
+                            <input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" autocomplete="off" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -237,7 +241,7 @@
                     </div>
                     <div class="col-md-2 col-md-offset-10" style = "margin-bottom:20px">
                         <hr>
-                        <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/add_especialidad')?>">Guardar</button>
+                        <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/add_agenda')?>">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -259,17 +263,11 @@
                             <tbody>
                                 <?php
                                     if (isset($especialistas)) {
-                                        $last = "";
                                         foreach ($especialistas as $key => $value) {
-                                            echo '<tr class = "sel_especialista" id = "'.$value->usuario.'">';
-                                                if ($last != $value->usuario) {
-                                                    echo '<td>'.$value->usuario.'</td>';
-                                                    $last = $value->usuario;
-                                                }
-                                                else {
-                                                    echo '<td></td>';
-                                                }
-                                                echo '<td class = "especialidad">'.$value->especialidad.'</td>';
+                                            $replace = array('"','[',']');
+                                            echo '<tr class = "sel_agenda" id = "'.$value->id.'">';
+                                                echo '<td>'.$value->usuario.'</td>';
+                                                echo '<td>'.str_replace($replace," ",$value->especialidad).'</td>';
                                             echo '</tr>';
                                         }
                                     }
@@ -284,8 +282,13 @@
 </div>
 <script type="text/javascript">
     function clear_esp() {
-        $("#esp_especialidad").val("");
+
+        $('.especialidades').html(
+            '<input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" autocomplete="off" required>'
+        );
+
         $("#esp_duracion").val("30");
+        $("#esp_id").val("");
 
         $("#lu").prop('checked', false);
         $("#lu_desde").val("");
@@ -360,23 +363,20 @@
         });
     });
 
-    $(".sel_especialista").click(function(){
+    $(".sel_agenda").click(function(){
 
         clear_esp();
-        usuario = $(this).attr('id');
-        $("#esp_usuario").val(usuario);
-
-        especialidad = $(this).find('.especialidad').html();
-        $("#esp_especialidad").val(especialidad);
+        id = $(this).attr('id');
+        $("#esp_id").val(id);
 
         $.ajax({
-            url: base_url+"/main/get_especialidad_json/"+usuario+"/"+especialidad,
+            url: base_url+"/main/get_agenda_json/"+id,
             dataType: 'json',
     	 	success: function(response) {
 
+                $("#esp_usuario").val(response.usuario);
                 if (response.dias_horarios != "") {
                     $("#esp_duracion").val(response.duracion);
-
                     $.each(JSON.parse(response.dias_horarios), function(key, value)
                     {
                         switch(key) {
@@ -408,6 +408,23 @@
 
                     });
                 }
+
+                if (response.especialidad != "") {
+                    flag = 0;
+                    $.each(JSON.parse(response.especialidad), function(key, value)
+                    {
+                        if (flag == 0) {
+                            $("input[name='esp_especialidad[]']").val(value);
+                            flag = 1;
+                        }
+                        else {
+                            $(".especialidades").append(
+                                '<input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" value = "'+value+'" autocomplete="off">'
+                            );
+                        }
+
+                    });
+                }
             }
         });
     });
@@ -415,5 +432,12 @@
     $("#nuevo").click( function(event){
         event.preventDefault();
         clear_esp();
+    })
+
+    $("#agregar").click( function(event){
+        event.preventDefault();
+        $(".especialidades").append(
+            '<input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" autocomplete="off">'
+        );
     })
 </script>

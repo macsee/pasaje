@@ -70,15 +70,16 @@ class Main_model extends CI_Model {
 
 	public function add_especialista($id)
 	{
-		$query = "	INSERT INTO especialistas_especialidades (usuario)
-					VALUES (?) ON DUPLICATE KEY UPDATE usuario = VALUES(usuario)";
+		$query = "	INSERT INTO especialistas_especialidades (usuario) VALUES (?)";
+					// VALUES (?) ON DUPLICATE KEY UPDATE usuario = VALUES(usuario)";
 
 		$this->db->query($query, array('usuario' => $id));
 	}
 
-	public function add_especialidad($array)
+	public function add_agenda($array)
 	{
 		$horarios = array();
+		$especialidades = array();
 
 		foreach ($array['esp_dias'] as $key => $dia)
 		{
@@ -88,25 +89,33 @@ class Main_model extends CI_Model {
 			);
 		}
 
+		foreach ($array['esp_especialidad'] as $key =>$esp)
+		{
+			$especialidades[] = ucwords(strtolower($esp));
+		}
+
 		$data = array(
-			'usuario' => $array['esp_usuario'],
-		   	'especialidad' => ucwords(strtolower($array['esp_especialidad'])),
+			'id'	  		=> $array['esp_id'],
+			'usuario' 		=> $array['esp_usuario'],
+		   	'especialidad' 	=> json_encode($especialidades),
 			'dias_horarios' => json_encode($horarios),
-		   	'duracion'	=> $array['duracion']
+		   	'duracion'		=> $array['duracion']
 		);
 
 
-		if ($this->first_esp($array['esp_usuario']))
-		{
-			$this->db->update('especialistas_especialidades', $data, array('usuario' => $array['esp_usuario']));
-		}
-		else
-		{
-			$query = "	INSERT INTO especialistas_especialidades (usuario, especialidad, dias_horarios, duracion)
-						VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE 	duracion = VALUES(duracion),
+		// if ($this->first_esp($array['esp_usuario']))
+		// {
+		// 	$this->db->update('especialistas_especialidades', $data, array('usuario' => $array['esp_usuario']));
+		// }
+		// else
+		// {
+			$query = "	INSERT INTO especialistas_especialidades (id, usuario, especialidad, dias_horarios, duracion)
+						VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE 	especialidad = VALUES(especialidad),
+																	usuario = VALUES(usuario),
+																	duracion = VALUES(duracion),
 																	dias_horarios = VALUES(dias_horarios)";
 			$this->db->query($query, $data);
-		}
+		// }
 	}
 
 	function first_esp($id)

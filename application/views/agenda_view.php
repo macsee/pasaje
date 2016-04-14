@@ -31,10 +31,12 @@
     <div class="col-md-9 main">
         <div class = "panel panel-default">
             <div class = "panel-body">
-                <div class = "col-md-4 col-xs-6 display_date" style = "padding-top:7px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px">
+                <div class = "col-md-4 col-xs-5 display_date" style = "padding-top:7px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px">
                     <?php //echo $display_date;?>
                 </div>
-                <div class = "col-md-3 col-xs-6">
+                <div class = "col-md-3 col-xs-7">
+                    <input type="hidden" id = "usuario" name="usuario" value="<?php echo $usuario ?>">
+                    <input type="hidden" id = "is_admin" name="is_admin" value="<?php echo $is_admin ?>">
                     <div class="btn-group" role="group">
                         <a href="#" type="button" class="btn btn-default glyphicon glyphicon-chevron-left" onclick="return dia_anterior();"></a>
                         <a href="#" type="button" class="btn btn-default glyphicon glyphicon-calendar" onclick="return dia_actual();"></a>
@@ -70,9 +72,9 @@
 
         <div class = "panel-body" style = "padding:0px;overflow:auto">
 
-            <div class="table-responsive horarios" style = "height:1020px">
-            </div>
-            <div class = "container-fluid abrir_agenda" style = "display:none">
+            <div class="table-responsive horarios" style = "/*height:1020px*/"></div>
+                <div class = "container-fluid abrir_agenda" style = "display:none">
+                <?php if ($is_admin) { ?>
                     <h3>Crear Agenda</h3>
                     <hr>
                     <form method = "post" class="row form-horizontal">
@@ -87,7 +89,6 @@
                                 <label class="col-sm-2 control-label">Especialidad</label>
                                 <div class="col-sm-3">
                                     <select class="form-control" id = "crear_agenda_especialidad" name = "crear_agenda_especialidad" required>
-
                                     </select>
                                 </div>
                             </div>
@@ -117,11 +118,12 @@
                                 </div>
                             </div>
                         </div>
-
                     </form>
-
-            </div>
-
+                    <?php }
+                    else {
+                        echo '<h3>No hay agenda abierta para este día.</h3>';
+                    }?>
+                </div>
         </div>
 
     </div>

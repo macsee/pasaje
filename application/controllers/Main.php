@@ -202,7 +202,7 @@ class Main extends CI_Controller {
 	{
 		$this->main_model->add_usuario($_POST);
 
-		if (array_search('especialista', $_POST['usr_funciones']) > 0)
+		if (array_search('especialista', $_POST['usr_funciones']) >= 0)
 			$this->main_model->add_especialista($_POST['usr_usuario']);
 
 		redirect('main/admin#usuarios');
@@ -224,25 +224,24 @@ class Main extends CI_Controller {
 		redirect('main/admin#usuarios');
 	}
 
-	public function add_especialidad()
+	public function add_agenda()
 	{
-		$this->main_model->add_especialidad($_POST);
+		$this->main_model->add_agenda($_POST);
 		redirect('main/admin#especialistas');
+	}
+
+	public function get_agenda($id)
+	{
+		return $this->main_model->get_data("especialistas_especialidades", null, array('id' => $id))[0];
+	}
+
+	public function get_agenda_json($id)
+	{
+		echo json_encode($this->get_agenda($id));
 	}
 
 	public function get_datos_especialista($id, $especialidad="")
 	{
-		// $like = null;
-		// $where = null;
-		//
-		// if ($id != "todos")
-		// 	$where = array('usuario' => $id);
-		//
-		// if ($especialidad != "")
-		// 	$like = array('especialidad' => $especialidad);
-
-		// return $this->main_model->get_data("especialistas_especialidades", $like, $where);
-
 		return $this->main_model->get_datos_especialista($id, $especialidad);
 	}
 
@@ -488,8 +487,8 @@ class Main extends CI_Controller {
 		$array['id_nota'] = $_POST['id_nota'];
 		$array['texto'] = $_POST['texto'];
 		$array['usuario'] = $this->session->userdata('usuario');
-		$array['destinatario'] = $_POST['destinatario'];
-		$array['fecha'] = date('Y-m-d',strtotime($_POST['fecha']));
+		$array['destinatario'] = $_POST['destinatario'] != "" ? $_POST['destinatario'] : $this->session->userdata('usuario');
+		$array['fecha'] = date('Y-m-d');
 
 		$this->main_model->am_nota($array);
 	}
