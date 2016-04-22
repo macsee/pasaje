@@ -476,7 +476,7 @@ class Main extends CI_Controller {
 	public function get_nota($id,$fecha="")
 	{
 		if ($fecha != "") {
-			$notas = $this->main_model->get_data('notas', null, array('fecha' => $fecha), array("last_update","desc"));
+			$notas = $this->main_model->get_data('notas', null, array('fecha' => $fecha), array("last_update","asen"));
 
 			if ($notas != null) {
 				foreach ($notas as $key => $value) {
