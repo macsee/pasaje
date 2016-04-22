@@ -18,7 +18,7 @@ class Main_model extends CI_Model {
 			$this->db->where($equal);
 
 		if ($order != null)
-			$this->db->order_by($order, "desc");
+			$this->db->order_by($order[0],$order[1]);
 
 
 			$query = $this->db->get($tabla);

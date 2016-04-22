@@ -315,7 +315,7 @@ class Main extends CI_Controller {
 			$horarios = $this->get_dias_horarios($fecha, $especialista, $agenda);
 		}
 
-		$turnos = $this->main_model->get_data("turnos", null, $array);
+		$turnos = $this->main_model->get_data("turnos", null, $array, array("hora","asen"));
 
 		if ($turnos != null)
 			foreach ($turnos as $key => $value) {

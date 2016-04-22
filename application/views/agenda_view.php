@@ -95,11 +95,6 @@
                                     <input type="hidden" class="form-control" name = "crear_agenda_especialistas">
                                     <input type="hidden" class="form-control" name = "crear_agenda_fecha">
                                 </div>
-                                <label class="col-sm-2 control-label">Especialidad</label>
-                                <div class="col-sm-3">
-                                    <select class="form-control" id = "crear_agenda_especialidad" name = "crear_agenda_especialidad" required>
-                                    </select>
-                                </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-1 control-label">Desde</label>
