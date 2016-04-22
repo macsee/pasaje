@@ -51,7 +51,7 @@ class Main_model extends CI_Model {
 		return $this->main_model->get_data("especialistas_especialidades", $like, $where);
 	}
 
-	public function add_usuario($array)
+	public function am_usuario($array)
 	{
 		$data = array(
 		   	'usuario' => $array['usr_usuario'],
@@ -68,12 +68,14 @@ class Main_model extends CI_Model {
 		$this->db->query($query, $data);
 	}
 
-	public function add_especialista($id)
+	public function am_especialista($id)
 	{
+
 		$query = "	INSERT INTO especialistas_especialidades (usuario) VALUES (?)";
 					// VALUES (?) ON DUPLICATE KEY UPDATE usuario = VALUES(usuario)";
 
-		$this->db->query($query, array('usuario' => $id));
+			if ($this->get_datos_especialista($id,"") == null)
+				$this->db->query($query, array('usuario' => $id));
 	}
 
 	public function add_agenda($array)
@@ -196,15 +198,15 @@ class Main_model extends CI_Model {
 			return $this->db->insert_id();
 	}
 
-	public function get_horarios($id, $especialidad="")
+	public function get_horarios($id, $agenda="")
 	{
 		$turnos = array();
 
-		$especialidad_esp = $this->get_datos_especialista($id, $especialidad);
+		$agenda_esp = $this->get_datos_especialista($id, $agenda);	//agenda 1 o agenda 2 o agenda 3
 
-		if ($especialidad_esp != null) {
+		if ($agenda_esp != null) {
 
-			foreach ($especialidad_esp as $fila) {
+			foreach ($agenda_esp as $fila) {
 
 				$dias = json_decode($fila->dias_horarios);
 				$duracion = $fila->duracion;
@@ -213,6 +215,12 @@ class Main_model extends CI_Model {
 				if ($dias != null) {
 
 					foreach ($dias as $key => $hora) {
+
+						//desde_man
+						//hasta_man
+
+						//desde_tar
+						//hasta_tar
 
 						$hora_hasta = strtotime($hora->hasta);
 						$hora_desde = strtotime($hora->desde);

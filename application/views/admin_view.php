@@ -97,7 +97,7 @@
                         <hr>
                         <button id = "reset" type="submit" class="btn btn-warning" formaction="<?php echo base_url('index.php/main/rst_usuario')?>">Resetear</button>
                         <button id = "eliminar" type="submit" class="btn btn-danger" formaction="<?php echo base_url('index.php/main/del_usuario')?>">Eliminar</button>
-                        <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/add_usuario')?>">Guardar</button>
+                        <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/am_usuario')?>">Guardar</button>
                     </div>
                 </form>
             </div>

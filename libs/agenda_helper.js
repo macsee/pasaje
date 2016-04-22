@@ -107,7 +107,7 @@ function get_turnos()
         header_especialista = '<th>Especialista</th>';
 
     $.ajax({
-        url: base_url+"/main/get_turnos_dia_esp_json/"+fecha+"/"+esp+"/"+especialidad,
+        url: base_url+"/main/get_turnos_fecha_json/"+fecha+"/"+esp+"/"+especialidad,
         dataType: 'json',
         success:function(response)
         {
@@ -595,7 +595,7 @@ function get_notas() {
     fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
 
     $.ajax({
-        url: base_url+"/main/get_notas_json/"+fecha,
+        url: base_url+"/main/get_nota_json/todas"+"/"+fecha,
         dataType: "json",
         success:function(response)
         {
@@ -641,6 +641,7 @@ function editar_nota(id) {
         dataType: "json",
         success:function(response)
         {
+            console.log(response);
             if (response != null) {
                 $("#modal_notas").find('#eliminar_nota').css('display','');
                 $("#modal_notas").find('select[name="destinatario_sel"]').val(response.destinatario);
