@@ -256,7 +256,7 @@ class Main extends CI_Controller {
 
 	public function get_especialidades($id)
 	{
-		return $this->main_model->get_data("especialistas_especialidades", null, array('id' => $id))[0];
+		return $this->main_model->get_data("especialistas_especialidades", null, array('usuario' => $id))[0];
 		// return $this->main_model->get_datos_especialista($id, "");
 	}
 

@@ -231,9 +231,8 @@ function fill_especialidades(esp, callback) {
         dataType: 'json',
         success:function(response)
         {
-
-            if (response != null && response[0].especialidad != null) {
-                data = JSON.parse(response[0].especialidad);
+            if (response != null && response.especialidad != null) {
+                data = JSON.parse(response.especialidad);
                 $.each( data, function(key,val) {
                     $("#modal_turno").find("select[name='especialidad']").append($('<option>', {
                             value: val,
@@ -701,22 +700,22 @@ function abrir_agenda() {
     $(".abrir_agenda").find("input[name='crear_agenda_especialistas_txt']").val(esp_txt);
     $(".abrir_agenda").find("input[name='crear_agenda_especialistas']").val(esp);
 
-    $.ajax({
-        url: base_url+"/main/get_especialidades_json/"+esp,
-        dataType: 'json',
-        success:function(response)
-        {
-            if (response != null && response[0].especialidad != null) {
-                data = JSON.parse(response[0].especialidad);
-                $.each( data, function(key,val) {
-                    $(".abrir_agenda").find("select[name='crear_agenda_especialidad']").append($('<option>', {
-                            value: val,
-                            text : val
-                    }));
-                });
-            }
-        }
-    });
+    // $.ajax({
+    //     url: base_url+"/main/get_especialidades_json/"+esp,
+    //     dataType: 'json',
+    //     success:function(response)
+    //     {
+    //         if (response != null && response[0].especialidad != null) {
+    //             data = JSON.parse(response[0].especialidad);
+    //             $.each( data, function(key,val) {
+    //                 $(".abrir_agenda").find("select[name='crear_agenda_especialidad']").append($('<option>', {
+    //                         value: val,
+    //                         text : val
+    //                 }));
+    //             });
+    //         }
+    //     }
+    // });
 
 }
 
