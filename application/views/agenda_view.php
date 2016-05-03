@@ -26,6 +26,42 @@
     .row_vacia {
         cursor: pointer;
     }
+
+    .celda_vacia {
+        background-color: #EAEAEA;
+    }
+
+    .celda_low {
+        background-color: rgba(69, 183, 11, 0.70)!important;
+    }
+
+    .celda_med_low {
+        background-color: rgba(11, 199, 218, 0.70)!important;
+    }
+
+    .celda_medium {
+        background-color: rgba(215, 218, 11, 0.70)!important;
+    }
+
+    .celda_high {
+        background-color: rgba(218, 135, 11, 0.70)!important;
+    }
+
+    .celda_full {
+        background-color: rgba(218, 11, 11, 0.70)!important;
+    }
+
+    .datepicker table tr td.today {
+        /*background-color: #99D0FF;
+        border-color: #99D0FF;*/
+        font-weight: 700;
+        font-size: 20px;
+    }
+
+    .datepicker table tr td.today:hover {
+        /*background-color: #99D0FF;
+        border-color: #99D0FF;*/
+    }
 </style>
 <div class="container-fluid">
     <div class="col-md-9 main">
@@ -152,7 +188,9 @@
                 <i class = "glyphicon glyphicon-calendar"></i> <strong>Calendario</strong>
             </div>
             <div class = "panel-body">
-                <?php echo '<iframe class = "calendario" src="'.base_url('index.php/calendar/make_calendar/'.$especialista_sel.'/'.$especialidad_sel).'"></iframe>'; ?>
+                <div></div>
+                <div id="datepicker"></div>
+                <!-- <?php echo '<iframe class = "calendario" src="'.base_url('index.php/calendar/make_calendar/'.$especialista_sel.'/'.$especialidad_sel).'"></iframe>'; ?> -->
             </div>
         </div>
     </div>
@@ -161,8 +199,63 @@
 <script src="<?php echo base_url('libs/agenda_helper.js')?>"></script>
 <script type="text/javascript">
 
+
+function crear_calendario(dias_agenda, dias_turnos, dias_bloqueados) {
+    $('#datepicker').datepicker({
+        language: "es",
+        format: 'yyyy-mm-dd',
+        todayHighlight: true,
+        toggleActive: true,
+        // datesDisabled: dias_bloqueados,
+        daysOfWeekHighlighted: dias_agenda,
+        beforeShowDay: function(date){
+            // d = new Date(date);
+            var day = date.getDay();
+            var mm = (date.getMonth() + 1).toString();
+            var dd = date.getDate().toString();
+            var yy = date.getFullYear().toString();
+            date = yy + "-" + (mm.length == 2?mm:"0"+mm) + "-" + (dd.length == 2?dd:"0"+dd);
+
+            if (dias_turnos.hasOwnProperty(date)) {
+
+                switch (dias_turnos[date]){
+                    case "0.25" :
+                        return {
+                            classes : "celda_low"
+                        }
+                    case "0.50" :
+                        return {
+                            classes : "celda_medium"
+                        }
+                    case "0.75" :
+                        return {
+                            classes : "celda_high"
+                        }
+                }
+            // if ($.inArray(date, dias_turnos) != -1){
+            //    return {
+            //       //enabled : false,
+            //       classes : "celda_vacia"
+            //    };
+            }
+            return;
+      }
+    });
+
+    $('#datepicker').on("changeDate", function() {
+        set_fecha($('#datepicker').datepicker('getFormattedDate'));
+    });
+}
+
 $(document).ready(function () {
+
+    var agenda = [1,3,5];
+    var turnos = {"2016-04-01":"0.25", "2016-04-10":"0.50", "2016-04-21":"0.75"};
+    var bloqueados = ['2016-04-01', '2016-04-02']
+    crear_calendario(agenda,turnos,bloqueados);
     dia_actual();
+
+
 });
 
 </script>

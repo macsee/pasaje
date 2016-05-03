@@ -244,16 +244,6 @@ class Main extends CI_Controller {
 		echo json_encode($this->get_agenda($id));
 	}
 
-	// public function get_datos_especialista($id, $especialidad="")
-	// {
-	// 	return $this->main_model->get_datos_especialista($id, $especialidad);
-	// }
-	//
-	// public function get_especialidad_json($id, $especialidad="")
-	// {
-	// 	echo json_encode($this->get_datos_especialista($id,$especialidad));
-	// }
-
 	public function get_especialidades($id)
 	{
 		return $this->main_model->get_data("especialistas_especialidades", null, array('usuario' => $id))[0];
@@ -265,10 +255,12 @@ class Main extends CI_Controller {
 		echo json_encode($this->get_especialidades($id));
 	}
 
-	public function get_dias_horarios($fecha, $id, $agenda="")
+	// Horarios de la agenda de un especialista para la fecha en cuestion. No se muestra la agenda de TODOS
+	public function get_horarios_fecha($fecha, $id_agenda)
 	{
 
-			$horarios_esp = $this->main_model->get_horarios($id, $agenda);
+			// $horarios_esp = $this->main_model->get_horarios($id, $agenda);
+			$horarios_esp = $this->main_model->get_horarios($id_agenda);
 
 			$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
 			$day = $array_dias[date('w', strtotime($fecha))];
@@ -276,18 +268,19 @@ class Main extends CI_Controller {
 			$turnos = null;
 
 			if (isset($horarios_esp[$day])) {
-				if ($id != "todos") {
-					$turnos = $horarios_esp[$day][$id]->horarios;
-				}
-				else {
+				// if ($id_agenda != "todos") {
+				// 	$turnos = $horarios_esp[$day][$id_agenda]->horarios;
+				// }
+				// else {
 					foreach ($horarios_esp[$day] as $key => $value) {
 						$turnos = $value->horarios;
 					}
-				}
+				// }
 
 			}
 			else {
-				$agenda_extra = $this->main_model->get_agenda_extra_dia($fecha, $id, $agenda);
+				// Agregar otra tabla con la agenda extra de cada especialista?
+				$agenda_extra = $this->main_model->get_agenda_extra_dia($fecha, $id_agenda);
 				if ($agenda_extra != null) {
 					foreach ($agenda_extra as $key => $value) {
 						$turnos = $value->horarios;
@@ -296,23 +289,25 @@ class Main extends CI_Controller {
 
 			}
 
+			print_r($horarios_esp[$day]);
 			return $turnos;
-
 
 	}
 
-	public function get_turnos_fecha($fecha, $especialista, $agenda="")
+	// Turnos para la fecha de la agenda seleccionada
+	public function get_turnos_fecha($fecha, $agenda)
 	{
 		$array['fecha'] = $fecha;
 		$horarios = null;
 
 		// if ($agenda != "")
 		// 	$array['especialidad'] = $agenda;
+		//$horarios = $this->get_horarios_fecha($fecha, $especialista);
 
-		if ($especialista != "todos") {
-			$array['especialista'] = $especialista;
+		if ($agenda != "todos") {
 			// $array['especialidad'] = $agenda;
-			$horarios = $this->get_dias_horarios($fecha, $especialista, $agenda);
+			$array['especialista'] = $agenda;
+			$horarios = $this->get_horarios_fecha($fecha, $agenda);
 		}
 
 		$turnos = $this->main_model->get_data("turnos", null, $array, array("hora","asen"));

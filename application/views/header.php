@@ -9,10 +9,14 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="<?php echo base_url('libs/jquery/jquery-ui.min.css')?>">
     <link rel="stylesheet" href="<?php echo base_url('libs/bootstrap/css/bootstrap.css')?>">
+    <link rel="stylesheet" href="<?php echo base_url('libs/datepicker/bootstrap-datepicker3.min.css')?>">
 
     <script src="<?php echo base_url('libs/jquery/jquery-2.1.4.js')?>"></script>
     <script src="<?php echo base_url('libs/jquery/jquery-ui.min.js')?>"></script>
     <script src="<?php echo base_url('libs/bootstrap/js/bootstrap.min.js')?>"></script>
+    <script src="<?php echo base_url('libs/datepicker/bootstrap-datepicker.min.js')?>"></script>
+    <script src="<?php echo base_url('libs/datepicker/bootstrap-datepicker.es.min.js')?>"></script>
+
     <script>
       var base_url = "<?php echo base_url('index.php')?>";
       var root_dir = "<?php echo base_url()?>"

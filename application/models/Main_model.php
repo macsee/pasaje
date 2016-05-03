@@ -37,7 +37,7 @@ class Main_model extends CI_Model {
 		}
 	}
 
-	public function get_datos_especialista($id, $especialidad)
+	public function get_datos_especialista($id)
 	{
 		$like = null;
 		$where = null;
@@ -45,8 +45,8 @@ class Main_model extends CI_Model {
 		if ($id != "todos")
 			$where = array('usuario' => $id);
 
-		if ($especialidad != "")
-			$like = array('especialidad' => $especialidad);
+		// if ($especialidad != "")
+		// 	$like = array('especialidad' => $especialidad);
 
 		return $this->main_model->get_data("especialistas_especialidades", $like, $where);
 	}
@@ -198,11 +198,11 @@ class Main_model extends CI_Model {
 			return $this->db->insert_id();
 	}
 
-	public function get_horarios($id, $agenda="")
+	public function get_horarios($id)
 	{
 		$turnos = array();
 
-		$agenda_esp = $this->get_datos_especialista($id, $agenda);	//agenda 1 o agenda 2 o agenda 3
+		$agenda_esp = $this->get_datos_especialista($id);
 
 		if ($agenda_esp != null) {
 
@@ -210,8 +210,8 @@ class Main_model extends CI_Model {
 
 				$dias = json_decode($fila->dias_horarios);
 				$duracion = $fila->duracion;
-				$usuario = $fila->usuario;						// cbolzani -> [Reiki, Acupuntura] -> Lu, Ma
-																// cbolzani -> [Otra cosa] -> Ma, Mi
+				$usuario = $fila->usuario;
+
 				if ($dias != null) {
 
 					foreach ($dias as $key => $hora) {
@@ -255,7 +255,7 @@ class Main_model extends CI_Model {
 	public function get_agenda_extra_dia($fecha, $id, $especialidad="")
 	{
 		$fecha = date('Y-m-d',strtotime($fecha));
-		$datos = $this->get_datos_especialista($id, $especialidad);
+		$datos = $this->get_datos_especialista($id);
 		$turnos = null;
 		$horarios_esp = null;
 
