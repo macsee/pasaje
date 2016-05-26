@@ -111,8 +111,8 @@ function get_turnos()
         dataType: 'json',
         success:function(response)
         {
-
-            if (response != null) {
+            console.log(response);
+            if (response != "") {
 
                 tabla = '<table class="table">'+
                             '<thead class = "cabecera">'+
@@ -128,13 +128,14 @@ function get_turnos()
                             '<tbody>';
 
                 $.each( response, function(key,val) {
+
                     primera_vez = "";
                     row_especialista = "";
                     row_vacia = "";
                     tipo_turno = 'return turno_vacio(\''+key+'\')';
                     estado = 'glyphicon glyphicon-unchecked';
 
-                    if (val != "") {
+                    if (val.id_turno != "") {
 
                         if (JSON.parse(val.data_extra).indexOf('primera_vez') >= 0)
                             primera_vez = "color:#d9534f";
@@ -152,7 +153,7 @@ function get_turnos()
 
                         tabla +=
                             '<tr id = "'+val.id_turno+'">'+
-                                '<td style = "font-size:16px;'+primera_vez+'">'+key+'</td>'+
+                                '<td style = "font-size:16px;'+primera_vez+'">'+val.hora+'</td>'+
                                 '<td>'+val.paciente+'</td>'+
                                 '<td>'+val.especialidad+'</td>'+
                                 row_especialista+
@@ -183,7 +184,7 @@ function get_turnos()
 
                         tabla +=
                             '<tr onclick = "'+tipo_turno+'" class = "row_vacia">'+
-                                '<td>'+key+'</td>'+
+                                '<td>'+val.hora+'</td>'+
                                 '<td></td>'+
                                 '<td></td>'+
                                 row_vacia+
@@ -202,7 +203,8 @@ function get_turnos()
                 $(".abrir_agenda").css('display','none');
                 $(".horarios").html(tabla);
             }
-            else if (response == null  && esp == "todos"){
+            else if (response == ""  && esp == "todos"){
+
                 $(".horarios").css('display','');
                 $(".abrir_agenda").css('display','none');
                 // $(".horarios").html("<h3>No hay agenda abierta para este día.</h3>");

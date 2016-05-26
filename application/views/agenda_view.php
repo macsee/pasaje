@@ -117,7 +117,7 @@
 
         <div class = "panel-body" style = "padding:0px;overflow:auto">
 
-            <div class="table-responsive horarios" style = "/*height:1020px*/"></div>
+            <div class="table-responsive horarios" style = "height:1020px"></div>
                 <div class = "container-fluid abrir_agenda" style = "display:none">
                 <?php if ($is_admin) { ?>
                     <h3>Crear Agenda</h3>
@@ -199,6 +199,35 @@
 <script src="<?php echo base_url('libs/agenda_helper.js')?>"></script>
 <script type="text/javascript">
 
+function get_()
+{
+    $(".horarios").empty();
+
+    var agenda = [1,3,5];
+    var turnos = {"2016-04-01":"0.25", "2016-04-10":"0.50", "2016-04-21":"0.75"};
+    var bloqueados = ['2016-04-01', '2016-04-02'];
+    
+    is_admin = $("#is_admin").val();
+    var esp = "eguercio";
+    var especialidad = "";
+    var fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
+    var tabla = "";
+    var header_especialista = "";
+
+    $.ajax({
+        url: base_url+"/main/get_cant_turnos_json/"+fecha_actual.getFullYear()+"/"+parseInt(fecha_actual.getMonth()+1)+"/"+esp,
+        dataType: 'json',
+        success:function(response)
+        {
+
+          $.each( response, function(key,val) {
+            console.log(val.fechas);
+          });
+
+          crear_calendario(agenda,turnos,bloqueados);
+        }
+    });
+}
 
 function crear_calendario(dias_agenda, dias_turnos, dias_bloqueados) {
     $('#datepicker').datepicker({
@@ -249,12 +278,9 @@ function crear_calendario(dias_agenda, dias_turnos, dias_bloqueados) {
 
 $(document).ready(function () {
 
-    var agenda = [1,3,5];
-    var turnos = {"2016-04-01":"0.25", "2016-04-10":"0.50", "2016-04-21":"0.75"};
-    var bloqueados = ['2016-04-01', '2016-04-02']
-    crear_calendario(agenda,turnos,bloqueados);
+    //crear_calendario(agenda,turnos,bloqueados);
     dia_actual();
-
+    get_();
 
 });
 

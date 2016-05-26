@@ -37,6 +37,28 @@ class Main_model extends CI_Model {
 		}
 	}
 
+	public function get_turnos_mes($year, $month, $id_agenda)
+	{
+
+		$this->db->where(array("MONTH(fecha)" => $year, "MONTH(fecha)" => $month, "especialista" => $id_agenda));
+		$this->db->order_by("hora","desc");
+		$query = $this->db->get("turnos");
+
+		if ($query->num_rows()>0)
+		{
+			foreach ($query->result() as $fila)
+			{
+				$data[$fila->especialista][$fila->fecha][] = $fila;
+			}
+			return $data;
+		}
+		else
+		{
+			return null;
+		}
+
+	}
+
 	public function get_datos_especialista($id)
 	{
 		$like = null;
@@ -230,7 +252,8 @@ class Main_model extends CI_Model {
 						$horarios_esp = array();
 
 						for ($i=0; $i <= $cant_turnos ; $i++) {
-							$horarios_esp[date('H:i',$hora_desde+($i*$duracion*60))] = "";
+							$horarios_esp[] = date('H:i',$hora_desde+($i*$duracion*60));
+							// $horarios_esp[date('H:i',$hora_desde+($i*$duracion*60))] = "";
 						}
 
 						// Agrego la clave usuario para poder sumar la cantidad de turnos de cada usuario en un mismo dia
