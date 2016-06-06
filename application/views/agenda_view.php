@@ -74,8 +74,8 @@
     .fila-turno {
         border: 1px solid #e8e8e5;
         border-radius: 4px;
-        font-size: 13px;
-        font-weight: 700;
+        //font-size: 13px;
+        //font-weight: 700;
         margin: 0px 0px 0px;
     }
 
@@ -132,21 +132,41 @@
             </div>
         </div>
 
-        <div class = "panel-body" style = "padding:0px;overflow:auto;margin-bottom:30px">
+        <div class = "panel-body" style = "padding:0px;overflow:inherit;margin-bottom:30px">
 
             <div class="horarios">
 
                 <div class = "row fila-turno">
-                    <div class = "col-xs-10 col-sd-10" style = "padding:0px;border-right:1px solid #e8e8e5">
-                        <div class="col-xs-12 col-sd-12" style = "padding:10px;font-size:20px;border-bottom:1px solid #e8e8e5">10:00 hs</div>
+                    <!-- <div class = "col-xs-10 col-sd-10" style = "padding:0px;border-right:1px solid #e8e8e5"> -->
+                        <div class="col-xs-11 col-sd-11" style = "padding:10px;font-size:20px;border-bottom:1px solid #e8e8e5">Cravero, Maximiliano</div>
+                        <div class = "col-xs-1 col-sd-1" style = "padding:0px;padding-top:10px;font-size:20px">
+                          <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><i class = "glyphicon glyphicon-th-list"></i><span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
+                                    <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
+                                    <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
+                                    <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
+                                </ul>
+                            </div>
+                            <!-- <span class="glyphicon glyphicon-check"></span> -->
+                        </div>
 
-                        <div class="col-xs-12 col-sd-12" style = "font-size:18px;padding:10px;border-bottom:1px solid #e8e8e5">Cravero, Maximiliano</div>
-
-                        <div class="col-xs-7 col-sd-7" style = "font-size:15px;padding:10px;border-right:1px solid #e8e8e5">Kinesiología Comportamental</div>
-                        <div class="col-xs-5 col-sd-5" style = "font-size:15px;padding:10px">Arebola, B</div>
-                    </div>
-                    <div class = "col-xs-1 col-sd-1" style = "padding:0px">
-                        <div class = "col-xs-12 col-sd-12" style = "padding:10px">
+                        <div class="col-xs-3 col-sd-3" style = "font-size:15px;padding:10px;border-right:1px solid #e8e8e5">10:00 hs</div>
+                        <div class="col-xs-5 col-sd-5" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">Kinesiología Comportamental</div>
+                        <div class="col-xs-4 col-sd-4" style = "font-size:14px;padding:10px;">Arebola, B</div>
+                    <!-- </div> -->
+                    <!-- <div class = "col-xs-1 col-sd-1" style = "padding:0px"> -->
+                    <!--  <div class="dropdown">
+                          <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><i class = "glyphicon glyphicon-th-list"></i><span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                              <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
+                              <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
+                              <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
+                              <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
+                          </ul>
+                      </div> -->
+                        <!-- <div class = "col-xs-12 col-sd-12" style = "padding:10px">
                             <span class="glyphicon glyphicon-check" style = "font-size:20px"></span>
                         </div>
                         <div class = "col-xs-12 col-sd-12" style ="padding:10px">
@@ -160,10 +180,10 @@
                         </div>
                         <div class = "col-xs-12 col-sd-12" style ="padding:10px">
                             <span class="glyphicon glyphicon-plus" style = "font-size:20px"></span>
-                        </div>
-                    </div>
-                    
-                </div>    
+                        </div> -->
+                    <!-- </div> -->
+
+                </div>
                 <!-- <table class="table">
                     <thead class = "cabecera">
                         <tr>
