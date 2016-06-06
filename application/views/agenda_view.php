@@ -62,6 +62,15 @@
         /*background-color: #99D0FF;
         border-color: #99D0FF;*/
     }
+
+    .datepicker table tr td.highlighted {
+        background-color: #EAEAEA;
+    }
+
+    .datepicker table tr td.today {
+        background-color: transparent;
+    }
+
 </style>
 <div class="container-fluid">
     <div class="col-md-9 main">
@@ -199,89 +208,10 @@
 <script src="<?php echo base_url('libs/agenda_helper.js')?>"></script>
 <script type="text/javascript">
 
-function get_()
-{
-    $(".horarios").empty();
-
-    var agenda = [1,3,5];
-    var turnos = {"2016-04-01":"0.25", "2016-04-10":"0.50", "2016-04-21":"0.75"};
-    var bloqueados = ['2016-04-01', '2016-04-02'];
-    
-    is_admin = $("#is_admin").val();
-    var esp = "eguercio";
-    var especialidad = "";
-    var fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
-    var tabla = "";
-    var header_especialista = "";
-
-    $.ajax({
-        url: base_url+"/main/get_cant_turnos_json/"+fecha_actual.getFullYear()+"/"+parseInt(fecha_actual.getMonth()+1)+"/"+esp,
-        dataType: 'json',
-        success:function(response)
-        {
-
-          $.each( response, function(key,val) {
-            console.log(val.fechas);
-          });
-
-          crear_calendario(agenda,turnos,bloqueados);
-        }
-    });
-}
-
-function crear_calendario(dias_agenda, dias_turnos, dias_bloqueados) {
-    $('#datepicker').datepicker({
-        language: "es",
-        format: 'yyyy-mm-dd',
-        todayHighlight: true,
-        toggleActive: true,
-        // datesDisabled: dias_bloqueados,
-        daysOfWeekHighlighted: dias_agenda,
-        beforeShowDay: function(date){
-            // d = new Date(date);
-            var day = date.getDay();
-            var mm = (date.getMonth() + 1).toString();
-            var dd = date.getDate().toString();
-            var yy = date.getFullYear().toString();
-            date = yy + "-" + (mm.length == 2?mm:"0"+mm) + "-" + (dd.length == 2?dd:"0"+dd);
-
-            if (dias_turnos.hasOwnProperty(date)) {
-
-                switch (dias_turnos[date]){
-                    case "0.25" :
-                        return {
-                            classes : "celda_low"
-                        }
-                    case "0.50" :
-                        return {
-                            classes : "celda_medium"
-                        }
-                    case "0.75" :
-                        return {
-                            classes : "celda_high"
-                        }
-                }
-            // if ($.inArray(date, dias_turnos) != -1){
-            //    return {
-            //       //enabled : false,
-            //       classes : "celda_vacia"
-            //    };
-            }
-            return;
-      }
-    });
-
-    $('#datepicker').on("changeDate", function() {
-        set_fecha($('#datepicker').datepicker('getFormattedDate'));
-    });
-}
-
 $(document).ready(function () {
-
     //crear_calendario(agenda,turnos,bloqueados);
     dia_actual();
-    get_();
-
+    get_turnos_mes();
 });
 
 </script>

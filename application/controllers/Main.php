@@ -392,10 +392,11 @@ class Main extends CI_Controller {
 
 	}
 
-	public function get_cant_turnos($year, $month, $id_agenda)
+	public function get_data_turnos($year, $month, $id_agenda)
 	{
 		$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
-
+		$array_turnos = "";
+		
 		$horarios = $this->main_model->get_horarios($id_agenda);
 		$turnos = $this->main_model->get_turnos_mes($year, $month, $id_agenda);
 
@@ -422,17 +423,16 @@ class Main extends CI_Controller {
 
 		$resultado[$id_agenda] = array(
 			'fechas' => $array_turnos,
-			'horarios' => $horarios,
-			'factor' => $factor
+			'horarios' => $horarios
 		);
 
 		return $resultado;
 
 	}
 
-	public function get_cant_turnos_json($year, $month, $id_agenda)
+	public function get_data_turnos_json($year, $month, $id_agenda)
 	{
-			echo json_encode($this->get_cant_turnos($year, $month, $id_agenda));
+			echo json_encode($this->get_data_turnos($year, $month, $id_agenda));
 	}
 
 /******************************************TURNOS******************************************/
