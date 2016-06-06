@@ -165,7 +165,7 @@ function crear_calendario(dias_agenda, dias_turnos, dias_bloqueados) {
 
 function get_turnos_mes()
 {
-    $(".horarios").empty();
+    //$(".horarios").empty();
 
     var esp = $("#especialistas").val();
     var especialidad = "";

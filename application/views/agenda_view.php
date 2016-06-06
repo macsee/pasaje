@@ -71,9 +71,17 @@
         background-color: transparent;
     }
 
+    .fila-turno {
+        border: 1px solid #e8e8e5;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 0px 0px 0px;
+    }
+
 </style>
 <div class="container-fluid">
-    <div class="col-md-9 main">
+    <div class="col-md-7 col-md-offset-1">
         <div class = "panel panel-default">
             <div class = "panel-body">
                 <div class = "col-md-4 col-xs-5 display_date" style = "padding-top:30px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px">
@@ -124,9 +132,52 @@
             </div>
         </div>
 
-        <div class = "panel-body" style = "padding:0px;overflow:auto">
+        <div class = "panel-body" style = "padding:0px;overflow:auto;margin-bottom:30px">
 
-            <div class="table-responsive horarios" style = "height:1020px"></div>
+            <div class="horarios">
+
+                <div class = "row fila-turno">
+                    <div class = "col-xs-10 col-sd-10" style = "padding:0px;border-right:1px solid #e8e8e5">
+                        <div class="col-xs-12 col-sd-12" style = "padding:10px;font-size:20px;border-bottom:1px solid #e8e8e5">10:00 hs</div>
+
+                        <div class="col-xs-12 col-sd-12" style = "font-size:18px;padding:10px;border-bottom:1px solid #e8e8e5">Cravero, Maximiliano</div>
+
+                        <div class="col-xs-7 col-sd-7" style = "font-size:15px;padding:10px;border-right:1px solid #e8e8e5">Kinesiología Comportamental</div>
+                        <div class="col-xs-5 col-sd-5" style = "font-size:15px;padding:10px">Arebola, B</div>
+                    </div>
+                    <div class = "col-xs-1 col-sd-1" style = "padding:0px">
+                        <div class = "col-xs-12 col-sd-12" style = "padding:10px">
+                            <span class="glyphicon glyphicon-check" style = "font-size:20px"></span>
+                        </div>
+                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
+                            <span class="glyphicon glyphicon-pencil" style = "font-size:20px"></span>
+                        </div>
+                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
+                            <span class="glyphicon glyphicon-trash" style = "font-size:20px"></span>
+                        </div>
+                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
+                            <span class="glyphicon glyphicon-transfer" style = "font-size:20px"></span>
+                        </div>
+                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
+                            <span class="glyphicon glyphicon-plus" style = "font-size:20px"></span>
+                        </div>
+                    </div>
+                    
+                </div>    
+                <!-- <table class="table">
+                    <thead class = "cabecera">
+                        <tr>
+                            <th>Hora</th>
+                            <th>Paciente</th>
+                            <th>Especialidad</th>
+                            <th>Acciones</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                </table> -->
+
+            </div>
+
                 <div class = "container-fluid abrir_agenda" style = "display:none">
                 <?php if ($is_admin) { ?>
                     <h3>Crear Agenda</h3>
