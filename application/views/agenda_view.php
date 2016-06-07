@@ -74,9 +74,16 @@
     .fila-turno {
         border: 1px solid #e8e8e5;
         border-radius: 4px;
-        //font-size: 13px;
-        //font-weight: 700;
         margin: 0px 0px 0px;
+    }
+
+    .cell_turno {
+        padding-left:5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-right:1px solid #e8e8e5;
+        //border-top: 1px solid #e8e8e5;
+        min-height: 40px;
     }
 
 </style>
@@ -84,10 +91,10 @@
     <div class="col-md-7 col-md-offset-1">
         <div class = "panel panel-default">
             <div class = "panel-body">
-                <div class = "col-md-4 col-xs-5 display_date" style = "padding-top:30px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px">
+                <div class = "col-md-4 col-xs-5 display_date" style = "padding:0px;padding-top:30px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px">
                     <?php //echo $display_date;?>
                 </div>
-                <div class = "col-md-3 col-xs-7" style = "padding-top:22px">
+                <div class = "col-md-3 col-xs-7" style = "padding:0px;padding-top:22px">
                     <input type="hidden" id = "usuario" name="usuario" value="<?php echo $usuario ?>">
                     <input type="hidden" id = "is_admin" name="is_admin" value="<?php echo $is_admin ?>">
                     <div class="btn-group" role="group">
@@ -136,54 +143,45 @@
 
             <div class="horarios">
 
-                <div class = "row fila-turno">
-                    <!-- <div class = "col-xs-10 col-sd-10" style = "padding:0px;border-right:1px solid #e8e8e5"> -->
-                        <div class="col-xs-11 col-sd-11" style = "padding:10px;font-size:20px;border-bottom:1px solid #e8e8e5">Cravero, Maximiliano</div>
-                        <div class = "col-xs-1 col-sd-1" style = "padding:0px;padding-top:10px;font-size:20px">
-                          <div class="dropdown">
-                                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><i class = "glyphicon glyphicon-th-list"></i><span class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
-                                    <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
-                                    <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
-                                    <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
-                                </ul>
-                            </div>
-                            <!-- <span class="glyphicon glyphicon-check"></span> -->
-                        </div>
-
-                        <div class="col-xs-3 col-sd-3" style = "font-size:15px;padding:10px;border-right:1px solid #e8e8e5">10:00 hs</div>
-                        <div class="col-xs-5 col-sd-5" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">Kinesiología Comportamental</div>
-                        <div class="col-xs-4 col-sd-4" style = "font-size:14px;padding:10px;">Arebola, B</div>
-                    <!-- </div> -->
-                    <!-- <div class = "col-xs-1 col-sd-1" style = "padding:0px"> -->
-                    <!--  <div class="dropdown">
-                          <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><i class = "glyphicon glyphicon-th-list"></i><span class="caret"></span></button>
-                          <ul class="dropdown-menu">
-                              <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
-                              <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
-                              <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
-                              <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
-                          </ul>
-                      </div> -->
-                        <!-- <div class = "col-xs-12 col-sd-12" style = "padding:10px">
-                            <span class="glyphicon glyphicon-check" style = "font-size:20px"></span>
-                        </div>
-                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
-                            <span class="glyphicon glyphicon-pencil" style = "font-size:20px"></span>
-                        </div>
-                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
-                            <span class="glyphicon glyphicon-trash" style = "font-size:20px"></span>
-                        </div>
-                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
-                            <span class="glyphicon glyphicon-transfer" style = "font-size:20px"></span>
-                        </div>
-                        <div class = "col-xs-12 col-sd-12" style ="padding:10px">
-                            <span class="glyphicon glyphicon-plus" style = "font-size:20px"></span>
-                        </div> -->
-                    <!-- </div> -->
-
+                <div class="row fila-turno">
+                    <div class="col-md-4 col-md-push-2 cell_turno" style = "border-bottom: 1px solid #e8e8e5;">
+                        Cravero, Maximiliano
+                    </div>
+                    <div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno">
+                        10:00 hs
+                    </div>
+                    <div class="col-md-3 col-xs-5 cell_turno">
+                        Kinesiología Comportamental
+                    </div>
+                    <div class="col-md-3 col-xs-3 cell_turno" style = "border-right:none">
+                        Arebola, B
+                    </div>
                 </div>
+
+                <!-- <div class = "row fila-turno"> -->
+                    <!-- <div class = "col-xs-10 col-md-10" style = "padding:0px;border-right:1px solid #e8e8e5"> -->
+                        <!-- div class="col-md-2 col-md-push-2" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">10:00 hs</div>
+                        <div class="col-md-4 col-md-push-4" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">Cravero, Maximiliano</div>
+                        <div class="col-md-4" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">Kinesiología Comportamental</div>
+                        <div class="col-md-2" style = "font-size:14px;padding:10px;">Arebola, B</div> -->
+                    <!-- </div> -->
+                    <!-- <div class = "col-xs-2 col-sd-2" style = "padding:0px;padding-top:10px">
+                        <div class = "col-xs-12 col-md-6">
+                            <button class="btn btn-default" role="button"><span class="glyphicon glyphicon-check"></span></button>
+                        </div>
+                        <div class = "col-xs-12 col-md-6">
+                            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-th-list"></span></button>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
+                                <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
+                                <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
+                                <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
+                            </ul>
+                        </div>
+                    </div>     -->
+                    
+
+                <!-- </div> -->
                 <!-- <table class="table">
                     <thead class = "cabecera">
                         <tr>
