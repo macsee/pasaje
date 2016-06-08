@@ -74,7 +74,7 @@
     .fila-turno {
         border: 1px solid #e8e8e5;
         border-radius: 4px;
-        margin: 0px 0px 0px;
+        margin: 0px 0px 10px 0px;
     }
 
     .cell_turno {
@@ -83,7 +83,7 @@
         padding-bottom: 10px;
         border-right:1px solid #e8e8e5;
         //border-top: 1px solid #e8e8e5;
-        min-height: 40px;
+        min-height: 60px;
     }
 
 </style>
@@ -94,7 +94,7 @@
                 <div class = "col-md-4 col-xs-5 display_date" style = "padding:0px;padding-top:30px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px">
                     <?php //echo $display_date;?>
                 </div>
-                <div class = "col-md-3 col-xs-7" style = "padding:0px;padding-top:22px">
+                <div class = "col-md-3 col-xs-7" style = "padding:0px;padding-top:22px;text-align:center">
                     <input type="hidden" id = "usuario" name="usuario" value="<?php echo $usuario ?>">
                     <input type="hidden" id = "is_admin" name="is_admin" value="<?php echo $is_admin ?>">
                     <div class="btn-group" role="group">
@@ -144,17 +144,50 @@
             <div class="horarios">
 
                 <div class="row fila-turno">
-                    <div class="col-md-4 col-md-push-2 cell_turno" style = "border-bottom: 1px solid #e8e8e5;">
+                    <div class="col-md-4 col-md-push-2 cell_turno">
                         Cravero, Maximiliano
                     </div>
                     <div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno">
                         10:00 hs
                     </div>
-                    <div class="col-md-3 col-xs-5 cell_turno">
+                    <div class="col-md-3 col-xs-4 cell_turno">
                         Kinesiología Comportamental
                     </div>
-                    <div class="col-md-3 col-xs-3 cell_turno" style = "border-right:none">
+                    <div class="col-md-2 col-xs-3 cell_turno">
                         Arebola, B
+                    </div>
+                    <div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">
+                      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>
+                      <ul class="dropdown-menu pull-right">
+                          <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
+                          <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
+                          <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
+                          <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
+                      </ul>
+                    </div>
+                </div>
+
+                <div class="row fila-turno">
+                    <div class="col-md-4 col-md-push-2 cell_turno">
+                        Cravero, Maximiliano
+                    </div>
+                    <div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno">
+                        10:30 hs
+                    </div>
+                    <div class="col-md-3 col-xs-4 cell_turno">
+                        Kinesiología Comportamental
+                    </div>
+                    <div class="col-md-2 col-xs-3 cell_turno">
+                        Arebola, B
+                    </div>
+                    <div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">
+                      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>
+                      <ul class="dropdown-menu pull-right">
+                          <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
+                          <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
+                          <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
+                          <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
+                      </ul>
                     </div>
                 </div>
 
@@ -179,7 +212,7 @@
                             </ul>
                         </div>
                     </div>     -->
-                    
+
 
                 <!-- </div> -->
                 <!-- <table class="table">
