@@ -73,19 +73,59 @@
 
     .fila-turno {
         border: 1px solid #e8e8e5;
+        background-color: #f9f9f9;
         border-radius: 4px;
         margin: 0px 0px 10px 0px;
     }
 
     .cell_turno {
+        font-size: 14px;
         padding-left:5px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 8px;
         border-right:1px solid #e8e8e5;
-        //border-top: 1px solid #e8e8e5;
-        min-height: 60px;
+        min-height: 50px;
+        overflow: hidden;
     }
 
+    .cell_vacia {
+      font-size: 14px;
+      padding-left:5px;
+      padding-top: 10px;
+      min-height: 40px;
+      overflow: hidden;
+    }
+
+    .cell_header {
+      font-size: 15px;
+      padding-left:5px;
+      padding-top: 10px;
+      /*border-right:1px solid #e8e8e5;*/
+      overflow: hidden;
+    }
+
+    .datepicker-inline {
+      margin: auto;
+    }
+
+    .cabecera {
+      margin: 0px 0px 10px 0px;
+      height: 40px;
+      background-color: #454545;
+      color: white;
+      font-size: 16px;
+      font-weight: 400;
+      font-size: 15px;
+    }
+
+    @media (max-width: 767px) {
+        .fix_on_xs {
+          border-right: none;
+          border-bottom: 1px solid #e8e8e5;
+          min-height: 50px;
+          font-size: 20px;
+          /*background-color: #f8f8f8;*/
+        }
+    }
 </style>
 <div class="container-fluid">
     <div class="col-md-7 col-md-offset-1">
@@ -141,17 +181,35 @@
 
         <div class = "panel-body" style = "padding:0px;overflow:inherit;margin-bottom:30px">
 
+            <div class="row cabecera hidden-xs hidden-sm">
+                <div class="col-md-2 cell_header">
+                    Hora
+                </div>
+                <div class="col-md-4 cell_header">
+                    Paciente
+                </div>
+                <div class="col-md-3 cell_header">
+                    Especialidad
+                </div>
+                <div class="col-md-2 cell_header">
+                    Especialista
+                </div>
+                <div class="col-md-1 cell_header">
+
+                </div>
+            </div>
+
             <div class="horarios">
 
                 <div class="row fila-turno">
-                    <div class="col-md-4 col-md-push-2 cell_turno">
+                    <div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">
                         Cravero, Maximiliano
                     </div>
                     <div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno">
                         10:00 hs
                     </div>
                     <div class="col-md-3 col-xs-4 cell_turno">
-                        Kinesiología Comportamental
+                        Kinesiología Comportamentalesssss
                     </div>
                     <div class="col-md-2 col-xs-3 cell_turno">
                         Arebola, B
@@ -168,7 +226,7 @@
                 </div>
 
                 <div class="row fila-turno">
-                    <div class="col-md-4 col-md-push-2 cell_turno">
+                    <div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">
                         Cravero, Maximiliano
                     </div>
                     <div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno">
@@ -181,7 +239,7 @@
                         Arebola, B
                     </div>
                     <div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">
-                      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>
+                      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-unchecked"></span></button>
                       <ul class="dropdown-menu pull-right">
                           <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
                           <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
