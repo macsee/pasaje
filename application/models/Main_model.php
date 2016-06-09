@@ -259,7 +259,8 @@ class Main_model extends CI_Model {
 						// Agrego la clave usuario para poder sumar la cantidad de turnos de cada usuario en un mismo dia
 						// y asi no contar dos veces un mismo usuario con mas de una especialidad
 
-						$turnos[$key][$usuario] = (object) array(
+						// $turnos[$key][$usuario] = (object) array( // La parte de usuarios esta manejada por la funcion que llama a esta funcion
+						$turnos[$key] = (object) array(
 							'horarios'		=>	$horarios_esp,
 							'cant_turnos' 	=> 	$cant_turnos
 						);

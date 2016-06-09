@@ -101,6 +101,8 @@
       padding-top: 10px;
       /*border-right:1px solid #e8e8e5;*/
       overflow: hidden;
+      color: white;
+      font-weight: 400;
     }
 
     .datepicker-inline {
@@ -110,14 +112,14 @@
     .cabecera {
       margin: 0px 0px 10px 0px;
       height: 40px;
-      background-color: #454545;
+      background-color: #454545; //#3f7ec1
       color: white;
       font-size: 16px;
       font-weight: 400;
       font-size: 15px;
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 990px) {
         .fix_on_xs {
           border-right: none;
           border-bottom: 1px solid #e8e8e5;
@@ -201,7 +203,7 @@
 
             <div class="horarios">
 
-                <div class="row fila-turno">
+                <!-- <div class="row fila-turno">
                     <div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">
                         Cravero, Maximiliano
                     </div>
@@ -247,7 +249,7 @@
                           <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
                       </ul>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- <div class = "row fila-turno"> -->
                     <!-- <div class = "col-xs-10 col-md-10" style = "padding:0px;border-right:1px solid #e8e8e5"> -->

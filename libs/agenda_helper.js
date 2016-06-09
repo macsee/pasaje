@@ -2,6 +2,7 @@ var fecha_actual = new Date();
 var cambio_turno = "";
 var prox_turno = "";
 var turnos_mes = [];
+var horarios_mes = []
 var dias = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -65,14 +66,14 @@ function dia_siguiente()
 {
     fecha_actual.setDate(fecha_actual.getDate()+1);
     actualizar_fecha();
-    get_turnos();
+    // get_turnos();
 }
 
 function dia_anterior()
 {
     fecha_actual.setDate(fecha_actual.getDate()-1);
     actualizar_fecha();
-    get_turnos();
+    // get_turnos();
 
 }
 
@@ -80,7 +81,7 @@ function dia_actual()
 {
     fecha_actual = new Date();
     actualizar_fecha();
-    //get_turnos();
+    // get_turnos();
 
 }
 
@@ -89,8 +90,8 @@ function set_fecha(fecha)
     fecha = fecha+" 00:00:00";
     fecha_actual = new Date(fecha.replace(/-/g, '/')); // Para que funcione en celulares
     actualizar_fecha();
-    show_turnos();
-    //get_turnos();
+    show_turnos(fecha_actual);
+    // get_turnos();
 }
 
 function format_date(fecha) {
@@ -104,9 +105,9 @@ function format_date(fecha) {
     return date;
 }
 
-function show_turnos() {
+function show_turnos(fecha) {
 
-    var date = format_date(fecha_actual);
+    var date = format_date(fecha);
     var html = "";
 
     $.each( turnos_mes[date].turnos, function(key,val) {
@@ -134,6 +135,7 @@ function show_turnos() {
               +'<div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">'
                 +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>'
                 +'<ul class="dropdown-menu pull-right">'
+                    +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Estado</a></li>'
                     +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>'
                     +'<li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>'
                     +'<li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>'
@@ -205,7 +207,7 @@ function crear_calendario(dias_agenda, dias_turnos, dias_bloqueados) {
 
 function get_turnos_mes()
 {
-    //$(".horarios").empty();
+    $(".horarios").empty();
 
     var esp = $("#especialistas").val();
     var especialidad = "";
@@ -220,9 +222,11 @@ function get_turnos_mes()
 
           var agenda = []; //dias para poner turnos
           var bloqueados = [];
-          var turnos = response[esp].fechas;
 
-          $.each( response[esp].horarios, function(key,val) {
+          turnos_mes = response[esp].fechas;
+          horarios_mes = response[esp].horarios;
+
+          $.each(horarios_mes, function(key,val) {
 
             switch (true) {
               case (key == "lu"):
@@ -244,8 +248,7 @@ function get_turnos_mes()
 
           });
 
-          turnos_mes = turnos;
-          crear_calendario(agenda,turnos,bloqueados);
+          crear_calendario(agenda, turnos_mes, bloqueados);
         }
     });
 }

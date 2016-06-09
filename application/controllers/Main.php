@@ -409,7 +409,8 @@ class Main extends CI_Controller {
 
 				$turnos_ocupados = $turnos[$id_agenda][$fecha];
 
-				$turnos_libres = $horarios[$dow][$id_agenda];
+				// $turnos_libres = $horarios[$dow][$id_agenda];
+				$turnos_libres = $horarios[$dow];
 				$factor = sizeof($turnos_ocupados)/$turnos_libres->cant_turnos;
 
 				$array_turnos[$fecha] = array(
