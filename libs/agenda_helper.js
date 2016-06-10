@@ -110,49 +110,57 @@ function show_turnos(fecha) {
     var date = format_date(fecha);
     var html = "";
 
-    $.each( turnos_mes[date].turnos, function(key,val) {
 
-        primera_vez = "";
-        row_especialista = "";
-        row_vacia = "";
-        tipo_turno = 'return turno_vacio(\''+key+'\')';
-        estado = 'glyphicon glyphicon-unchecked';
+    if (turnos_mes.hasOwnProperty(date)) {
 
-        if (val.id_turno != "") {
-          html += '<div class="row fila-turno">'
-              +'<div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">'
-                  +val.paciente
-              +'</div>'
-              +'<div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno" style = "font-size:18px">'
-                  +val.hora
-              +'</div>'
-              +'<div class="col-md-3 col-xs-4 cell_turno">'
-                  +val.especialidad
-              +'</div>'
-              +'<div class="col-md-2 col-xs-3 cell_turno">'
-                  +val.especialista
-              +'</div>'
-              +'<div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">'
-                +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>'
-                +'<ul class="dropdown-menu pull-right">'
-                    +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Estado</a></li>'
-                    +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>'
-                    +'<li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>'
-                    +'<li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>'
-                    +'<li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>'
-                +'</ul>'
-              +'</div>'
-          +'</div>';
-        }
-        else {
-          html += '<div class="row fila-turno">'
-                    +'<div class="col-md-12 cell_vacia">'
-                      +val.hora
-                    +'</div>'
-          +'</div>';
-        }
+      $.each( turnos_mes[date].turnos, function(key,val) {
 
-    });
+          primera_vez = "";
+          row_especialista = "";
+          row_vacia = "";
+          tipo_turno = 'return turno_vacio(\''+key+'\')';
+          estado = 'glyphicon glyphicon-unchecked';
+
+          if (val.id_turno != "") {
+            html += '<div class="row fila-turno">'
+                +'<div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">'
+                    +val.paciente
+                +'</div>'
+                +'<div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno" style = "font-size:18px">'
+                    +val.hora
+                +'</div>'
+                +'<div class="col-md-3 col-xs-4 cell_turno">'
+                    +val.especialidad
+                +'</div>'
+                +'<div class="col-md-2 col-xs-3 cell_turno">'
+                    +val.especialista
+                +'</div>'
+                +'<div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">'
+                  +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>'
+                  +'<ul class="dropdown-menu pull-right">'
+                      +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Estado</a></li>'
+                      +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>'
+                      +'<li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>'
+                      +'<li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>'
+                      +'<li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>'
+                  +'</ul>'
+                +'</div>'
+            +'</div>';
+          }
+          else {
+            html += '<div class="row fila-turno">'
+                      +'<div class="col-md-12 cell_vacia">'
+                        +val.hora
+                      +'</div>'
+            +'</div>';
+          }
+
+      });
+    }
+    else {
+
+      console.log(horarios_mes);
+    }
 
     $(".horarios").html(html);
 
