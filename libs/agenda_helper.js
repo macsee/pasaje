@@ -87,6 +87,7 @@ function dia_actual()
 
 function set_fecha(fecha)
 {
+    console.log("hola");
     fecha = fecha+" 00:00:00";
     fecha_actual = new Date(fecha.replace(/-/g, '/')); // Para que funcione en celulares
     actualizar_fecha();
@@ -110,6 +111,7 @@ function show_turnos(fecha) {
     var date = format_date(fecha);
     var html = "";
 
+    // console.log(horarios_mes);
 
     if (turnos_mes.hasOwnProperty(date)) {
 
@@ -158,8 +160,7 @@ function show_turnos(fecha) {
       });
     }
     else {
-
-      console.log(horarios_mes);
+      // console.log(horarios_mes);
     }
 
     $(".horarios").html(html);
@@ -227,7 +228,6 @@ function get_turnos_mes()
         dataType: 'json',
         success:function(response)
         {
-
           var agenda = []; //dias para poner turnos
           var bloqueados = [];
 
