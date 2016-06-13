@@ -86,8 +86,7 @@ function dia_actual()
 }
 
 function set_fecha(fecha)
-{
-    console.log("hola");
+{   
     fecha = fecha+" 00:00:00";
     fecha_actual = new Date(fecha.replace(/-/g, '/')); // Para que funcione en celulares
     actualizar_fecha();
@@ -160,7 +159,41 @@ function show_turnos(fecha) {
       });
     }
     else {
-      // console.log(horarios_mes);
+        
+        horarios_disp = [];
+
+        switch (true){
+            case (fecha.getDay() == 1) :
+                horarios_disp = horarios_mes['lu'].horarios;
+                break;                
+            case (fecha.getDay() == 2) :
+                horarios_disp = horarios_mes['ma'].horarios;
+                break;
+            case (fecha.getDay() == 3) :
+                horarios_disp = horarios_mes['mi'].horarios;
+                break;
+            case (fecha.getDay() == 4) :
+                horarios_disp = horarios_mes['ju'].horarios;
+                break;
+            case (fecha.getDay() == 5) :
+                horarios_disp = horarios_mes['vi'].horarios;
+                break;
+            case (fecha.getDay() == 6) :
+                horarios_disp = horarios_mes['sa'].horarios;
+                break;
+            case (fecha.getDay() == 7) :
+                horarios_disp = horarios_mes['do'].horarios;
+                break;
+        }
+
+        $.each( horarios_disp, function(key,val) {
+            html += '<div class="row fila-turno">'
+                      +'<div class="col-md-12 cell_vacia">'
+                        +val
+                      +'</div>'
+            +'</div>';
+        });    
+
     }
 
     $(".horarios").html(html);
@@ -208,14 +241,15 @@ function crear_calendario(dias_agenda, dias_turnos, dias_bloqueados) {
       }
     });
 
-    $('#datepicker').on("changeDate", function() {
-        set_fecha($('#datepicker').datepicker('getFormattedDate'));
-    });
-
 }
 
+$('#datepicker').on("changeDate", function() {
+    set_fecha($('#datepicker').datepicker('getFormattedDate'));
+});
+
 function get_turnos_mes()
-{
+{   
+
     $(".horarios").empty();
 
     var esp = $("#especialistas").val();
