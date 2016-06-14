@@ -84,7 +84,7 @@
         padding-top: 8px;
         border-right:1px solid #e8e8e5;
         min-height: 50px;
-        overflow: hidden;
+        /*overflow: hidden;*/
     }
 
     .cell_vacia {

@@ -86,7 +86,7 @@ function dia_actual()
 }
 
 function set_fecha(fecha)
-{   
+{
     fecha = fecha+" 00:00:00";
     fecha_actual = new Date(fecha.replace(/-/g, '/')); // Para que funcione en celulares
     actualizar_fecha();
@@ -119,10 +119,15 @@ function show_turnos(fecha) {
           primera_vez = "";
           row_especialista = "";
           row_vacia = "";
-          tipo_turno = 'return turno_vacio(\''+key+'\')';
-          estado = 'glyphicon glyphicon-unchecked';
+          tipo_turno = 'return turno_vacio(\''+val.hora+'\')';
 
           if (val.id_turno != "") {
+
+            if (val.estado != "OK")
+                estado = 'glyphicon glyphicon-unchecked';
+            else
+                estado = 'glyphicon glyphicon-check';
+
             html += '<div class="row fila-turno">'
                 +'<div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">'
                     +val.paciente
@@ -137,35 +142,37 @@ function show_turnos(fecha) {
                     +val.especialista
                 +'</div>'
                 +'<div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">'
-                  +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>'
-                  +'<ul class="dropdown-menu pull-right">'
-                      +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Estado</a></li>'
-                      +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>'
-                      +'<li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>'
-                      +'<li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>'
-                      +'<li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>'
-                  +'</ul>'
+                  +'<div class = "dropdown">'
+                    +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "'+estado+'"></span></button>'
+                    +'<ul class="dropdown-menu pull-right">'
+                        +'<li><a href="#" onclick = "return confirmar_datos(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Estado</a></li>'
+                        +'<li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>'
+                        +'<li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>'
+                        +'<li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>'
+                        +'<li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>'
+                    +'</ul>'
+                  +'</div>'
                 +'</div>'
             +'</div>';
           }
           else {
             html += '<div class="row fila-turno">'
-                      +'<div class="col-md-12 cell_vacia">'
-                        +val.hora
-                      +'</div>'
+                    +'<div class="col-md-12 cell_vacia turno_vacio" onclick = "'+tipo_turno+'">'
+                      +val.hora
+                    +'</div>'
             +'</div>';
           }
 
       });
     }
     else {
-        
+
         horarios_disp = [];
 
         switch (true){
             case (fecha.getDay() == 1) :
                 horarios_disp = horarios_mes['lu'].horarios;
-                break;                
+                break;
             case (fecha.getDay() == 2) :
                 horarios_disp = horarios_mes['ma'].horarios;
                 break;
@@ -187,12 +194,13 @@ function show_turnos(fecha) {
         }
 
         $.each( horarios_disp, function(key,val) {
+            tipo_turno = 'return turno_vacio(\''+val+'\')';
             html += '<div class="row fila-turno">'
-                      +'<div class="col-md-12 cell_vacia">'
+                      +'<div class="col-md-12 cell_vacia turno_vacio" onclick="'+tipo_turno+'">'
                         +val
                       +'</div>'
             +'</div>';
-        });    
+        });
 
     }
 
@@ -248,7 +256,7 @@ $('#datepicker').on("changeDate", function() {
 });
 
 function get_turnos_mes()
-{   
+{
 
     $(".horarios").empty();
 
@@ -453,7 +461,7 @@ function fill_especialidades(esp, callback) {
 
 }
 
-function turno_vacio(id) {
+function turno_vacio(hora) {
 
     esp = $("#especialistas").val();
     fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
@@ -461,7 +469,7 @@ function turno_vacio(id) {
     clear_fields($("#modal_turno"));
 
     $("#modal_turno").find("#titulo").html("Nuevo Turno");
-    $("#modal_turno").find("input[name='hora']").val(id);
+    $("#modal_turno").find("input[name='hora']").val(hora);
     $("#modal_turno").find("input[name='fecha']").val(fecha);
     $("#modal_turno").find("input[name='id_especialista']").val(esp);
     $("#modal_turno").find("input[name='especialista']").val($("#especialistas option:selected").text());
@@ -504,6 +512,10 @@ function am_turno(event) {
 
         }
     });
+}
+
+function cambiar_estado() {
+
 }
 
 function editar_turno(id) {
@@ -641,7 +653,7 @@ function ok_confirmar_datos(event) {
         success:function(response)
         {
 
-            get_turnos();
+            get_turnos_mes();
             $("#modal_datos").modal('hide');
 
         }
