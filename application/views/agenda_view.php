@@ -372,8 +372,9 @@
 
 $(document).ready(function () {
     //crear_calendario(agenda,turnos,bloqueados);
-    dia_actual();
-    get_turnos_mes();
+    // dia_actual();
+    // get_turnos_mes();
+    init();
 });
 
 </script>
