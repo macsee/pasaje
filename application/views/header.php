@@ -26,6 +26,7 @@
       body {
         font-family: 'Roboto', sans-serif;
         font-weight: 300;
+        background-color: #f1f1f1; //#f5f8fa
       }
 
       .cabecera th{

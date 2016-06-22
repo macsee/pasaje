@@ -396,7 +396,7 @@ class Main extends CI_Controller {
 	{
 		$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
 		$array_turnos = "";
-		
+
 		$horarios = $this->main_model->get_horarios($id_agenda);
 		$turnos = $this->main_model->get_turnos_mes($year, $month, $id_agenda);
 
@@ -408,14 +408,11 @@ class Main extends CI_Controller {
 			if(isset($turnos[$id_agenda][$fecha])) {
 
 				$turnos_ocupados = $turnos[$id_agenda][$fecha];
-
-				// $turnos_libres = $horarios[$dow][$id_agenda];
 				$turnos_libres = $horarios[$dow];
-				$factor = sizeof($turnos_ocupados)/$turnos_libres->cant_turnos;
 
 				$array_turnos[$fecha] = array(
-					'turnos' => $this->arrange_turnos($turnos_ocupados, $turnos_libres->horarios),
-					'factor' => $factor
+					'turnos' => $this->arrange_turnos($turnos_ocupados, $turnos_libres),
+					'ocupados' => sizeof($turnos_ocupados)
 				);
 
 			}

@@ -128,6 +128,22 @@
           /*background-color: #f8f8f8;*/
         }
     }
+
+    .panel-default > .panel-heading {
+        background-color: #454545;
+        color: white;
+        font-weight: 400;
+    }
+
+    .navbar-default {
+      background-color: white;
+    }
+
+    .separador {
+      background-color: transparent;
+      border-color: transparent;
+    }
+
 </style>
 <div class="container-fluid">
     <div class="col-md-7 col-md-offset-1">
@@ -146,10 +162,19 @@
                     </div>
                 </div>
                 <div class = "col-md-5 col-xs-12">
-                    <div class = "col-md-5 col-xs-5" style = "padding-top:7px;">
+                    <div class = "col-md-5 col-xs-5" style = "padding-top:15px;">
+                        <label class = "label-control">Especialidad</label>
+                    </div>
+                    <div class = "col-md-7 col-xs-7" style = "padding-top:7px;">
+                        <select class = "form-control" id = "especialidad">
+                          <option>Todas</option>
+                        </select>
+                    </div>
+
+                    <div class = "col-md-5 col-xs-5" style = "padding-top:20px;">
                         <label class = "label-control">Especialista</label>
                     </div>
-                    <div class = "col-md-7 col-xs-7">
+                    <div class = "col-md-7 col-xs-7" style = "padding-top:15px;">
                         <select class = "form-control" id = "especialistas">
                             <?php
                                 if ($especialistas != null) {
@@ -166,15 +191,6 @@
                                 else
                                     echo '<option selected value = "'.$especialista_sel.'">'.$nom_especialista_sel.'</option>';
                             ?>
-                        </select>
-                    </div>
-
-                    <div class = "col-md-5 col-xs-5" style = "padding-top:14px;">
-                        <label class = "label-control">Especialidad</label>
-                    </div>
-                    <div class = "col-md-7 col-xs-7" style = "padding-top:7px;">
-                        <select class = "form-control" id = "especialidad">
-
                         </select>
                     </div>
                 </div>
@@ -202,91 +218,7 @@
             </div>
 
             <div class="horarios">
-
-                <!-- <div class="row fila-turno">
-                    <div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">
-                        Cravero, Maximiliano
-                    </div>
-                    <div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno">
-                        10:00 hs
-                    </div>
-                    <div class="col-md-3 col-xs-4 cell_turno">
-                        Kinesiología Comportamentalesssss
-                    </div>
-                    <div class="col-md-2 col-xs-3 cell_turno">
-                        Arebola, B
-                    </div>
-                    <div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">
-                      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-check"></span></button>
-                      <ul class="dropdown-menu pull-right">
-                          <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
-                          <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
-                          <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
-                          <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
-                      </ul>
-                    </div>
-                </div>
-
-                <div class="row fila-turno">
-                    <div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">
-                        Cravero, Maximiliano
-                    </div>
-                    <div class="col-md-2 col-md-pull-4 col-xs-3 cell_turno">
-                        10:30 hs
-                    </div>
-                    <div class="col-md-3 col-xs-4 cell_turno">
-                        Kinesiología Comportamental
-                    </div>
-                    <div class="col-md-2 col-xs-3 cell_turno">
-                        Arebola, B
-                    </div>
-                    <div class="col-md-1 col-xs-2 cell_turno" style = "border-right: none; text-align:center">
-                      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-unchecked"></span></button>
-                      <ul class="dropdown-menu pull-right">
-                          <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
-                          <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
-                          <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
-                          <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
-                      </ul>
-                    </div>
-                </div> -->
-
-                <!-- <div class = "row fila-turno"> -->
-                    <!-- <div class = "col-xs-10 col-md-10" style = "padding:0px;border-right:1px solid #e8e8e5"> -->
-                        <!-- div class="col-md-2 col-md-push-2" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">10:00 hs</div>
-                        <div class="col-md-4 col-md-push-4" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">Cravero, Maximiliano</div>
-                        <div class="col-md-4" style = "font-size:14px;padding:10px;border-right:1px solid #e8e8e5">Kinesiología Comportamental</div>
-                        <div class="col-md-2" style = "font-size:14px;padding:10px;">Arebola, B</div> -->
-                    <!-- </div> -->
-                    <!-- <div class = "col-xs-2 col-sd-2" style = "padding:0px;padding-top:10px">
-                        <div class = "col-xs-12 col-md-6">
-                            <button class="btn btn-default" role="button"><span class="glyphicon glyphicon-check"></span></button>
-                        </div>
-                        <div class = "col-xs-12 col-md-6">
-                            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-th-list"></span></button>
-                            <ul class="dropdown-menu pull-right">
-                                <li><a href="#" onclick = "return editar_turno(\''+val.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>
-                                <li><a href="#" onclick = "return eliminar_turno(\''+val.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>
-                                <li><a href="#" onclick = "return cambiar_turno(\''+val.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>
-                                <li><a href="#" onclick = "return proximo_turno(\''+val.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>
-                            </ul>
-                        </div>
-                    </div>     -->
-
-
-                <!-- </div> -->
-                <!-- <table class="table">
-                    <thead class = "cabecera">
-                        <tr>
-                            <th>Hora</th>
-                            <th>Paciente</th>
-                            <th>Especialidad</th>
-                            <th>Acciones</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                </table> -->
-
+              <!-- ACA VA TODO EL CONTENIDO -->
             </div>
 
                 <div class = "container-fluid abrir_agenda" style = "display:none">
@@ -343,10 +275,10 @@
             <div class="panel-heading">
                 <div class = "row">
                     <div class="col-md-6 col-xs-6">
-                        <i class = "glyphicon glyphicon-bell"></i> <strong>Notas</strong>
+                        <i class = "glyphicon glyphicon-bell"></i> Notas
                     </div>
                     <div class="col-md-1 col-md-offset-4 col-xs-1 col-xs-offset-4" style = "font-size:18px;color:black">
-                        <a style = "color:black" href="#" onclick = "return add_notas()"><span class = "glyphicon glyphicon-plus-sign"></span></a>
+                        <a style = "color:white" href="#" onclick = "return add_notas()"><span class = "glyphicon glyphicon-plus-sign"></span></a>
                     </div>
                 </div>
             </div>
@@ -356,7 +288,7 @@
 
         <div class="panel panel-default" style = "height:320px">
             <div class="panel-heading" style = "font-weight:700px">
-                <i class = "glyphicon glyphicon-calendar"></i> <strong>Calendario</strong>
+                <i class = "glyphicon glyphicon-calendar"></i> Calendario
             </div>
             <div class = "panel-body">
                 <div></div>

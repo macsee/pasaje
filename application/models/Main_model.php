@@ -244,26 +244,42 @@ class Main_model extends CI_Model {
 						//desde_tar
 						//hasta_tar
 
-						$hora_hasta = strtotime($hora->hasta);
-						$hora_desde = strtotime($hora->desde);
-						$diff = abs($hora_hasta - $hora_desde)/60;
-						$cant_turnos = $diff/$duracion;
-
 						$horarios_esp = array();
+						$horarios_man = array();
+						$horarios_tar = array();
 
-						for ($i=0; $i <= $cant_turnos ; $i++) {
-							$horarios_esp[] = date('H:i',$hora_desde+($i*$duracion*60));
+						$desde_man = !isset($hora->{1}->desde) ? 0 : strtotime($hora->{1}->desde);
+						$hasta_man = !isset($hora->{1}->hasta) ? 0 : strtotime($hora->{1}->hasta);
+						$diff = abs($hasta_man - $desde_man)/60;
+						$cant_turnos_man = $diff/$duracion;
+
+						$desde_tar = !isset($hora->{2}->desde) ? 0 : strtotime($hora->{2}->desde);
+						$hasta_tar = !isset($hora->{2}->hasta) ? 0 : strtotime($hora->{2}->hasta);
+						$diff = abs($hasta_tar - $desde_tar)/60;
+						$cant_turnos_tar = $diff/$duracion;
+
+						for ($i=0; $i <= $cant_turnos_man && $cant_turnos_man > 0; $i++) {
+							$horarios_esp[] = date('H:i',$desde_man+($i*$duracion*60));
 							// $horarios_esp[date('H:i',$hora_desde+($i*$duracion*60))] = "";
+						}
+
+						if ($cant_turnos_man > 0 && $cant_turnos_tar > 0)
+							$horarios_esp[] = "";
+
+						for ($i=0; $i <= $cant_turnos_tar && $cant_turnos_tar > 0 ; $i++) {
+							$horarios_esp[] = date('H:i',$desde_tar+($i*$duracion*60));
 						}
 
 						// Agrego la clave usuario para poder sumar la cantidad de turnos de cada usuario en un mismo dia
 						// y asi no contar dos veces un mismo usuario con mas de una especialidad
 
 						// $turnos[$key][$usuario] = (object) array( // La parte de usuarios esta manejada por la funcion que llama a esta funcion
-						$turnos[$key] = (object) array(
-							'horarios'		=>	$horarios_esp,
-							'cant_turnos' 	=> 	$cant_turnos
-						);
+
+						// $turnos[$key] = (object) array(
+						// 	'horarios'		=>	$horarios_esp,
+						// 	'cant_turnos' 	=> 	$cant_turnos
+						// );
+						$turnos[$key] = (object) $horarios_esp;
 
 					}
 
