@@ -293,7 +293,6 @@
             <div class = "panel-body">
                 <div></div>
                 <div id="datepicker"></div>
-                <!-- <?php echo '<iframe class = "calendario" src="'.base_url('index.php/calendar/make_calendar/'.$especialista_sel.'/'.$especialidad_sel).'"></iframe>'; ?> -->
             </div>
         </div>
     </div>

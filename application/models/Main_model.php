@@ -40,7 +40,12 @@ class Main_model extends CI_Model {
 	public function get_turnos_mes($year, $month, $id_agenda)
 	{
 
-		$this->db->where(array("MONTH(fecha)" => $year, "MONTH(fecha)" => $month, "especialista" => $id_agenda));
+		$data = [];
+
+		if ($id_agenda != "todos")
+			$this->db->where(array("especialista" => $id_agenda));
+
+		$this->db->where(array("MONTH(fecha)" => $year, "MONTH(fecha)" => $month));
 		$this->db->order_by("hora","desc");
 		$query = $this->db->get("turnos");
 
@@ -48,15 +53,12 @@ class Main_model extends CI_Model {
 		{
 			foreach ($query->result() as $fila)
 			{
-				$data[$fila->especialista][$fila->fecha][] = $fila;
+				$data[$fila->fecha][$fila->especialista][] = $fila;
+				// $data[$fila->especialista][$fila->fecha][] = $fila;
 			}
-			return $data;
-		}
-		else
-		{
-			return null;
 		}
 
+		return $data;
 	}
 
 	public function get_datos_especialista($id)
@@ -238,12 +240,6 @@ class Main_model extends CI_Model {
 
 					foreach ($dias as $key => $hora) {
 
-						//desde_man
-						//hasta_man
-
-						//desde_tar
-						//hasta_tar
-
 						$horarios_esp = array();
 						$horarios_man = array();
 						$horarios_tar = array();
@@ -279,7 +275,7 @@ class Main_model extends CI_Model {
 						// 	'horarios'		=>	$horarios_esp,
 						// 	'cant_turnos' 	=> 	$cant_turnos
 						// );
-						$turnos[$key] = (object) $horarios_esp;
+						$turnos[$key][$usuario] = $horarios_esp;
 
 					}
 

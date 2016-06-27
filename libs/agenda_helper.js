@@ -57,11 +57,30 @@ function split_telefono(t1)
     }
 }
 
+function get_horarios()
+{
+  var esp = $("#especialistas").val();
+
+  $.ajax({
+      url: base_url+"/main/get_horarios_json/"+esp,
+      dataType: 'json',
+      success:function(response)
+      {
+        horarios_mes = response;
+        // actualizar_datos();
+        get_turnos_mes(fecha_actual);
+        // return response
+      }
+  });
+}
+
 function init()
 {
     fecha_actual = new Date();
+    get_horarios();
+    // get_turnos_mes(fecha_actual);
     actualizar_datos();
-    get_turnos_mes(fecha_actual);
+    // get_horarios();
 }
 
 function actualizar_datos()
@@ -119,14 +138,13 @@ function show_turnos(fecha) {
 
     $(".horarios").empty();
 
+    var esp = $("#especialistas").val();
     var date = format_date(fecha);
     var html = "";
 
-    // console.log(turnos_mes);
-
     if (turnos_mes.hasOwnProperty(date)) { // Horarios ocupados y disponibles para la fecha
 
-        $.each( turnos_mes[date].turnos, function(key,val) {
+        $.each( turnos_mes[date][esp], function(key,val) {
 
             primera_vez = "";
             tipo_turno = 'return turno_vacio(\''+val.hora+'\')';
@@ -246,53 +264,6 @@ function show_turnos(fecha) {
 
 }
 
-function crear_calendario(fecha_default, dias_agenda, dias_turnos, dias_bloqueados) {
-
-    $('#datepicker').datepicker('remove');
-
-    $('#datepicker').datepicker({
-        language: "es",
-        format: 'yyyy-mm-dd',
-        todayHighlight: true,
-        toggleActive: true,
-        defaultViewDate: { year: fecha_default.getFullYear(), month: fecha_default.getMonth(), day: 01 },
-        // datesDisabled: dias_bloqueados,
-        daysOfWeekHighlighted: dias_agenda,
-        beforeShowDay: function(date){
-
-            var date = format_date(date);
-
-            if (dias_turnos.hasOwnProperty(date)) {
-
-                factor = dias_turnos[date].ocupados / dias_turnos[date].turnos.length;
-
-                switch (true){
-                    case (factor < 0.50) :
-                        return {
-                            classes : "celda_low"
-                        }
-                    case (factor >= 0.50 && factor < 0.75) :
-                        return {
-                            classes : "celda_medium"
-                        }
-                    case (factor >= 0.75):
-                        return {
-                            classes : "celda_high"
-                        }
-                }
-            // if ($.inArray(date, dias_turnos) != -1){
-            //    return {
-            //       //enabled : false,
-            //       classes : "celda_vacia"
-            //    };
-            // }
-            }
-            return;
-      }
-    });
-
-}
-
 $('#datepicker').on("changeDate", function(e) {
     // var fecha = $('#datepicker').datepicker('getFormattedDate');
     // var fecha = $('#datepicker').datepicker('getDate');
@@ -312,58 +283,125 @@ $('#datepicker').on("changeMonth", function(e) {
 
  });
 
+function dias_turnos_array(array)
+{
+  var dias = {'do' : 0, 'lu' : 1, 'ma' : 2, 'mi' : 3, 'ju' : 4, 'vi' : 5, 'sa' : 6};
+  var agenda = [];
+
+  // $.each(array, function(key,val) {
+  //   agenda = agenda.concat($.map(val, function(value, index) {
+  //     return dias[index];
+  //   }));
+  // });
+
+  agenda = $.map(array, function(value, index) {
+    return dias[index];
+  });
+
+  return agenda;
+}
+
+function dias_turnos_array_inv(num)
+{
+  var dias = ['do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa'];
+  return dias[num];
+}
+
 function get_turnos_mes(fecha)
 {
+  var esp = $("#especialistas").val();
 
-    // $(".horarios").empty();
+  $.ajax({
+      url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+esp,
+      dataType: 'json',
+      success:function(response)
+      {
+        var bloqueados = [];
+        turnos_mes = response;
 
-    var esp = $("#especialistas").val();
-    var especialidad = "";
-
-    // var fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
-
-    $.ajax({
-        // url: base_url+"/main/get_data_turnos_json/"+fecha_actual.getFullYear()+"/"+parseInt(fecha_actual.getMonth()+1)+"/"+esp,
-        url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+esp,
-        dataType: 'json',
-        success:function(response)
-        {
-          var agenda = []; //dias para poner turnos
-          var bloqueados = [];
-
-          turnos_mes = response[esp].fechas;
-          horarios_mes = response[esp].horarios;
-
-          // console.log(response);
-
-          $.each(horarios_mes, function(key,val) {
-
-            switch (true) {
-              case (key == "lu"):
-                agenda.push(1);
-                break;
-              case (key == "ma"):
-                agenda.push(2);
-                break;
-              case (key == "mi"):
-                agenda.push(3);
-                break;
-              case (key == "ju"):
-                agenda.push(4);
-                break;
-              case (key == "vi"):
-                agenda.push(5);
-                break;
-            }
-
-          });
-
-          crear_calendario(fecha, agenda, turnos_mes, bloqueados);
-          show_turnos(fecha);
-
-        }
-    });
+        crear_calendario(fecha, horarios_mes, turnos_mes, bloqueados);
+        //console.log(turnos_mes[fecha]);
+        show_turnos(fecha);
+      }
+  });
 }
+
+function crear_calendario(fecha_default, agenda, turnos_mes, bloqueados) {
+
+  $('#datepicker').datepicker('remove');
+
+  $('#datepicker').datepicker({
+    language: "es",
+    format: 'yyyy-mm-dd',
+    todayHighlight: true,
+    toggleActive: true,
+    defaultViewDate: { year: fecha_default.getFullYear(), month: fecha_default.getMonth(), day: 01 },
+    // datesDisabled: bloqueados,
+    daysOfWeekHighlighted: dias_turnos_array(agenda),
+    beforeShowDay: function(date){
+
+      var day = date.getDay();
+      var date = format_date(date);
+      var horarios = agenda[dias_turnos_array_inv(day)];
+      var cant_turnos_ocupados = 0;
+      var cant_turnos_disp = 0;
+
+      if (turnos_mes.hasOwnProperty(date)) {
+
+        $.each(horarios , function(key,val) {
+          cant_turnos_ocupados += turnos_mes[date][key].length;
+          cant_turnos_disp =+ val.length;
+        });
+
+        // console.log("Fecha: ",date," - ","Cant. Turnos: ",cant_turnos_ocupados);
+        factor = cant_turnos_ocupados / cant_turnos_disp;
+
+        switch (true){
+            case (factor < 0.50) :
+                return {
+                    classes : "celda_low"
+                }
+            case (factor >= 0.50 && factor < 0.75) :
+                return {
+                    classes : "celda_medium"
+                }
+            case (factor >= 0.75):
+                return {
+                    classes : "celda_high"
+                }
+        }
+
+      }
+      return;
+    }
+  });
+}
+
+
+                // turnos_mes[date];
+
+                // factor = agenda[date].length / 3; //agenda;
+                //
+                // switch (true){
+                //     case (factor < 0.50) :
+                //         return {
+                //             classes : "celda_low"
+                //         }
+                //     case (factor >= 0.50 && factor < 0.75) :
+                //         return {
+                //             classes : "celda_medium"
+                //         }
+                //     case (factor >= 0.75):
+                //         return {
+                //             classes : "celda_high"
+                //         }
+                // }
+            //}
+            //return;
+          // }
+//     });
+//
+// }
 
 // function get_turnos()
 // {
@@ -550,10 +588,7 @@ function update_calendar() {
 }
 
 $("#especialistas").change(function () {
-    // update_calendar();
-    get_turnos_mes(fecha_actual);
-    // show_turnos(fecha_actual);
-    // get_turnos();
+    get_horarios()
 });
 
 function am_turno(event) {

@@ -291,6 +291,25 @@ class Main extends CI_Controller {
 
 	}
 
+	public function get_horarios($id_agenda)
+	{
+
+		$horarios_esp = $this->main_model->get_horarios($id_agenda);
+
+		$data = [];
+
+		foreach ($horarios_esp as $key => $value) {
+				$data[$key] = $value;
+		}
+
+		return $data;
+	}
+
+	public function get_horarios_json($id_agenda)
+	{
+			echo json_encode($this->main_model->get_horarios($id_agenda));
+	}
+
 	// Turnos para la fecha de la agenda seleccionada
 	public function get_turnos_fecha($fecha, $agenda)
 	{
@@ -397,32 +416,49 @@ class Main extends CI_Controller {
 		$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
 		$array_turnos = "";
 
-		$horarios = $this->main_model->get_horarios($id_agenda);
-		$turnos = $this->main_model->get_turnos_mes($year, $month, $id_agenda);
+		$turnos = $this->main_model->get_turnos_mes($year, $month, $id_agenda); // Turnos del mes para todos o para la agenda seleccionada
+		//$horarios = $this->main_model->get_horarios($id_agenda);
 
-		for ($i=1;$i<=31;$i++) {
+		// for ($i=1;$i<=31;$i++) {
+		//
+		// 	$fecha = date('Y-m-d',strtotime($year."-".$month."-".$i));
+		// 	$dow = $array_dias[date('w', strtotime($year."-".$month."-".$i))];
+		//
+		// 	if(isset($turnos[$id_agenda][$fecha])) {
+		//
+		// 		$turnos_ocupados = $turnos[$id_agenda][$fecha];
+		// 		$turnos_libres = $horarios[$dow];
+		//
+		// 		$array_turnos[$fecha] = array(
+		// 			'turnos' => $this->arrange_turnos($turnos_ocupados, $turnos_libres),
+		// 			'ocupados' => sizeof($turnos_ocupados)
+		// 		);
+		//
+		// 	}
+		//
+		// }
+		//
+		// $resultado[$id_agenda] = array(
+		// 	'fechas' => $array_turnos,
+		// 	'horarios' => $horarios
+		// );
 
-			$fecha = date('Y-m-d',strtotime($year."-".$month."-".$i));
-			$dow = $array_dias[date('w', strtotime($year."-".$month."-".$i))];
+		// foreach ($horarios as $fecha => $value) {
+		// 	echo $fecha;
+		// 	print_r($value);
+		// 	echo '<br>';
+		// }
 
-			if(isset($turnos[$id_agenda][$fecha])) {
-
-				$turnos_ocupados = $turnos[$id_agenda][$fecha];
-				$turnos_libres = $horarios[$dow];
-
-				$array_turnos[$fecha] = array(
-					'turnos' => $this->arrange_turnos($turnos_ocupados, $turnos_libres),
-					'ocupados' => sizeof($turnos_ocupados)
-				);
-
-			}
-
+		// foreach ($turnos as $fecha => $value) {
+		// 	foreach ($value as $esp => $datos) {
+		// 		$resultado[$fecha][$esp] = $datos;
+		// 	}
+		// }
+		foreach ($turnos as $fecha => $value) {
+			foreach ($value as $esp => $datos) {
+				$resultado[$fecha][$esp] = $datos;
+				}
 		}
-
-		$resultado[$id_agenda] = array(
-			'fechas' => $array_turnos,
-			'horarios' => $horarios
-		);
 
 		return $resultado;
 
@@ -662,6 +698,11 @@ class Main extends CI_Controller {
 		);
 
 		$this->main_model->crear_agenda($data);
+	}
+
+	function amr_test()
+	{
+		$this->load->view('amr_test');
 	}
 
 }
