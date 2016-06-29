@@ -142,9 +142,11 @@ function show_turnos(fecha) {
     var date = format_date(fecha);
     var html = "";
 
+    console.log(turnos_mes);
+
     if (turnos_mes.hasOwnProperty(date)) { // Horarios ocupados y disponibles para la fecha
 
-        $.each( turnos_mes[date][esp], function(key,val) {
+        $.each( turnos_mes[date], function(key,val) {
 
             primera_vez = "";
             tipo_turno = 'return turno_vacio(\''+val.hora+'\')';
@@ -349,7 +351,8 @@ function crear_calendario(fecha_default, agenda, turnos_mes, bloqueados) {
       if (turnos_mes.hasOwnProperty(date)) {
 
         $.each(horarios , function(key,val) {
-          cant_turnos_ocupados += turnos_mes[date][key].length;
+          //cant_turnos_ocupados += turnos_mes[date][key].length;
+          cant_turnos_ocupados = 1;
           cant_turnos_disp =+ val.length;
         });
 

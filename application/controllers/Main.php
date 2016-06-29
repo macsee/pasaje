@@ -313,6 +313,7 @@ class Main extends CI_Controller {
 	// Turnos para la fecha de la agenda seleccionada
 	public function get_turnos_fecha($fecha, $agenda)
 	{
+
 		$array['fecha'] = $fecha;
 		$horarios_agenda = [];
 		$result = [];
@@ -368,18 +369,52 @@ class Main extends CI_Controller {
 	}
 
 /******************************************PRUEBAAAAAAAAAA******************************************/
-	public function arrange_turnos($turnos, $horarios)
+	// public function arrange_turnos($turnos, $horarios)
+	// {
+	//
+	// 	$horarios_agenda = [];
+	// 	$result = [];
+	//
+	// 	if ($horarios != null) {
+	// 		foreach ($horarios as $k => $h) {
+	// 			$horarios_agenda[$h] = $k;
+	// 			$result[] = (object) array('hora' => $h, 'id_turno' => "");
+	// 		}
+	// 	}
+	//
+	// 	if ($turnos != null) {
+	// 		foreach ($turnos as $key => $value) {
+	//
+	// 			$nombre_esp = $this->get_usuario($value->especialista);
+	// 			$nombre_pac = $this->get_paciente($value->id_paciente);
+	// 			$hora = date('H:i',strtotime($value->hora));
+	//
+	// 			$obj = (object) array(
+	// 								'hora' => $hora,
+	// 								'id_turno' => $value->id_turno,
+	// 								'id_paciente' => $value->id_paciente,
+	// 								'paciente' => $nombre_pac != null ? $nombre_pac->apellido.", ".$nombre_pac->nombre : "",
+	// 								'especialidad' => $value->especialidad,
+	// 								'especialista' => $nombre_esp->apellido.", ".$nombre_esp->nombre,
+	// 								'estado' => $value->estado,
+	// 								'data_extra' => $value->data_extra
+	// 							);
+	//
+	// 			if (isset($horarios_agenda[$hora]))
+	// 				$result[$horarios_agenda[$hora]] = $obj;
+	// 			else
+	// 				$result[] = $obj;
+	//
+	// 		}
+	// 	}
+	//
+	// 	return $result;
+	//
+	// }
+
+	public function arrange_turnos($turnos)
 	{
-
-		$horarios_agenda = [];
-		$result = [];
-
-		if ($horarios != null) {
-			foreach ($horarios as $k => $h) {
-				$horarios_agenda[$h] = $k;
-				$result[] = (object) array('hora' => $h, 'id_turno' => "");
-			}
-		}
+		$obj = null;
 
 		if ($turnos != null) {
 			foreach ($turnos as $key => $value) {
@@ -394,21 +429,20 @@ class Main extends CI_Controller {
 									'id_paciente' => $value->id_paciente,
 									'paciente' => $nombre_pac != null ? $nombre_pac->apellido.", ".$nombre_pac->nombre : "",
 									'especialidad' => $value->especialidad,
-									'especialista' => $nombre_esp->apellido.", ".$nombre_esp->nombre,
+									'especialista' => $nombre_esp->apellido.", ".$nombre_esp->nombre[0],
 									'estado' => $value->estado,
 									'data_extra' => $value->data_extra
 								);
 
-				if (isset($horarios_agenda[$hora]))
-					$result[$horarios_agenda[$hora]] = $obj;
-				else
+				// if (isset($horarios_agenda[$hora]))
+				// 	$result[$horarios_agenda[$hora]] = $obj;
+				// else
 					$result[] = $obj;
 
 			}
 		}
 
-		return $result;
-
+		return $obj;
 	}
 
 	public function get_data_turnos($year, $month, $id_agenda)
@@ -456,7 +490,8 @@ class Main extends CI_Controller {
 		// }
 		foreach ($turnos as $fecha => $value) {
 			foreach ($value as $esp => $datos) {
-				$resultado[$fecha][$esp] = $datos;
+				// $resultado[$fecha][$esp] = $datos;
+				$resultado[$fecha][$esp] = $this->arrange_turnos($datos);
 				}
 		}
 
@@ -702,7 +737,26 @@ class Main extends CI_Controller {
 
 	function amr_test()
 	{
-		$this->load->view('amr_test');
+		$this->load->view('header', array('title' => "AMR"));
+			$this->load->view('amr_test');
+		$this->load->view('footer');
+	}
+
+	function convenios() {
+
+		// $url = 'https://www.amr.org.ar/gestion/webServices/autorizador/test/profesiones';
+		$login = '38026';
+		$password = 'IUUIASUX';
+		$url = 'https://www.amr.org.ar/gestion/webServices/autorizador/v3/convenios';
+		$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL,$url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt($ch, CURLOPT_USERPWD, "$login:$password");
+			$result = curl_exec($ch);
+		curl_close($ch);
+
+		echo json_encode($result);
 	}
 
 }
