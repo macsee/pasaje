@@ -294,15 +294,19 @@ class Main extends CI_Controller {
 	public function get_horarios($id_agenda)
 	{
 
-		$horarios_esp = $this->main_model->get_horarios($id_agenda);
+		// $horarios_esp = $this->main_model->get_horarios($id_agenda);
+		//
+		// $data = [];
+		//
+		//
+		// foreach ($horarios_esp as $key => $value) {
+		// 		$data[$key] = $value;
+		// }
+		//
+		// return $data;
 
-		$data = [];
+		return $this->main_model->get_horarios($id_agenda);
 
-		foreach ($horarios_esp as $key => $value) {
-				$data[$key] = $value;
-		}
-
-		return $data;
 	}
 
 	public function get_horarios_json($id_agenda)
@@ -447,6 +451,7 @@ class Main extends CI_Controller {
 
 	public function get_data_turnos($year, $month, $id_agenda)
 	{
+
 		$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
 		$array_turnos = "";
 
@@ -488,14 +493,17 @@ class Main extends CI_Controller {
 		// 		$resultado[$fecha][$esp] = $datos;
 		// 	}
 		// }
-		foreach ($turnos as $fecha => $value) {
-			foreach ($value as $esp => $datos) {
-				// $resultado[$fecha][$esp] = $datos;
-				$resultado[$fecha][$esp] = $this->arrange_turnos($datos);
-				}
-		}
 
-		return $resultado;
+		return $turnos;
+
+		// foreach ($turnos as $fecha => $value) {
+		// 	foreach ($value as $esp => $datos) {
+		// 		$resultado[$fecha][$esp] = $datos;
+		// 		// $resultado[$fecha][$esp][] = $this->arrange_turnos($datos);
+		// 		}
+		// }
+		//
+		// return $resultado;
 
 	}
 
