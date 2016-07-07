@@ -37,7 +37,7 @@ class Main_model extends CI_Model {
 		}
 	}
 
-	public function arrange_turnos($value)
+	public function format_turno($value)
 	{
 
 		$nombre_esp = $this->get_data("usuarios",null,array('usuario' => $value->especialista))[0];
@@ -74,8 +74,8 @@ class Main_model extends CI_Model {
 		{
 			foreach ($query->result() as $fila)
 			{
-				$data[$fila->fecha][date("H:i",strtotime($fila->hora))] = $this->arrange_turnos($fila);
-				// $data[$fila->especialista][$fila->fecha][] = $fila;
+				// $data[$fila->fecha][date("H:i",strtotime($fila->hora))] = $this->format_turno($fila);
+				$data[$fila->fecha][] = $this->format_turno($fila);
 			}
 		}
 
