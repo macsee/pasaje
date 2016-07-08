@@ -219,6 +219,7 @@ function show_turnos(fecha) {
     var dia = dias_turnos_array_inv(fecha.getDay());
 
     if (turnos_mes.hasOwnProperty(date)) { // Si en la fecha hay turnos entonces los muestro
+
       $.each( turnos_mes[date].datos, function(key, value) {
         if (value.id_turno == "") {
           html += make_turno_vacio(value.hora);
@@ -232,7 +233,7 @@ function show_turnos(fecha) {
         if (esp != "todos") { // Si tengo especialista, tengo que mostrar los horarios disponibles de su agenda si los hay para este dia
           if (horarios_mes.hasOwnProperty(dia)) {
             $.each( horarios_mes[dia][0], function(key, value) {
-                html += make_turno_vacio(value);
+                html += make_turno_vacio(value.hora);
             });
           }
           else { // Si no los hay entonces ofrezco abrir agenda

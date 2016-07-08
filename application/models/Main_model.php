@@ -276,15 +276,15 @@ class Main_model extends CI_Model {
 						$cant_turnos_tar = $diff/$duracion;
 
 						for ($i=0; $i <= $cant_turnos_man && $cant_turnos_man > 0; $i++) {
-							$horarios_esp[] = date('H:i',$desde_man+($i*$duracion*60));
+							$horarios_esp[] = (object) array('hora' => date('H:i',$desde_man+($i*$duracion*60)), 'id_turno' => "");
 							// $horarios_esp[date('H:i',$hora_desde+($i*$duracion*60))] = "";
 						}
 
 						if ($cant_turnos_man > 0 && $cant_turnos_tar > 0)
-							$horarios_esp[] = "";
+							$horarios_esp[] = (object) array('hora' => "", 'id_turno' => "");
 
 						for ($i=0; $i <= $cant_turnos_tar && $cant_turnos_tar > 0 ; $i++) {
-							$horarios_esp[] = date('H:i',$desde_tar+($i*$duracion*60));
+							$horarios_esp[] = (object) array('hora' => date('H:i',$desde_tar+($i*$duracion*60)), 'id_turno' => "");
 						}
 
 						// Agrego la clave usuario para poder sumar la cantidad de turnos de cada usuario en un mismo dia

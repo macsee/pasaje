@@ -373,33 +373,37 @@ class Main extends CI_Controller {
 	}
 
 /******************************************PRUEBAAAAAAAAAA******************************************/
-	
 	public function arrange_turnos($turnos, $horarios)
 	{
 
-		$horarios_agenda = [];
-		$result = [];
-
-		if ($horarios != null) {
-			foreach ($horarios as $k => $h) {
-
-				$horarios_agenda[$h] = $k;
-				$result[] = (object) array('hora' => $h, 'id_turno' => "");
-
-			}
-		}
+		$result = $horarios;
+		// $horarios_agenda = [];
+		//
+		// if ($horarios != null) {
+		// 	foreach ($horarios as $k => $h) {
+		// 		$horarios_agenda[$h] = $k;
+		// 		$result[] = (object) array('hora' => $h, 'id_turno' => "");
+		// 	}
+		// }
 
 		if ($turnos != null) {
-			foreach ($turnos as $key => $value) {
+			foreach ($turnos as $index => $val_turno) {
 
-				$hora = date('H:i',strtotime($value->hora));
+				foreach ($result as $key => $val_hora) {
 
-				if (isset($horarios_agenda[$hora]))
-					$result[$horarios_agenda[$hora]] = $value;
-				else
-					$result[] = $value;
+					if ($val_turno->hora == $val_hora->hora) {
+						$result[$key] = $val_turno;
+						break;
+					}
+					else if ($val_turno->hora < $val_hora->hora) {
+						array_splice($result, $key, 0, [$val_turno]);
+						break;
+					}
+
+				}
 
 			}
+
 		}
 
 		return $result;
