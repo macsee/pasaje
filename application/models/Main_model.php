@@ -58,16 +58,22 @@ class Main_model extends CI_Model {
 		return $obj;
 	}
 
+// Los turnos se obtendran seleccionando un id_agenda, no un especialista. Se podra filtrar agendas de acuerdo a la especialidad en la vista de agenda
+// Como los turnos solo registran especialista y especialidad, al seleccionar un id_agenda, debo obtener el especialista y las especialidades relacionadas
+// y buscar los turnos del mes que cumplan con esos requisitos.
+
 	public function get_turnos_mes($year, $month, $id_agenda)
 	{
 
 		$data = [];
 
+		$datos = $this->get_datos_agenda($id_agenda);
+
 		if ($id_agenda != "todos")
 			$this->db->where(array("especialista" => $id_agenda));
 
 		$this->db->where(array("MONTH(fecha)" => $year, "MONTH(fecha)" => $month));
-		$this->db->order_by("hora","desc");
+		$this->db->order_by("hora","asc");
 		$query = $this->db->get("turnos");
 
 		if ($query->num_rows()>0)
@@ -93,7 +99,35 @@ class Main_model extends CI_Model {
 		// if ($especialidad != "")
 		// 	$like = array('especialidad' => $especialidad);
 
-		return $this->main_model->get_data("especialistas_especialidades", $like, $where);
+		return $this->main_model->get_data("agendas", $like, $where);
+	}
+
+	public function get_datos_agenda($id)
+	{
+		$like = null;
+		$where = null;
+
+		if ($id != "todos")
+			$where = array('id_agenda' => $id);
+
+		// if ($especialidad != "")
+		// 	$like = array('especialidad' => $especialidad);
+
+		return $this->main_model->get_data("agendas", $like, $where);
+	}
+
+	public function get_datos_agenda_extra($id)
+	{
+		$like = null;
+		$where = null;
+
+		if ($id != "todos")
+			$where = array('id_agenda' => $id);
+
+		// if ($especialidad != "")
+		// 	$like = array('especialidad' => $especialidad);
+
+		return $this->main_model->get_data("agendas_extras", $like, $where);
 	}
 
 	public function am_usuario($array)
@@ -116,7 +150,7 @@ class Main_model extends CI_Model {
 	public function am_especialista($id)
 	{
 
-		$query = "	INSERT INTO especialistas_especialidades (usuario) VALUES (?)";
+		$query = "	INSERT INTO agendas (usuario) VALUES (?)";
 					// VALUES (?) ON DUPLICATE KEY UPDATE usuario = VALUES(usuario)";
 
 			if ($this->get_datos_especialista($id,"") == null)
@@ -152,11 +186,11 @@ class Main_model extends CI_Model {
 
 		// if ($this->first_esp($array['esp_usuario']))
 		// {
-		// 	$this->db->update('especialistas_especialidades', $data, array('usuario' => $array['esp_usuario']));
+		// 	$this->db->update('agendas', $data, array('usuario' => $array['esp_usuario']));
 		// }
 		// else
 		// {
-			$query = "	INSERT INTO especialistas_especialidades (id, usuario, especialidad, dias_horarios, duracion)
+			$query = "	INSERT INTO agendas (id, usuario, especialidad, dias_horarios, duracion)
 						VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE 	especialidad = VALUES(especialidad),
 																	usuario = VALUES(usuario),
 																	duracion = VALUES(duracion),
@@ -167,7 +201,7 @@ class Main_model extends CI_Model {
 
 	function first_esp($id)
 	{
-		$query = $this->db->get_where("especialistas_especialidades", array('usuario' => $id));
+		$query = $this->db->get_where("agendas", array('usuario' => $id));
 		if ($query->num_rows() > 0)
 			return $query->row(1)->especialidad == "";
 	}
@@ -176,7 +210,7 @@ class Main_model extends CI_Model {
 	{
 		// $usuario = $this->get_usuario_by($id);
 		$this->db->delete("usuarios", array('usuario' => $id));
-		$this->db->delete("especialistas_especialidades", array('usuario' => $id));
+		$this->db->delete("agendas", array('usuario' => $id));
 
 	}
 
@@ -243,6 +277,56 @@ class Main_model extends CI_Model {
 			return $this->db->insert_id();
 	}
 
+	public function get_horarios_extra($id_agenda)
+	{
+		$turnos = array();
+
+		$agenda_extra = $this->get_datos_agenda_extra($id_agenda);
+
+		if ($agenda_extra != null) {
+
+			foreach ($agenda_extra as $fila) {
+
+				$horas = json_decode($fila->horarios);
+				$duracion = $fila->duracion;
+
+				if ($dias != null) {
+
+					$horarios_esp = array();
+					$horarios_man = array();
+					$horarios_tar = array();
+
+					$desde_man = !isset($horas->{1}->desde) ? 0 : strtotime($horas->{1}->desde);
+					$hasta_man = !isset($horas->{1}->hasta) ? 0 : strtotime($horas->{1}->hasta);
+					$diff = abs($hasta_man - $desde_man)/60;
+					$cant_turnos_man = $diff/$duracion;
+
+					$desde_tar = !isset($horas->{2}->desde) ? 0 : strtotime($horas->{2}->desde);
+					$hasta_tar = !isset($horas->{2}->hasta) ? 0 : strtotime($horas->{2}->hasta);
+					$diff = abs($hasta_tar - $desde_tar)/60;
+					$cant_turnos_tar = $diff/$duracion;
+
+					for ($i=0; $i <= $cant_turnos_man && $cant_turnos_man > 0; $i++) {
+						$horarios_esp[] = (object) array('hora' => date('H:i',$desde_man+($i*$duracion*60)), 'id_turno' => "");
+					}
+
+					if ($cant_turnos_man > 0 && $cant_turnos_tar > 0)
+						$horarios_esp[] = (object) array('hora' => "", 'id_turno' => "");
+
+					for ($i=0; $i <= $cant_turnos_tar && $cant_turnos_tar > 0 ; $i++) {
+						$horarios_esp[] = (object) array('hora' => date('H:i',$desde_tar+($i*$duracion*60)), 'id_turno' => "");
+					}
+
+					$turnos[$fila->fecha][] = $horarios_esp;
+
+				}
+
+			}
+		}
+
+		return $turnos;
+	}
+
 	public function get_horarios($id)
 	{
 		$turnos = array();
@@ -277,7 +361,6 @@ class Main_model extends CI_Model {
 
 						for ($i=0; $i <= $cant_turnos_man && $cant_turnos_man > 0; $i++) {
 							$horarios_esp[] = (object) array('hora' => date('H:i',$desde_man+($i*$duracion*60)), 'id_turno' => "");
-							// $horarios_esp[date('H:i',$hora_desde+($i*$duracion*60))] = "";
 						}
 
 						if ($cant_turnos_man > 0 && $cant_turnos_tar > 0)
@@ -287,15 +370,6 @@ class Main_model extends CI_Model {
 							$horarios_esp[] = (object) array('hora' => date('H:i',$desde_tar+($i*$duracion*60)), 'id_turno' => "");
 						}
 
-						// Agrego la clave usuario para poder sumar la cantidad de turnos de cada usuario en un mismo dia
-						// y asi no contar dos veces un mismo usuario con mas de una especialidad
-
-						// $turnos[$key][$usuario] = (object) array( // La parte de usuarios esta manejada por la funcion que llama a esta funcion
-
-						// $turnos[$key] = (object) array(
-						// 	'horarios'		=>	$horarios_esp,
-						// 	'cant_turnos' 	=> 	$cant_turnos
-						// );
 						$turnos[$key][] = $horarios_esp;
 
 					}
@@ -303,47 +377,6 @@ class Main_model extends CI_Model {
 				}
 
 			}
-		}
-
-		return $turnos;
-	}
-
-
-	public function get_agenda_extra_dia($fecha, $id, $especialidad="")
-	{
-		$fecha = date('Y-m-d',strtotime($fecha));
-		$datos = $this->get_datos_especialista($id);
-		$turnos = null;
-		$horarios_esp = null;
-
-		if ($datos != null) {
-			foreach ($datos as $key => $value) {
-
-					$usuario = $value->usuario;
-					$agenda_extra = json_decode($value->agenda_extra);
-
-					if (isset($agenda_extra->$fecha)) {
-
-						$extra = $agenda_extra->$fecha;
-						$hora_hasta = strtotime($extra->hora_hasta);
-						$hora_desde = strtotime($extra->hora_desde);
-						$diff = abs($hora_hasta - $hora_desde)/60;
-						$cant_turnos = $diff/$extra->duracion;
-
-						for ($i=0; $i <= $cant_turnos ; $i++) {
-							$horarios_esp[date('H:i',$hora_desde+($i*$extra->duracion*60))] = "";
-						}
-
-						// Horarios extra para la fecha $fecha y para el especialista $id
-						//
-						$turnos[$usuario] = (object) array(
-							'horarios'		=>	$horarios_esp,
-							'cant_turnos' 	=> 	$cant_turnos
-						);
-					}
-
-			}
-
 		}
 
 		return $turnos;
@@ -420,7 +453,7 @@ class Main_model extends CI_Model {
 
 	public function is_especialista($id)
 	{
-		return $this->get_data("especialistas_especialidades",null,array('usuario' => $id)) != null;
+		return $this->get_data("agendas",null,array('usuario' => $id)) != null;
 	}
 
 	public function rol($id, $rol)
@@ -430,6 +463,6 @@ class Main_model extends CI_Model {
 
 	public function crear_agenda($data)
 	{
-		$this->db->update('especialistas_especialidades', array('agenda_extra' => $data['agenda']), array('usuario' => $data['usuario']));
+		$this->db->update('agendas', array('agenda_extra' => $data['agenda']), array('usuario' => $data['usuario']));
 	}
 }

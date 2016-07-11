@@ -109,7 +109,7 @@ class Main extends CI_Controller {
 			redirect('main/agenda');
 		else {
 			$data['usuarios'] = $this->main_model->get_data("usuarios");
-			$data['especialistas'] = $this->main_model->get_data("especialistas_especialidades");
+			$data['especialistas'] = $this->main_model->get_data("agendas");
 
 			$arraybar = array (
 				'admin_act' 		=> "active",
@@ -138,7 +138,7 @@ class Main extends CI_Controller {
 	public function pacientes()
 	{
 		$data['usuarios'] = $this->main_model->get_data("usuarios");
-		$data['especialistas'] = $this->main_model->get_data("especialistas_especialidades");
+		$data['especialistas'] = $this->main_model->get_data("agendas");
 
 		$arraybar = array (
 			'admin_act' 		=> "",
@@ -171,7 +171,7 @@ class Main extends CI_Controller {
 		else {
 
 			$data['usuarios'] = $this->main_model->get_data("usuarios");
-			$data['especialistas'] = $this->main_model->get_data("especialistas_especialidades");
+			$data['especialistas'] = $this->main_model->get_data("agendas");
 
 			$arraybar = array (
 				'admin_act' 		=> "",
@@ -236,7 +236,7 @@ class Main extends CI_Controller {
 
 	public function get_agenda($id)
 	{
-		return $this->main_model->get_data("especialistas_especialidades", null, array('id' => $id))[0];
+		return $this->main_model->get_data("agendas", null, array('id' => $id))[0];
 	}
 
 	public function get_agenda_json($id)
@@ -246,8 +246,7 @@ class Main extends CI_Controller {
 
 	public function get_especialidades($id)
 	{
-		return $this->main_model->get_data("especialistas_especialidades", null, array('usuario' => $id))[0];
-		// return $this->main_model->get_datos_especialista($id, "");
+		return $this->main_model->get_data("agendas", null, array('usuario' => $id))[0];
 	}
 
 	public function get_especialidades_json($id)
@@ -664,7 +663,7 @@ class Main extends CI_Controller {
 
 	function crear_agenda()
 	{
-		$extra = $this->main_model->get_data("especialistas_especialidades", null, array('usuario' => $_POST['crear_agenda_especialistas']))[0];
+		$extra = $this->main_model->get_data("agendas", null, array('usuario' => $_POST['crear_agenda_especialistas']))[0];
 		$array = (array) json_decode($extra->agenda_extra);
 
 		$agenda = array(

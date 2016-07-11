@@ -113,6 +113,7 @@ function set_fecha(fecha)
     fecha = format_date(fecha);
     fecha = fecha.replace(/-/g, '/'); // Para que funcione en celulares
     fecha_actual = new Date(fecha+" 00:00:00");
+
     actualizar_datos();
     show_turnos(fecha_actual);
 }
@@ -266,13 +267,19 @@ function make_turno_vacio(hora) {
 }
 
 function make_turno_ocupado(data) {
+  var data_extra = $.parseJSON(data.data_extra);
 
   if (data.estado != "OK")
       estado = 'glyphicon glyphicon-unchecked';
   else
       estado = 'glyphicon glyphicon-check';
 
-  html = '<div class="row fila-turno">'
+  if (data_extra.indexOf("primera_vez"))
+      primera_vez = 'style = "color:red"';
+  else
+      primera_vez = '';
+
+  html = '<div class="row fila-turno" '+primera_vez+'">'
       +'<div class="col-md-4 col-md-push-2 cell_turno fix_on_xs">'
           +data.paciente
       +'</div>'
@@ -307,7 +314,7 @@ $('#datepicker').on("changeDate", function(e) {
     // var fecha = $('#datepicker').datepicker('getDate');
     var fecha = new Date(e.date);
 
-    if (fecha != null)
+    if (e.dates.length > 0)
         set_fecha(fecha);
     else
         set_fecha(fecha_actual);
