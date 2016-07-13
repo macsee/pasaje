@@ -177,19 +177,22 @@
                     <div class = "col-md-7 col-xs-7" style = "padding-top:15px;">
                         <select class = "form-control" id = "especialistas">
                             <?php
-                                if ($especialistas != null) {
+                                // if ($especialistas != null) {
+                                if ($especialista_sel == "todos")
                                     echo '<option value = "todos">Todos</option>';
-                                    foreach ($especialistas as $key => $value) {
-                                        if ($especialista_sel == $value->usuario)
-                                            $selected = "selected";
-                                        else
-                                            $selected = "";
 
-                                        echo '<option '.$selected.' value = "'.$value->usuario.'">'.$value->apellido.', '.$value->nombre[0].'</option>';
-                                    }
+                                foreach ($especialistas as $key => $value) {
+                                  echo '<option value = "'.$value->id_agenda.'">'.$value->nombre_agenda.'</option>';
+                                    // if ($especialista_sel == $value->usuario)
+                                    //     $selected = "selected";
+                                    // else
+                                    //     $selected = "";
+                                    //
+                                    // echo '<option '.$selected.' value = "'.$value->usuario.'">'.$value->apellido.', '.$value->nombre[0].'</option>';
                                 }
-                                else
-                                    echo '<option selected value = "'.$especialista_sel.'">'.$nom_especialista_sel.'</option>';
+                            // }
+                            // else
+                                // echo '<option selected value = "'.$especialista_sel.'">'.$nom_especialista_sel.'</option>';
                             ?>
                         </select>
                     </div>

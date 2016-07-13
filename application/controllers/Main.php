@@ -63,16 +63,24 @@ class Main extends CI_Controller {
 	public function agenda()
 	{
 		$data['especialista_sel'] = $this->session->userdata('especialista');
-		$data['especialidad_sel'] = $this->session->userdata('especialidad');
+		// $data['especialidad_sel'] = $this->session->userdata('especialidad');
 		$data['usuario'] = $this->session->userdata('usuario');
 		$data['is_admin'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? 1 : 0;
 
-		if ($this->main_model->rol($this->session->userdata('usuario'),"especialista")) {
-			$data['especialistas'] = null;
-			$data['nom_especialista_sel'] = $this->session->userdata('apellido').', '.$this->session->userdata('nombre')[0];
+		if ($data['especialista_sel'] != "todos") {
+				$data['especialistas'] = $this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
 		}
-		else
-			$data['especialistas'] = $this->main_model->get_data('usuarios', array('funciones' => 'especialista'));
+		else {
+				$data['especialistas'] = $this->main_model->get_data('agendas');
+		}
+
+		// if ($this->main_model->rol($this->session->userdata('usuario'),"especialista")) {
+		// 	$data['especialistas'] = null;
+		// 	$data['nom_especialista_sel'] = $this->session->userdata('apellido').', '.$this->session->userdata('nombre')[0];
+		// }
+		// else
+		// 	$data['especialistas'] = $this->main_model->get_data('agendas', array('usuario' => $this->session->userdata('usuario')));
+			// $data['especialistas'] = $this->main_model->get_data('usuarios', array('funciones' => 'especialista'));
 
 		$arraybar = array (
 			'admin_act' 		=> "",
@@ -416,8 +424,10 @@ class Main extends CI_Controller {
 
 		$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
 
-		$turnos = $this->main_model->get_turnos_mes($year, $month, $id_agenda); // Turnos del mes para todos o para la agenda seleccionada
+		$datos_agenda = $this->main_model->get_datos_agenda($id_agenda);
+		$turnos = $this->main_model->get_turnos_mes($year, $month, $datos_agenda); // Turnos del mes para todos o para la agenda seleccionada
 		$horarios = $this->main_model->get_horarios($id_agenda);
+		$horarios_extra = $this->main_model->get_horarios_extra($id_agenda);
 
 		foreach ($turnos as $fecha => $datos) {
 

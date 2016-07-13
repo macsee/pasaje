@@ -62,19 +62,48 @@ class Main_model extends CI_Model {
 // Como los turnos solo registran especialista y especialidad, al seleccionar un id_agenda, debo obtener el especialista y las especialidades relacionadas
 // y buscar los turnos del mes que cumplan con esos requisitos.
 
-	public function get_turnos_mes($year, $month, $id_agenda)
+	public function get_turnos_mes($year, $month, $agenda)
 	{
 
 		$data = [];
 
-		$datos = $this->get_datos_agenda($id_agenda);
+		$especialistas = "";
+		$especialidades = "";
 
-		if ($id_agenda != "todos")
-			$this->db->where(array("especialista" => $id_agenda));
+		if($agenda != null)
+		{
+			foreach ($agenda as $index => $fila)
+			{
+				$or = " OR ";
+
+				if ($index == count($agenda)-1)
+					$or = "";
+
+				$especialistas .= "especialista = '".$fila->usuario."'".$or;
+
+				$aux = json_decode($fila->especialidad);
+
+				foreach ($aux as $key => $value) {
+					$or = " OR ";
+
+					if ($index == count($agenda)-1)
+						$or = "";
+
+					$especialidades .= "especialidad = '".$value."'".$or;
+				}
+
+			}
+
+			$this->db->where("(".$especialistas.") AND (".$especialidades.")");
+
+		}
+		// if ($id_agenda != "todos")
+		// 	$this->db->where(array("especialista" => $id_agenda));
 
 		$this->db->where(array("MONTH(fecha)" => $year, "MONTH(fecha)" => $month));
 		$this->db->order_by("hora","asc");
 		$query = $this->db->get("turnos");
+		// $this->output->enable_profiler(TRUE);
 
 		if ($query->num_rows()>0)
 		{
@@ -116,7 +145,7 @@ class Main_model extends CI_Model {
 		return $this->main_model->get_data("agendas", $like, $where);
 	}
 
-	public function get_datos_agenda_extra($id)
+	public function get_datos_agenda_extra($id, $fecha)
 	{
 		$like = null;
 		$where = null;
@@ -277,61 +306,11 @@ class Main_model extends CI_Model {
 			return $this->db->insert_id();
 	}
 
-	public function get_horarios_extra($id_agenda)
-	{
-		$turnos = array();
-
-		$agenda_extra = $this->get_datos_agenda_extra($id_agenda);
-
-		if ($agenda_extra != null) {
-
-			foreach ($agenda_extra as $fila) {
-
-				$horas = json_decode($fila->horarios);
-				$duracion = $fila->duracion;
-
-				if ($dias != null) {
-
-					$horarios_esp = array();
-					$horarios_man = array();
-					$horarios_tar = array();
-
-					$desde_man = !isset($horas->{1}->desde) ? 0 : strtotime($horas->{1}->desde);
-					$hasta_man = !isset($horas->{1}->hasta) ? 0 : strtotime($horas->{1}->hasta);
-					$diff = abs($hasta_man - $desde_man)/60;
-					$cant_turnos_man = $diff/$duracion;
-
-					$desde_tar = !isset($horas->{2}->desde) ? 0 : strtotime($horas->{2}->desde);
-					$hasta_tar = !isset($horas->{2}->hasta) ? 0 : strtotime($horas->{2}->hasta);
-					$diff = abs($hasta_tar - $desde_tar)/60;
-					$cant_turnos_tar = $diff/$duracion;
-
-					for ($i=0; $i <= $cant_turnos_man && $cant_turnos_man > 0; $i++) {
-						$horarios_esp[] = (object) array('hora' => date('H:i',$desde_man+($i*$duracion*60)), 'id_turno' => "");
-					}
-
-					if ($cant_turnos_man > 0 && $cant_turnos_tar > 0)
-						$horarios_esp[] = (object) array('hora' => "", 'id_turno' => "");
-
-					for ($i=0; $i <= $cant_turnos_tar && $cant_turnos_tar > 0 ; $i++) {
-						$horarios_esp[] = (object) array('hora' => date('H:i',$desde_tar+($i*$duracion*60)), 'id_turno' => "");
-					}
-
-					$turnos[$fila->fecha][] = $horarios_esp;
-
-				}
-
-			}
-		}
-
-		return $turnos;
-	}
-
 	public function get_horarios($id)
 	{
 		$turnos = array();
 
-		$agenda_esp = $this->get_datos_especialista($id);
+		$agenda_esp = $this->get_datos_agenda($id);
 
 		if ($agenda_esp != null) {
 
@@ -373,6 +352,56 @@ class Main_model extends CI_Model {
 						$turnos[$key][] = $horarios_esp;
 
 					}
+
+				}
+
+			}
+		}
+
+		return $turnos;
+	}
+
+	public function get_horarios_extra($id_agenda, $fecha)
+	{
+		$turnos = array();
+
+		$agenda_extra = $this->get_datos_agenda_extra($id_agenda, $fecha);
+
+		if ($agenda_extra != null) {
+
+			foreach ($agenda_extra as $fila) {
+
+				$horas = json_decode($fila->horarios);
+				$duracion = $fila->duracion;
+
+				if ($dias != null) {
+
+					$horarios_esp = array();
+					$horarios_man = array();
+					$horarios_tar = array();
+
+					$desde_man = !isset($horas->{1}->desde) ? 0 : strtotime($horas->{1}->desde);
+					$hasta_man = !isset($horas->{1}->hasta) ? 0 : strtotime($horas->{1}->hasta);
+					$diff = abs($hasta_man - $desde_man)/60;
+					$cant_turnos_man = $diff/$duracion;
+
+					$desde_tar = !isset($horas->{2}->desde) ? 0 : strtotime($horas->{2}->desde);
+					$hasta_tar = !isset($horas->{2}->hasta) ? 0 : strtotime($horas->{2}->hasta);
+					$diff = abs($hasta_tar - $desde_tar)/60;
+					$cant_turnos_tar = $diff/$duracion;
+
+					for ($i=0; $i <= $cant_turnos_man && $cant_turnos_man > 0; $i++) {
+						$horarios_esp[] = (object) array('hora' => date('H:i',$desde_man+($i*$duracion*60)), 'id_turno' => "");
+					}
+
+					if ($cant_turnos_man > 0 && $cant_turnos_tar > 0)
+						$horarios_esp[] = (object) array('hora' => "", 'id_turno' => "");
+
+					for ($i=0; $i <= $cant_turnos_tar && $cant_turnos_tar > 0 ; $i++) {
+						$horarios_esp[] = (object) array('hora' => date('H:i',$desde_tar+($i*$duracion*60)), 'id_turno' => "");
+					}
+
+					$turnos[$fila->fecha][] = $horarios_esp;
 
 				}
 

@@ -132,7 +132,7 @@ function format_date(fecha) {
 function get_turnos_mes(fecha)
 {
   var esp = $("#especialistas").val();
-
+  console.log(esp);
   $.ajax({
       url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+esp,
       dataType: 'json',
