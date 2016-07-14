@@ -394,23 +394,30 @@ class Main extends CI_Controller {
 		// }
 
 		if ($turnos != null) {
-			foreach ($turnos as $index => $val_turno) {
+			if ($horarios == null) {
+				$result = $turnos;
+			}
+			else {
+				foreach ($turnos as $index => $val_turno) {
 
-				foreach ($result as $key => $val_hora) {
+					foreach ($result as $key => $val_hora) {
 
-					if ($val_turno->hora == $val_hora->hora) {
-						$result[$key] = $val_turno;
-						break;
-					}
-					else if ($val_turno->hora < $val_hora->hora) {
-						array_splice($result, $key, 0, [$val_turno]);
-						break;
+						if ($val_turno->hora == $val_hora->hora) {
+							$result[$key] = $val_turno;
+							break;
+						}
+						else if ($val_turno->hora < $val_hora->hora) {
+							array_splice($result, $key, 0, [$val_turno]);
+							break;
+						}
+
 					}
 
 				}
-
 			}
-
+		}
+		else {
+			$result = [];
 		}
 
 		return $result;
@@ -427,7 +434,7 @@ class Main extends CI_Controller {
 		$datos_agenda = $this->main_model->get_datos_agenda($id_agenda);
 		$turnos = $this->main_model->get_turnos_mes($year, $month, $datos_agenda); // Turnos del mes para todos o para la agenda seleccionada
 		$horarios = $this->main_model->get_horarios($id_agenda);
-		$horarios_extra = $this->main_model->get_horarios_extra($id_agenda);
+		$horarios_extra = $this->main_model->get_horarios_extra($year, $month, $id_agenda);
 
 		foreach ($turnos as $fecha => $datos) {
 
@@ -439,6 +446,9 @@ class Main extends CI_Controller {
 
 				if(isset($horarios[$dow])) {
 					$aux = $horarios[$dow][0];
+				}
+				else if (isset($horarios_extra[$fecha])) {
+					$aux = $horarios_extra[$fecha][0];
 				}
 
 				$dat = $this->arrange_turnos($datos, $aux);
@@ -453,7 +463,8 @@ class Main extends CI_Controller {
 
 		return array(
 			'turnos' => $resultado,
-			'horarios' => $horarios
+			'horarios' => $horarios,
+			'horarios_extra' => $horarios_extra
 		);
 
 	}

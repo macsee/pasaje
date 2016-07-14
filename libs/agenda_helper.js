@@ -1,8 +1,9 @@
 var fecha_actual = new Date();
 var cambio_turno = "";
 var prox_turno = "";
-// var turnos_mes = [];
-// var horarios_mes = [];
+var turnos_mes = [];
+var horarios_mes = [];
+var horarios_extra = [];
 var dias = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -132,7 +133,7 @@ function format_date(fecha) {
 function get_turnos_mes(fecha)
 {
   var esp = $("#especialistas").val();
-  console.log(esp);
+
   $.ajax({
       url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+esp,
       dataType: 'json',
@@ -144,15 +145,16 @@ function get_turnos_mes(fecha)
 
         turnos_mes = response.turnos; // Aca seteo las variables locales turnos_mes y horarios_mes
         horarios_mes = response.horarios; // que contienen toda la info de los turnos
+        horarios_extra = response.horarios_extra;
 
-        crear_calendario(fecha, horarios_mes, turnos_mes, bloqueados);
+        crear_calendario(fecha, horarios_mes, turnos_mes, horarios_extra, bloqueados);
         show_turnos(fecha);
       }
   });
 
 }
 
-function crear_calendario(fecha, h_mes, t_mes, bloqueados) {
+function crear_calendario(fecha, h_mes, t_mes, h_extra, bloqueados) {
 
   $('#datepicker').datepicker('remove');
 
@@ -176,11 +178,16 @@ function crear_calendario(fecha, h_mes, t_mes, bloqueados) {
         $.each( h_mes[dia_semana], function(index,turnos) {
             cant_turnos_disp += turnos.length;
         });
+      }
 
-        if (t_mes.hasOwnProperty(fecha)) {
-          cant_turnos_ocupados = Object.keys(t_mes[fecha]).length;
-        }
+      if (h_extra.hasOwnProperty(fecha)) {
+        $.each( h_extra[fecha], function(index,turnos) {
+            cant_turnos_disp += turnos.length;
+        });
+      }
 
+      if (t_mes.hasOwnProperty(fecha)) {
+        cant_turnos_ocupados = Object.keys(t_mes[fecha]).length;
       }
 
       // console.log("Fecha: ",date," - ","Cant. Horarios: ",cant_turnos_disp, "Cant. Turnos: ",cant_turnos_ocupados);
@@ -199,6 +206,10 @@ function crear_calendario(fecha, h_mes, t_mes, bloqueados) {
           case (factor >= 0.75):
               return {
                   classes : "celda_high"
+              }
+          case (factor == 0 && cant_turnos_disp > 0):
+              return {
+                  classes : "highlighted"
               }
       }
 
@@ -234,6 +245,11 @@ function show_turnos(fecha) {
         if (esp != "todos") { // Si tengo especialista, tengo que mostrar los horarios disponibles de su agenda si los hay para este dia
           if (horarios_mes.hasOwnProperty(dia)) {
             $.each( horarios_mes[dia][0], function(key, value) {
+                html += make_turno_vacio(value.hora);
+            });
+          }
+          else if (horarios_extra.hasOwnProperty(date)) {
+            $.each( horarios_extra[date][0], function(key, value) {
                 html += make_turno_vacio(value.hora);
             });
           }
@@ -390,12 +406,6 @@ function turno_vacio(hora) {
     });
 }
 
-function update_calendar() {
-    var especialista = $("#especialistas").val();
-    var especialidad = ""
-    $(".calendario").attr( 'src', base_url+"/calendar/make_calendar/"+especialista+"/"+especialidad);
-}
-
 $("#especialistas").change(function () {
     // get_horarios();
     get_turnos_mes(fecha_actual);
@@ -415,7 +425,6 @@ function am_turno(event) {
 
             prox_turno = "";
             get_turnos_mes(fecha_actual);
-            // update_calendar();
             $("#modal_turno").modal('hide');
 
         }
@@ -486,7 +495,6 @@ function ok_eliminar_turno(event) {
         data: form.serialize(),
         success:function(response)
         {
-            update_calendar();
             get_turnos_mes();
             $("#modal_eliminar_turno").modal('hide');
 
@@ -854,7 +862,6 @@ function crear_agenda() {
         success:function(response)
         {
             get_turnos_mes();
-            update_calendar();
             // get_notas();
         }
     });

@@ -23,6 +23,7 @@ class Main_model extends CI_Model {
 
 			$query = $this->db->get($tabla);
 
+		// $this->output->enable_profiler(TRUE);
 		if ($query->num_rows()>0)
 		{
 			foreach ($query->result() as $fila)
@@ -100,7 +101,7 @@ class Main_model extends CI_Model {
 		// if ($id_agenda != "todos")
 		// 	$this->db->where(array("especialista" => $id_agenda));
 
-		$this->db->where(array("MONTH(fecha)" => $year, "MONTH(fecha)" => $month));
+		$this->db->where(array("YEAR(fecha)" => $year, "MONTH(fecha)" => $month));
 		$this->db->order_by("hora","asc");
 		$query = $this->db->get("turnos");
 		// $this->output->enable_profiler(TRUE);
@@ -145,16 +146,18 @@ class Main_model extends CI_Model {
 		return $this->main_model->get_data("agendas", $like, $where);
 	}
 
-	public function get_datos_agenda_extra($id, $fecha)
+	public function get_datos_agenda_extra($year, $month, $id)
 	{
 		$like = null;
-		$where = null;
+		$where = [];
 
 		if ($id != "todos")
 			$where = array('id_agenda' => $id);
 
 		// if ($especialidad != "")
 		// 	$like = array('especialidad' => $especialidad);
+
+		$where += array("YEAR(fecha)" => $year, "MONTH(fecha)" => $month);
 
 		return $this->main_model->get_data("agendas_extras", $like, $where);
 	}
@@ -361,20 +364,23 @@ class Main_model extends CI_Model {
 		return $turnos;
 	}
 
-	public function get_horarios_extra($id_agenda, $fecha)
+	public function get_horarios_extra($year, $month, $id_agenda)
 	{
 		$turnos = array();
 
-		$agenda_extra = $this->get_datos_agenda_extra($id_agenda, $fecha);
+		$agenda_extra = $this->get_datos_agenda_extra($year, $month, $id_agenda);
+
+		// print_r($agenda_extra);
 
 		if ($agenda_extra != null) {
 
 			foreach ($agenda_extra as $fila) {
 
+
 				$horas = json_decode($fila->horarios);
 				$duracion = $fila->duracion;
 
-				if ($dias != null) {
+				// if ($dias != null) {
 
 					$horarios_esp = array();
 					$horarios_man = array();
@@ -403,7 +409,7 @@ class Main_model extends CI_Model {
 
 					$turnos[$fila->fecha][] = $horarios_esp;
 
-				}
+				// }
 
 			}
 		}
