@@ -57,7 +57,7 @@
                                 <label class="col-sm-3 control-label">Especialista</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control" name = "especialista" readonly>
-                                    <input type="hidden" class="form-control" name = "id_especialista">
+                                    <input type="hidden" class="form-control" name = "id_agenda">
                                     <input type="hidden" class="form-control" name = "id_turno">
                                     <input type="hidden" class="form-control" id = "id_paciente" name = "id_paciente">
                                 </div>

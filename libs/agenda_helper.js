@@ -142,7 +142,7 @@ function get_turnos_mes(fecha)
         var bloqueados = [];
         var t_mes = [];
         var h_mes = [];
-
+        
         turnos_mes = response.turnos; // Aca seteo las variables locales turnos_mes y horarios_mes
         horarios_mes = response.horarios; // que contienen toda la info de los turnos
         horarios_extra = response.horarios_extra;
@@ -291,7 +291,7 @@ function make_turno_ocupado(data) {
       estado = 'glyphicon glyphicon-check';
 
   if (data_extra.indexOf("primera_vez"))
-      primera_vez = 'style = "color:red"';
+      primera_vez = 'style = "color:rgba(245, 33, 8, 0.86)"';
   else
       primera_vez = '';
 
@@ -326,8 +326,7 @@ function make_turno_ocupado(data) {
 }
 
 $('#datepicker').on("changeDate", function(e) {
-    // var fecha = $('#datepicker').datepicker('getFormattedDate');
-    // var fecha = $('#datepicker').datepicker('getDate');
+
     var fecha = new Date(e.date);
 
     if (e.dates.length > 0)
@@ -338,7 +337,6 @@ $('#datepicker').on("changeDate", function(e) {
 
 $('#datepicker').on("changeMonth", function(e) {
 
-    // var fecha = $('#datepicker').datepicker('getDate');
     var fecha = new Date(e.date);
     get_turnos_mes(fecha);
 
@@ -366,7 +364,7 @@ function dias_turnos_array_inv(num)
 function fill_especialidades(esp, callback) {
 
     $.ajax({
-        url: base_url+"/main/get_especialidades_json/"+esp,
+        url: base_url+"/main/get_data_agenda_json/"+esp,
         dataType: 'json',
         success:function(response)
         {
@@ -407,7 +405,6 @@ function turno_vacio(hora) {
 }
 
 $("#especialistas").change(function () {
-    // get_horarios();
     get_turnos_mes(fecha_actual);
 });
 
@@ -456,7 +453,7 @@ function editar_turno(id) {
 
             $("#modal_turno").find("input[name='hora']").val(datos_turno.hora);
             $("#modal_turno").find("input[name='fecha']").val(datos_turno.fecha);
-            $("#modal_turno").find("input[name='id_especialista']").val(datos_turno.especialista);
+            $("#modal_turno").find("input[name='id_agenda']").val(datos_turno.especialista);
             $("#modal_turno").find("input[name='especialista']").val(datos_turno.name_especialista);
 
             if (JSON.parse(datos_turno.data_extra).indexOf('primera_vez') >= 0)
@@ -464,7 +461,7 @@ function editar_turno(id) {
             else
                 $("#modal_turno").find("input[name='primera_vez']").removeAttr('checked');
 
-            fill_especialidades(datos_turno.especialista, function(){
+            fill_especialidades(datos_turno.agenda, function(){
                 $("#modal_turno").find("input[name='especialidad']").val(datos_turno.especialidad);
                 $("#modal_turno").modal({
                     show: true

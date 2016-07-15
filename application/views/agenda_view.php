@@ -129,7 +129,7 @@
         }
     }
 
-    .panel-default > .panel-heading {
+    .panel-default .panel-heading {
         background-color: #454545;
         color: white;
         font-weight: 400;

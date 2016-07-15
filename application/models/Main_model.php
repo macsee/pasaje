@@ -41,7 +41,8 @@ class Main_model extends CI_Model {
 	public function format_turno($value)
 	{
 
-		$nombre_esp = $this->get_data("usuarios",null,array('usuario' => $value->especialista))[0];
+		$id_esp = $this->get_datos_agenda($value->agenda)[0]->usuario;
+		$nombre_esp = $this->get_data("usuarios",null,array('usuario' => $id_esp))[0];
 		$nombre_pac = $this->get_data("pacientes",null,array('id_paciente' => $value->id_paciente))[0];
 		$hora = date('H:i',strtotime($value->hora));
 
@@ -68,38 +69,39 @@ class Main_model extends CI_Model {
 
 		$data = [];
 
-		$especialistas = "";
-		$especialidades = "";
+		// $especialistas = "";
+		// $especialidades = "";
+		//
+		// if($agenda != null)
+		// {
+		// 	foreach ($agenda as $index => $fila)
+		// 	{
+		// 		$or = " OR ";
+		//
+		// 		if ($index == count($agenda)-1)
+		// 			$or = "";
+		//
+		// 		$especialistas .= "especialista = '".$fila->usuario."'".$or;
+		//
+		// 		$aux = json_decode($fila->especialidad);
+		//
+		// 		foreach ($aux as $key => $value) {
+		// 			$or = " OR ";
+		//
+		// 			if ($index == count($agenda)-1)
+		// 				$or = "";
+		//
+		// 			$especialidades .= "especialidad = '".$value."'".$or;
+		// 		}
+		//
+		// 	}
+		//
+		// 	$this->db->where("(".$especialistas.") AND (".$especialidades.")");
+		//
+		// }
 
-		if($agenda != null)
-		{
-			foreach ($agenda as $index => $fila)
-			{
-				$or = " OR ";
-
-				if ($index == count($agenda)-1)
-					$or = "";
-
-				$especialistas .= "especialista = '".$fila->usuario."'".$or;
-
-				$aux = json_decode($fila->especialidad);
-
-				foreach ($aux as $key => $value) {
-					$or = " OR ";
-
-					if ($index == count($agenda)-1)
-						$or = "";
-
-					$especialidades .= "especialidad = '".$value."'".$or;
-				}
-
-			}
-
-			$this->db->where("(".$especialistas.") AND (".$especialidades.")");
-
-		}
-		// if ($id_agenda != "todos")
-		// 	$this->db->where(array("especialista" => $id_agenda));
+		// if (count($agenda) == 1)
+		// 	$this->db->where(array("agenda" => $agenda[0]->id_agenda));
 
 		$this->db->where(array("YEAR(fecha)" => $year, "MONTH(fecha)" => $month));
 		$this->db->order_by("hora","asc");
@@ -249,11 +251,11 @@ class Main_model extends CI_Model {
 	public function am_turno($data)
 	{
 
-		$query = "	INSERT INTO turnos (id_turno, id_paciente, fecha, hora, especialista, especialidad, observaciones, data_extra, estado, usuario)
+		$query = "	INSERT INTO turnos (id_turno, id_paciente, fecha, hora, agenda, especialidad, observaciones, data_extra, estado, usuario)
 					VALUES (?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	id_paciente		= VALUES(id_paciente),
 																			fecha 			= VALUES(fecha),
 																			hora 			= VALUES(hora),
-																			especialista 	= VALUES(especialista),
+																			agenda 	= VALUES(agenda),
 																			especialidad 	= VALUES(especialidad),
 																			observaciones 	= VALUES(observaciones),
 																			estado 			= VALUES(estado),
