@@ -65,6 +65,7 @@ class Main extends CI_Controller {
 		$data['especialista_sel'] = $this->session->userdata('especialista');
 		// $data['especialidad_sel'] = $this->session->userdata('especialidad');
 		$data['usuario'] = $this->session->userdata('usuario');
+		$data['usuarios'] = $this->main_model->get_data('usuarios');
 		$data['is_admin'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? 1 : 0;
 
 		if ($data['especialista_sel'] != "todos") {
@@ -381,35 +382,43 @@ class Main extends CI_Controller {
 		echo json_encode($this->get_turno($id));
 	}
 
-	public function am_turno()
+	public function nuevo_turno()
 	{
-		$id = $this->am_paciente($_POST);
+		$this->am_turno($_POST);
+	}
+
+	public function modificar_datos()
+	{
+		$this->am_turno($_POST);
+		$this->am_facturacion($_POST);
+	}
+
+	public function am_turno($array)
+	{
+		$id = $this->am_paciente($array);
 
 		$extra = array();
 
-		if (isset($_POST['primera_vez']))
+		if (isset($array['primera_vez']))
 			array_push($extra,'primera_vez');
 
-		$usuario = "";
+		$usuario = $this->session->userdata('usuario');
 
 		$data_turno = array(
-			'id_turno' 			=> $_POST['id_turno'],
+			'id_turno' 			=> $array['id_turno'],
 		  'id_paciente' 	=> $id,
-		  'fecha' 				=> $_POST['fecha'],
-		  'hora' 					=> $_POST['hora'],
-			'agenda'				=> $_POST['id_agenda'],
-		  // 'especialista' 	=> $this->get_data_agenda($_POST['id_agenda'])->usuario,
-		  'especialidad' 	=> $_POST['especialidad'],
-			'observaciones' => $_POST['observaciones'],
+		  'fecha' 				=> $array['fecha'],
+		  'hora' 					=> $array['hora'],
+			'agenda'				=> $array['id_agenda'],
+		  'especialidad' 	=> $array['especialidad'],
+			'observaciones' => $array['observaciones_turno'],
 			'data_extra'		=> json_encode($extra),
-			'estado'				=> "",
+			'estado'				=> $array['estado'],
 			'usuario'				=> $usuario
 		);
 
+		// echo json_encode($data_turno);
 		$this->main_model->am_turno($data_turno);
-
-		// echo json_encode($_POST);
-		// redirect('main/agenda/');
 	}
 
 	public function del_turno()
@@ -438,13 +447,13 @@ class Main extends CI_Controller {
 
 		$data_paciente = array(
 			'id_paciente' 	=> $data['id_paciente'],
-		   	'nombre' 		=> ucwords(strtolower($data['nombre'])),
-		   	'apellido' 		=> ucwords(strtolower($data['apellido'])),
-			'dni'			=> isset($data['dni']) ? $data['dni'] : "",
-			'direccion'		=> isset($data['direccion']) ? ucwords(strtolower($data['direccion'])) : "",
-			'localidad'		=> isset($data['localidad']) ? ucwords(strtolower($data['localidad'])) : "",
-		   	'tel1' 			=> $tel1,
-		   	'tel2' 			=> $tel2,
+		  'nombre' 				=> ucwords(strtolower($data['nombre'])),
+		  'apellido' 			=> ucwords(strtolower($data['apellido'])),
+			'dni'						=> isset($data['dni']) ? $data['dni'] : "",
+			'direccion'			=> isset($data['direccion']) ? ucwords(strtolower($data['direccion'])) : "",
+			'localidad'			=> isset($data['localidad']) ? ucwords(strtolower($data['localidad'])) : "",
+		  'tel1' 					=> $tel1,
+		  'tel2' 					=> $tel2,
 			'observaciones'	=> isset($data['observaciones_paciente']) ? $data['observaciones_paciente'] : "",
 		);
 
@@ -483,16 +492,19 @@ class Main extends CI_Controller {
 		$array['id_nota'] = $_POST['id_nota'];
 		$array['texto'] = $_POST['texto'];
 		$array['usuario'] = $this->session->userdata('usuario');
-		$array['destinatario'] = $_POST['destinatario'] != "" ? $_POST['destinatario'] : $this->session->userdata('usuario');
-		$array['fecha'] = date('Y-m-d');
+		$array['destinatario'] = $_POST['destinatario_sel'];
+		$array['fecha'] = $_POST['fecha'];
 
 		$this->main_model->am_nota($array);
 	}
 
 	public function get_nota($id,$fecha="")
 	{
-		if ($fecha != "") {
-			$notas = $this->main_model->get_data('notas', null, array('fecha' => $fecha), array("last_update","desc"));
+		$usr = $this->session->userdata('usuario');
+
+		if ($id == "todas") {
+			$where = "fecha = '".$fecha."' AND (destinatario = 'todos' OR destinatario = '".$usr."' OR usuario = '".$usr."')";
+			$notas = $this->main_model->get_data('notas', null, $where, array("last_update","desc"));
 
 			if ($notas != null) {
 				foreach ($notas as $key => $value) {
@@ -500,7 +512,6 @@ class Main extends CI_Controller {
 					$value->nombre_usuario = $usuario->apellido.', '.$usuario->nombre[0];
 				}
 			}
-
 		}
 		else {
 			$notas = $this->main_model->get_data("notas",null,array('id_nota' => $id))[0];
@@ -520,35 +531,53 @@ class Main extends CI_Controller {
 	}
 
 /******************************************FACTURACION******************************************/
+	// public function modificar_datos()
+	// {
+	// 	$this->am_turno($_POST);
+	// 	$this->am_facturacion($_POST);
+	//
+	// 	$data_turno = array(
+	// 		'id_turno' 	=> $_POST['id_turno'],
+	// 		'estado' 	=> $_POST['estado']
+	// 	);
+	//
+	// 	$this->main_model->change_turno_estado($data_turno);
+	//
+	// }
 
-	public function am_facturacion()
+	public function am_facturacion($array)
 	{
 
-		$this->am_paciente($_POST);
+		// $this->am_paciente($_POST);
+		//
+		// $data_turno = array(
+		// 	'id_turno' 	=> $_POST['id_turno'],
+		// 	'estado' 	=> $_POST['estado']
+		// );
+		//
+		// $this->main_model->change_turno_estado($data_turno);
 
-		$data_turno = array(
-			'id_turno' 	=> $_POST['id_turno'],
-			'estado' 	=> $_POST['estado']
-		);
-
-		$this->main_model->change_turno_estado($data_turno);
-		$usuario = "";
+		$usuario = $this->session->userdata('usuario');
 
 		$data_extra = array(
-			'total' => $_POST['total'],
-			'pago'	=> $_POST['total'],
+			'total' => $array['total'],
+			'pago'	=> $array['total'],
 			'debe'	=> ""
 		);
 
 		$data_facturacion = array(
-			'id_facturacion'	=> $_POST['id_facturacion'],
-			'id_turno' 			=> $_POST['id_turno'],
-			'fecha'				=> $_POST['fecha'],
-			'datos'				=> json_encode($data_extra),
-			'usuario'			=> $usuario
+			'id_facturacion'	=> $array['id_facturacion'],
+			'id_turno' 				=> $array['id_turno'],
+			'fecha'						=> $array['fecha'],
+			'datos'						=> json_encode($data_extra),
+			'usuario'					=> $usuario
 		);
 
-		$this->main_model->am_facturacion($data_facturacion);
+		if ($array['estado'] == "OK" && $array['total'] != "")
+			$this->main_model->am_facturacion($data_facturacion);
+		else if ($array['estado'] != "OK" && $array['id_facturacion'] != "")
+			$this->main_model->del_facturacion($array['id_facturacion']);
+
 	}
 
 	function crear_agenda()

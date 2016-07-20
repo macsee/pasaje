@@ -48,6 +48,10 @@
         margin-top: 5px;
         font-size: 16px;
     }
+
+    #total {
+        display: none;
+    }
 </style>
 
 <div id="modal_datos" class="modal fade in" role="dialog" tabindex="-1">
@@ -71,7 +75,8 @@
                                     <input type="hidden" class="form-control" name = "id_turno">
                                     <input type="hidden" class="form-control" name = "id_paciente">
                                     <input type="hidden" class="form-control" name = "id_facturacion">
-                                    <input type="hidden" class="form-control" name = "estado">
+                                    <input type="hidden" class="form-control" name = "id_agenda">
+                                    <!-- <input type="hidden" class="form-control" name = "estado"> -->
                                     <input type="hidden" class="form-control" name = "fecha">
                                 </div>
                             </div>
@@ -133,26 +138,46 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Especialidad</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" name = "especialidad">
+                                    </select>
+                                </div>
+                                <!-- <label class="col-sm-3 control-label">Especialidad</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" id = "especialidad" name = "especialidad" readonly>
-                                </div>
+                                </div> -->
                                 <!-- <div id = "especialidad" class="datos_turno col-sm-6"></div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Hora</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id = "hora" name = "hora" readonly>
+                                    <input type="time" class="form-control" id = "hora" name = "hora" readonly>
                                 </div>
                                 <!-- <div id = "hora" class="datos_turno col-sm-6"></div> -->
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-3 control-label">Primera vez</label>
+                                <div class="col-sm-4">
+                                     <input id = "primera_vez" type="checkbox" name = "primera_vez" checked>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label">Observaciones</label>
                                 <div class="col-sm-9">
-                                    <textarea type="text" class="form-control" id = "observaciones" name = "observaciones" readonly></textarea>
+                                    <textarea type="text" class="form-control" id = "observaciones_turno" name = "observaciones_turno"></textarea>
                                 </div>
                                 <!-- <div id = "observaciones" class="datos_turno col-sm-9" style = "height:60px"></div> -->
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-3 control-label">Estado</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" id = "estado" name = "estado">
+                                      <option value="">Ausente</option>
+                                      <option value="OK">Presente</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" id ="total">
                                 <label class="col-sm-3 control-label">Total</label>
                                 <div class="col-sm-3">
                                      <input type="tel" class="form-control" name = "total" autocomplete="off" required>
@@ -163,13 +188,20 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id = "confirmar_datos" onclick="ok_confirmar_datos(event)"class="btn btn-default">Guardar</button>
+                <button id = "confirmar_datos" onclick="ok_modificar_datos(event)"class="btn btn-default">Guardar</button>
                 <button id = "cancelar" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+    $("#estado").change(function(){
+        if ($(this).val() == ESTADO_OK)
+          $("#total").show();
+        else
+          $("#total").hide();
+    });
+
     $( "#apellido" ).autocomplete({
         source: function( request, response ) {
             $.ajax({

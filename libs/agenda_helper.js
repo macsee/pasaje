@@ -1,9 +1,10 @@
-var fecha_actual = new Date();
-var cambio_turno = "";
-var prox_turno = "";
-var turnos_mes = [];
-var horarios_mes = [];
-var horarios_extra = [];
+var FECHA_ACTUAL = new Date();
+var CAMBIO_TURNO = "";
+var PROX_TURNO = "";
+var TURNOS_MES = [];
+var HORARIOS_MES = [];
+var HORARIOS_EXTRA = [];
+var ESTADO_OK = "OK";
 var dias = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -15,7 +16,7 @@ function clear_fields(obj)
     obj.find("input[name='id_especialista']").val("");
     obj.find("input[name='especialista']").val("");
     obj.find("select[name='especialidad']").empty();
-    obj.find("textarea[name='observaciones']").val("");
+    obj.find("textarea[name='observaciones_turno']").val("");
     obj.find("input[name='estado']").val("");
     obj.find("input[name='primera_vez']").prop('checked',true);
 
@@ -33,6 +34,7 @@ function clear_fields(obj)
 
     obj.find("input[name='id_facturacion']").val("");
     obj.find("input[name='total']").val("");
+    obj.find("#total").hide();
 }
 
 function split_telefono(t1)
@@ -58,65 +60,48 @@ function split_telefono(t1)
     }
 }
 
-// function get_horarios(esp, callback)
-// {
-//   // var esp = $("#especialistas").val();
-//
-//   $.ajax({
-//       url: base_url+"/main/get_horarios_json/"+esp,
-//       dataType: 'json',
-//       success:function(response)
-//       {
-//         // horarios_mes = response;
-//         callback(response);
-//         // actualizar_datos();
-//         // get_turnos_mes(fecha_actual);
-//         // return response
-//       }
-//   });
-// }
-
 function init()
 {
-    fecha_actual = new Date();
-    get_turnos_mes(fecha_actual);
+    FECHA_ACTUAL = new Date();
+    get_turnos_mes(FECHA_ACTUAL);
     actualizar_datos();
 }
 
 function actualizar_datos()
 {
-    $(".display_date").html(dias[fecha_actual.getDay()]+" "+fecha_actual.getDate()+", "+meses[fecha_actual.getMonth()]+" "+fecha_actual.getFullYear());
+    $(".display_date").html(dias[FECHA_ACTUAL.getDay()]+" "+FECHA_ACTUAL.getDate()+", "+meses[FECHA_ACTUAL.getMonth()]+" "+FECHA_ACTUAL.getFullYear());
 }
 
 function dia_siguiente()
 {
-    fecha_actual.setDate(fecha_actual.getDate()+1);
+    FECHA_ACTUAL.setDate(FECHA_ACTUAL.getDate()+1);
     actualizar_datos();
-    show_turnos(fecha_actual);
+    show_turnos(FECHA_ACTUAL);
 }
 
 function dia_anterior()
 {
-    fecha_actual.setDate(fecha_actual.getDate()-1);
+    FECHA_ACTUAL.setDate(FECHA_ACTUAL.getDate()-1);
     actualizar_datos();
-    show_turnos(fecha_actual);
+    show_turnos(FECHA_ACTUAL);
 }
 
 function dia_actual()
 {
-    fecha_actual = new Date();
+    FECHA_ACTUAL = new Date();
     actualizar_datos();
-    show_turnos(fecha_actual);
+    show_turnos(FECHA_ACTUAL);
 }
 
 function set_fecha(fecha)
 {
     fecha = format_date(fecha);
     fecha = fecha.replace(/-/g, '/'); // Para que funcione en celulares
-    fecha_actual = new Date(fecha+" 00:00:00");
+    FECHA_ACTUAL = new Date(fecha);
+    // FECHA_ACTUAL = new Date(fecha+" 00:00:00");
 
     actualizar_datos();
-    show_turnos(fecha_actual);
+    show_turnos(FECHA_ACTUAL);
 }
 
 function format_date(fecha) {
@@ -142,12 +127,12 @@ function get_turnos_mes(fecha)
         var bloqueados = [];
         var t_mes = [];
         var h_mes = [];
-        
-        turnos_mes = response.turnos; // Aca seteo las variables locales turnos_mes y horarios_mes
-        horarios_mes = response.horarios; // que contienen toda la info de los turnos
-        horarios_extra = response.horarios_extra;
 
-        crear_calendario(fecha, horarios_mes, turnos_mes, horarios_extra, bloqueados);
+        TURNOS_MES = response.turnos; // Aca seteo las variables locales TURNOS_MES y HORARIOS_MES
+        HORARIOS_MES = response.horarios; // que contienen toda la info de los turnos
+        HORARIOS_EXTRA = response.horarios_extra;
+
+        crear_calendario(fecha, HORARIOS_MES, TURNOS_MES, HORARIOS_EXTRA, bloqueados);
         show_turnos(fecha);
       }
   });
@@ -187,7 +172,7 @@ function crear_calendario(fecha, h_mes, t_mes, h_extra, bloqueados) {
       }
 
       if (t_mes.hasOwnProperty(fecha)) {
-        cant_turnos_ocupados = Object.keys(t_mes[fecha]).length;
+        cant_turnos_ocupados += t_mes[fecha].cant;
       }
 
       // console.log("Fecha: ",date," - ","Cant. Horarios: ",cant_turnos_disp, "Cant. Turnos: ",cant_turnos_ocupados);
@@ -195,17 +180,21 @@ function crear_calendario(fecha, h_mes, t_mes, h_extra, bloqueados) {
       factor = cant_turnos_ocupados / cant_turnos_disp;
 
       switch (true){
-          case (factor > 0 && factor < 0.50) :
+          case (factor > 0 && factor < 0.30) :
               return {
                   classes : "celda_low"
               }
-          case (factor >= 0.50 && factor < 0.75) :
+          case (factor >= 0.30 && factor < 0.60) :
               return {
                   classes : "celda_medium"
               }
-          case (factor >= 0.75):
+          case (factor >= 0.60 && factor < 0.90):
               return {
                   classes : "celda_high"
+              }
+          case (factor >= 0.90):
+              return {
+                  classes : "celda_full"
               }
           case (factor == 0 && cant_turnos_disp > 0):
               return {
@@ -221,6 +210,7 @@ function crear_calendario(fecha, h_mes, t_mes, h_extra, bloqueados) {
 
 function show_turnos(fecha) {
 
+    get_notas();
     $(".horarios").empty();
 
     var esp = $("#especialistas").val();
@@ -230,9 +220,11 @@ function show_turnos(fecha) {
     var date = format_date(fecha);
     var dia = dias_turnos_array_inv(fecha.getDay());
 
-    if (turnos_mes.hasOwnProperty(date)) { // Si en la fecha hay turnos entonces los muestro
+    if (TURNOS_MES.hasOwnProperty(date)) { // Si en la fecha hay turnos entonces los muestro
 
-      $.each( turnos_mes[date].datos, function(key, value) {
+      html += make_header_turnos();
+
+      $.each( TURNOS_MES[date].datos, function(key, value) {
         if (value.id_turno == "") {
           html += make_turno_vacio(value.hora);
         }
@@ -243,27 +235,51 @@ function show_turnos(fecha) {
     }
     else { // Si no hay turnos en esta fecha tengo que verificar si se debe a que no estoy en un dia de agenda
         if (esp != "todos") { // Si tengo especialista, tengo que mostrar los horarios disponibles de su agenda si los hay para este dia
-          if (horarios_mes.hasOwnProperty(dia)) {
-            $.each( horarios_mes[dia][0], function(key, value) {
+          if (HORARIOS_MES.hasOwnProperty(dia)) {
+            html += make_header_horarios();
+            $.each( HORARIOS_MES[dia][0], function(key, value) {
                 html += make_turno_vacio(value.hora);
             });
           }
-          else if (horarios_extra.hasOwnProperty(date)) {
-            $.each( horarios_extra[date][0], function(key, value) {
+          else if (HORARIOS_EXTRA.hasOwnProperty(date)) {
+            html += make_header_horarios();
+            $.each( HORARIOS_EXTRA[date][0], function(key, value) {
                 html += make_turno_vacio(value.hora);
             });
           }
           else { // Si no los hay entonces ofrezco abrir agenda
-            html += "Abrir agenda";
+            html += '<div class = "panel panel-default" style = "padding:0px;overflow:inherit;margin-bottom:30px;height:300px">Abrir agenda</div>';
           }
         }
         else { // Si no hay turnos y estoy en la vista de todos, entonces muestro un mensaje de que no hay turnos
-          html += "No hay turnos";
+          html += '<div class = "panel panel-default text-muted" style = "padding:50px;overflow:inherit;margin-bottom:30px;height:150px;font-size:30px;text-align:center"><i>No hay turnos</i></div>';
         }
     }
 
     $(".horarios").html(html);
 
+}
+
+function make_header_horarios() {
+  html = '<div class="row cabecera hidden-xs hidden-sm">'
+      +'<div class="col-md-12 cell_header">Hora</div>'
+  +'</div>';
+
+  return html;
+}
+
+function make_header_turnos() {
+  html = '<div class="row cabecera hidden-xs hidden-sm">'
+      +'<div class="col-md-2 cell_header">Hora</div>'
+      +'<div class="col-md-4 cell_header">Paciente</div>'
+      +'<div class="col-md-3 cell_header">Especialidad</div>'
+      +'<div class="col-md-2 cell_header">Especialista</div>'
+      // <div class="col-md-1 cell_header">
+      //
+      // </div>
+  +'</div>';
+
+  return html;
 }
 
 function make_turno_vacio(hora) {
@@ -273,8 +289,15 @@ function make_turno_vacio(hora) {
     else
       separador = "";
 
+    if (CAMBIO_TURNO != "")
+        funcion = "return cambiar_turno(\'"+hora+"\')";
+    else if (PROX_TURNO != "")
+        funcion = "return proximo_turno(\'"+hora+"\')";
+    else
+        funcion = "return nuevo_turno(\'"+hora+"\')";
+
     html = '<div class="row fila-turno '+separador+'">'
-              +'<div class="col-md-12 cell_vacia turno_vacio" onclick = "return turno_vacio(\''+hora+'\')">'
+              +'<div class="col-md-12 cell_vacia turno_vacio" onclick = "'+funcion+'">'
                 +hora
               +'</div>'
             +'</div>';
@@ -285,12 +308,12 @@ function make_turno_vacio(hora) {
 function make_turno_ocupado(data) {
   var data_extra = $.parseJSON(data.data_extra);
 
-  if (data.estado != "OK")
+  if (data.estado != ESTADO_OK)
       estado = 'glyphicon glyphicon-unchecked';
   else
       estado = 'glyphicon glyphicon-check';
 
-  if (data_extra.indexOf("primera_vez"))
+  if (data_extra.indexOf("primera_vez") >= 0)
       primera_vez = 'style = "color:rgba(245, 33, 8, 0.86)"';
   else
       primera_vez = '';
@@ -312,11 +335,11 @@ function make_turno_ocupado(data) {
         +'<div class = "dropdown">'
           +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "'+estado+'"></span></button>'
           +'<ul class="dropdown-menu pull-right">'
-              +'<li><a href="#" onclick = "return confirmar_datos(\''+data.id_turno+'\')" data-toggle="modal">Cambiar Estado</a></li>'
-              +'<li><a href="#" onclick = "return editar_turno(\''+data.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>'
-              +'<li><a href="#" onclick = "return eliminar_turno(\''+data.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>'
-              +'<li><a href="#" onclick = "return cambiar_turno(\''+data.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>'
-              +'<li><a href="#" onclick = "return proximo_turno(\''+data.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>'
+              +'<li><a href="#" onclick = "return modificar_datos_item(\''+data.id_turno+'\')" data-toggle="modal">Modificar Datos</a></li>'
+              // +'<li><a href="#" onclick = "return editar_turno(\''+data.id_turno+'\')" data-toggle="modal">Editar Turno</a></li>'
+              +'<li><a href="#" onclick = "return eliminar_turno_item(\''+data.id_turno+'\')" data-toggle="modal">Eliminar Turno</a></li>'
+              +'<li><a href="#" onclick = "return cambiar_turno_item(\''+data.id_turno+'\')" data-toggle="modal">Cambiar Fecha/Hora</a></li>'
+              +'<li><a href="#" onclick = "return proximo_turno_item(\''+data.id_turno+'\')" data-toggle="modal">Nuevo Turno</a></li>'
           +'</ul>'
         +'</div>'
       +'</div>'
@@ -332,7 +355,7 @@ $('#datepicker').on("changeDate", function(e) {
     if (e.dates.length > 0)
         set_fecha(fecha);
     else
-        set_fecha(fecha_actual);
+        set_fecha(FECHA_ACTUAL);
 });
 
 $('#datepicker').on("changeMonth", function(e) {
@@ -360,7 +383,6 @@ function dias_turnos_array_inv(num)
   return dias[num];
 }
 
-
 function fill_especialidades(esp, callback) {
 
     $.ajax({
@@ -368,111 +390,70 @@ function fill_especialidades(esp, callback) {
         dataType: 'json',
         success:function(response)
         {
+            data = [];
             if (response != null && response.especialidad != null) {
                 data = JSON.parse(response.especialidad);
-                $.each( data, function(key,val) {
-                    $("#modal_turno").find("select[name='especialidad']").append($('<option>', {
-                            value: val,
-                            text : val
-                    }));
-                });
             }
 
-            callback();
+            callback(data);
         }
     });
 
 }
 
-function turno_vacio(hora) {
+$("#especialistas").change(function () {
+    get_turnos_mes(FECHA_ACTUAL);
+});
+
+function nuevo_turno(hora) {
 
     esp = $("#especialistas").val();
-    fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
+    fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
 
     clear_fields($("#modal_turno"));
 
     $("#modal_turno").find("#titulo").html("Nuevo Turno");
     $("#modal_turno").find("input[name='hora']").val(hora);
     $("#modal_turno").find("input[name='fecha']").val(fecha);
-    $("#modal_turno").find("input[name='id_especialista']").val(esp);
+    $("#modal_turno").find("input[name='id_agenda']").val(esp);
     $("#modal_turno").find("input[name='especialista']").val($("#especialistas option:selected").text());
 
-    fill_especialidades(esp, function(){
+    fill_especialidades(esp, function(data){
+
+        $.each( data, function(key,val) {
+            $("#modal_turno").find("select[name='especialidad']").append($('<option>', {
+                    value: val,
+                    text : val
+            }));
+        });
+
         $("#modal_turno").modal({
             show: true
         });
     });
 }
 
-$("#especialistas").change(function () {
-    get_turnos_mes(fecha_actual);
-});
-
-function am_turno(event) {
+function ok_nuevo_turno(event) {
     event.preventDefault();
 
     form = $("#modal_turno").find('form');
 
     $.ajax({
         type: "POST",
-        url: base_url+"/main/am_turno/",
+        url: base_url+"/main/nuevo_turno/",
         data: form.serialize(),
+        // dataType: 'json',
         success:function(response)
         {
-
-            prox_turno = "";
-            get_turnos_mes(fecha_actual);
-            $("#modal_turno").modal('hide');
-
+          // console.log(response);
+          PROX_TURNO = "";
+          get_turnos_mes(FECHA_ACTUAL);
+          $("#modal_turno").modal('hide');
         }
     });
 }
 
-function editar_turno(id) {
-    $.ajax({
-        type: "POST",
-        url: base_url+"/main/get_turno_json/"+id,
-        dataType: "json",
-        success:function(response)
-        {
-            clear_fields($("#modal_turno"));
-
-            datos_paciente = response.datos_paciente;
-            datos_turno = response.datos_turno;
-
-            $("#modal_turno").find("#titulo").html("Editar Turno");
-            $("#modal_turno").find("input[name='id_turno']").val(id);
-            $("#modal_turno").find("input[name='id_paciente']").val(datos_paciente.id_paciente);
-            $("#modal_turno").find("input[name='nombre']").val(datos_paciente.nombre);
-            $("#modal_turno").find("input[name='apellido']").val(datos_paciente.apellido);
-            $("#modal_turno").find("input[name='tel1']").val(split_telefono(datos_paciente.tel1).prefijo);
-            $("#modal_turno").find("input[name='tel2']").val(split_telefono(datos_paciente.tel1).telefono);
-            $("#modal_turno").find("input[name='cel1']").val(split_telefono(datos_paciente.tel2).prefijo);
-            $("#modal_turno").find("input[name='cel2']").val(split_telefono(datos_paciente.tel2).telefono);
-            $("#modal_turno").find("textarea[name='observaciones']").val(datos_turno.observaciones);
-
-            $("#modal_turno").find("input[name='hora']").val(datos_turno.hora);
-            $("#modal_turno").find("input[name='fecha']").val(datos_turno.fecha);
-            $("#modal_turno").find("input[name='id_agenda']").val(datos_turno.especialista);
-            $("#modal_turno").find("input[name='especialista']").val(datos_turno.name_especialista);
-
-            if (JSON.parse(datos_turno.data_extra).indexOf('primera_vez') >= 0)
-                $("#modal_turno").find("input[name='primera_vez']").prop('checked',true);
-            else
-                $("#modal_turno").find("input[name='primera_vez']").removeAttr('checked');
-
-            fill_especialidades(datos_turno.agenda, function(){
-                $("#modal_turno").find("input[name='especialidad']").val(datos_turno.especialidad);
-                $("#modal_turno").modal({
-                    show: true
-                });
-            });
-
-        }
-    });
-}
-
-function eliminar_turno(id)
+function eliminar_turno_item(id)
 {
     $("#modal_eliminar_turno").find("input[name='id_turno']").val(id);
 
@@ -492,14 +473,14 @@ function ok_eliminar_turno(event) {
         data: form.serialize(),
         success:function(response)
         {
-            get_turnos_mes();
+            get_turnos_mes(FECHA_ACTUAL);
             $("#modal_eliminar_turno").modal('hide');
 
         }
     });
 }
 
-function confirmar_datos(id)
+function modificar_datos_item(id)
 {
     $.ajax({
         type: "POST",
@@ -509,19 +490,21 @@ function confirmar_datos(id)
         {
             clear_fields($("#modal_datos"));
 
-            total = "";
+            // total = "";
             datos_paciente = response.datos_paciente;
             datos_turno = response.datos_turno;
             datos_facturacion = response.datos_facturacion;
 
             $("#modal_datos").find("#titulo").html("Confirmar Datos");
+
             $("#modal_datos").find("input[name='id_turno']").val(id);
-            $("#modal_datos").find("input[name='hora']").val(datos_turno.hora);
+            $("#modal_datos").find("input[name='hora']").val(datos_turno.hora); //.substring(0,datos_turno.hora.length - 3)
             $("#modal_datos").find("input[name='fecha']").val(datos_turno.fecha);
             $("#modal_datos").find("input[name='especialista']").val(datos_turno.name_especialista);
+            $("#modal_datos").find("input[name='id_agenda']").val(datos_turno.agenda);
             $("#modal_datos").find("input[name='especialidad']").val(datos_turno.especialidad);
-            $("#modal_datos").find("textarea[name='observaciones']").val(datos_turno.observaciones);
-            $("#modal_datos").find("input[name='estado']").val("OK");
+            $("#modal_datos").find("textarea[name='observaciones_turno']").val(datos_turno.observaciones);
+            $("#modal_datos").find("select[name='estado']").val(datos_turno.estado);
 
             $("#modal_datos").find("input[name='id_paciente']").val(datos_paciente.id_paciente);
             $("#modal_datos").find("input[name='nombre']").val(datos_paciente.nombre);
@@ -535,43 +518,83 @@ function confirmar_datos(id)
             $("#modal_datos").find("input[name='direccion']").val(datos_paciente.direccion);
             $("#modal_datos").find("textarea[name='observaciones_paciente']").val(datos_paciente.observaciones);
 
+            if (datos_turno.estado == ESTADO_OK) {
+              $("#modal_datos").find("#total").show();
+            }
+
             if (datos_facturacion != null) {
                 total = JSON.parse(datos_facturacion.datos).total;
                 $("#modal_datos").find("input[name='total']").val(total);
                 $("#modal_datos").find("input[name='id_facturacion']").val(datos_facturacion.id_facturacion);
             }
 
+            if (JSON.parse(datos_turno.data_extra).indexOf('primera_vez') >= 0)
+                $("#modal_datos").find("input[name='primera_vez']").prop('checked',true);
+            else
+                $("#modal_datos").find("input[name='primera_vez']").removeAttr('checked');
 
-            $("#modal_datos").modal({
-                show: true
+            fill_especialidades(datos_turno.agenda, function(data){
+              $.each( data, function(key,val) {
+                  $("#modal_datos").find("select[name='especialidad']").append($('<option>', {
+                          value: val,
+                          text : val
+                  }));
+              });
+              $("#modal_datos").find("input[name='especialidad']").val(datos_turno.especialidad);
+              $("#modal_datos").modal({
+                  show: true
+              });
             });
-
         }
     });
 }
 
-function ok_confirmar_datos(event) {
+function ok_modificar_datos(event) {
     event.preventDefault();
 
     form = $("#modal_datos").find('form');
 
     $.ajax({
         type: "POST",
-        url: base_url+"/main/am_facturacion/",
+        url: base_url+"/main/modificar_datos/",
         data: form.serialize(),
+        // dataType: 'json',
         success:function(response)
         {
-
-            get_turnos_mes(fecha_actual);
-            $("#modal_datos").modal('hide');
-
+          // console.log(response);
+          get_turnos_mes(FECHA_ACTUAL);
+          $("#modal_datos").modal('hide');
         }
     });
 }
 
-function cambiar_turno(id) {
-    cambio_turno = id;
-    get_turnos_mes();
+function cambiar_turno_item(id) {
+    CAMBIO_TURNO = id;
+    get_turnos_mes(FECHA_ACTUAL);
+}
+
+function cambiar_turno(hora) {
+
+    fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
+
+    $.ajax({
+        type: "POST",
+        url: base_url+"/main/get_turno_json/"+CAMBIO_TURNO,
+        dataType: "json",
+        success:function(response)
+        {
+            $("#modal_cambiar_turno").find("input[name='id_turno']").val(CAMBIO_TURNO);
+            $("#modal_cambiar_turno").find("input[name='fecha']").val(fecha);
+            $("#modal_cambiar_turno").find("input[name='hora']").val(hora);
+
+            $("#modal_cambiar_turno").find('#nombre').html(response.datos_paciente.apellido+', '+response.datos_paciente.nombre);
+            $("#modal_cambiar_turno").find('#fecha_hora').html(dias[FECHA_ACTUAL.getDay()]+" "+FECHA_ACTUAL.getDate()+", "+meses[FECHA_ACTUAL.getMonth()]+" "+FECHA_ACTUAL.getFullYear()+" a las "+hora+"Hs");
+            $("#modal_cambiar_turno").modal({
+                show: true
+            });
+
+        }
+    });
 }
 
 function ok_cambiar_turno(event) {
@@ -585,106 +608,97 @@ function ok_cambiar_turno(event) {
         data: form.serialize(),
         success:function(response)
         {
-            cambio_turno = "";
-            get_turnos_mes();
-            $("#modal_cambiar_turno").modal('hide');
-
+          CAMBIO_TURNO = "";
+          get_turnos_mes(FECHA_ACTUAL);
+          $("#modal_cambiar_turno").modal('hide');
         }
     });
 }
 
-function turno_cambio(id) {
-
-    fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
-
-    $.ajax({
-        type: "POST",
-        url: base_url+"/main/get_turno_json/"+cambio_turno,
-        dataType: "json",
-        success:function(response)
-        {
-            $("#modal_cambiar_turno").find("input[name='id_turno']").val(cambio_turno);
-            $("#modal_cambiar_turno").find("input[name='fecha']").val(fecha);
-            $("#modal_cambiar_turno").find("input[name='hora']").val(id);
-
-            $("#modal_cambiar_turno").find('#nombre').html(response.datos_paciente.apellido+', '+response.datos_paciente.nombre);
-            $("#modal_cambiar_turno").find('#fecha_hora').html(dias[fecha_actual.getDay()]+" "+fecha_actual.getDate()+", "+meses[fecha_actual.getMonth()]+" "+fecha_actual.getFullYear()+" a las "+id+"Hs");
-            $("#modal_cambiar_turno").modal({
-                show: true
-            });
-
-        }
-    });
+function proximo_turno_item(id) {
+    PROX_TURNO = id;
+    get_turnos_mes(FECHA_ACTUAL);
 }
 
-function proximo_turno(id) {
-    prox_turno = id;
-    get_turnos_mes();
-}
-
-function turno_prox(id) {
+function proximo_turno(hora) {
 
     esp = $("#especialistas").val();
-    fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
+    fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
 
     clear_fields($("#modal_turno"));
 
     $("#modal_turno").find("#titulo").html("Nuevo Turno");
-    $("#modal_turno").find("input[name='hora']").val(id);
+    $("#modal_turno").find("input[name='hora']").val(hora);
     $("#modal_turno").find("input[name='fecha']").val(fecha);
-    $("#modal_turno").find("input[name='id_especialista']").val(esp);
+    $("#modal_turno").find("input[name='id_agenda']").val(esp);
     $("#modal_turno").find("input[name='especialista']").val($("#especialistas option:selected").text());
 
     $.ajax({
         type: "POST",
-        url: base_url+"/main/get_turno_json/"+prox_turno,
+        url: base_url+"/main/get_turno_json/"+PROX_TURNO,
         dataType: "json",
         success:function(response)
         {
-            datos_paciente = response.datos_paciente;
-            datos_turno = response.datos_turno;
+          datos_paciente = response.datos_paciente;
+          datos_turno = response.datos_turno;
+          datos_facturacion = response.datos_facturacion;
 
-            $("#modal_turno").find("input[name='id_paciente']").val(datos_paciente.id_paciente);
-            $("#modal_turno").find("input[name='nombre']").val(datos_paciente.nombre);
-            $("#modal_turno").find("input[name='apellido']").val(datos_paciente.apellido);
-            $("#modal_turno").find("input[name='tel1']").val(split_telefono(datos_paciente.tel1).prefijo);
-            $("#modal_turno").find("input[name='tel2']").val(split_telefono(datos_paciente.tel1).telefono);
-            $("#modal_turno").find("input[name='cel1']").val(split_telefono(datos_paciente.tel2).prefijo);
-            $("#modal_turno").find("input[name='cel2']").val(split_telefono(datos_paciente.tel2).telefono);
-            $("#modal_turno").find("input[name='primera_vez']").removeAttr('checked');
-            $("#modal_turno").find("#anular").css("visibility", "visible");
+          $("#modal_turno").find("#titulo").html("Nuevo Turno");
 
-            fill_especialidades(esp, function(){
-                $("#modal_turno").modal({
-                    show: true
-                });
+          $("#modal_turno").find("input[name='id_paciente']").val(datos_paciente.id_paciente);
+          $("#modal_turno").find("input[name='nombre']").val(datos_paciente.nombre);
+          $("#modal_turno").find("input[name='apellido']").val(datos_paciente.apellido);
+          $("#modal_turno").find("input[name='tel1']").val(split_telefono(datos_paciente.tel1).prefijo);
+          $("#modal_turno").find("input[name='tel2']").val(split_telefono(datos_paciente.tel1).telefono);
+          $("#modal_turno").find("input[name='cel1']").val(split_telefono(datos_paciente.tel2).prefijo);
+          $("#modal_turno").find("input[name='cel2']").val(split_telefono(datos_paciente.tel2).telefono);
+          $("#modal_turno").find("input[name='dni']").val(datos_paciente.dni);
+          $("#modal_turno").find("input[name='localidad']").val(datos_paciente.localidad);
+          $("#modal_turno").find("input[name='direccion']").val(datos_paciente.direccion);
+          $("#modal_turno").find("textarea[name='observaciones_paciente']").val(datos_paciente.observaciones);
+
+          $("#modal_turno").find("input[name='primera_vez']").removeAttr('checked');
+          $("#modal_turno").find("#anular").css('visibility','visible')
+
+          fill_especialidades(datos_turno.agenda, function(data){
+            $.each( data, function(key,val) {
+                $("#modal_turno").find("select[name='especialidad']").append($('<option>', {
+                        value: val,
+                        text : val
+                }));
             });
 
+            $("#modal_turno").modal({
+                show: true
+            });
+          });
         }
     });
 }
 
 function anular_accion(id) {
-    cambio_turno = "";
-    prox_turno = "";
+    CAMBIO_TURNO = "";
+    PROX_TURNO = "";
 
     $("#modal_turno").modal('hide');
     $("#modal_turno").find("#anular").css("visibility", "hidden");
 
     $("#modal_cambiar_turno").modal('hide');
-    get_turnos_mes();
+    get_turnos_mes(FECHA_ACTUAL);
 }
 
 function add_notas() {
+
     esp = $("#especialistas").val();
-    fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
+    // fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
+    fecha = format_date(FECHA_ACTUAL);
 
     $("#modal_notas").find('input[name="fecha"]').val(fecha);
-    $("#modal_notas").find('select[name="destinatario_sel"]').val(esp);
-    $("#modal_notas").find('input[name="destinatario"]').val(esp);
+    $("#modal_notas").find('select[name="destinatario_sel"]').val("todos");
+    // $("#modal_notas").find('input[name="destinatario"]').val(esp);
     $("#modal_notas").find('textarea[name="texto"]').val("");
     $("#modal_notas").find('input[name="id_nota"]').val("");
-    $("#modal_notas").find('#eliminar_nota').css('display','none');
+    $("#modal_notas").find('#eliminar_nota').css('visibility','hidden');
 
     $("#modal_notas").modal({
         show: true
@@ -693,7 +707,7 @@ function add_notas() {
 
 function ok_am_nota() {
 
-    $("#modal_notas").find('input[name="destinatario"]').val($("#modal_notas").find('select[name="destinatario_sel"]').val());
+    // $("#modal_notas").find('input[name="destinatario"]').val($("#modal_notas").find('select[name="destinatario_sel"]').val());
     form = $("#modal_notas").find('form');
 
     $.ajax({
@@ -715,25 +729,25 @@ function get_notas() {
     is_admin = $("#is_admin").val();
     notas = "";
 
-    esp = $("#especialistas").val();
+    // esp = $("#especialistas").val();
     $('.notas_body').empty();
     $('.notas_body').html(notas);
 
-    fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
+    // fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
+    fecha = format_date(FECHA_ACTUAL);
 
     $.ajax({
         url: base_url+"/main/get_nota_json/todas"+"/"+fecha,
         dataType: "json",
         success:function(response)
         {
+
             if (response != null) {
                 notas = '<ul style = "margin-left:-25px">';
-                //TERMINAR LA IMPLEMENTACION DE ESPECIALIDADES Y AGENDAS
-                //VER EL TEMA DE MAÑANA Y TARDE EN LAS AGENDAS
 
                 $.each( response, function(key,val) {
 
-                    if (val.destinatario == esp || val.destinatario == "todos" || esp == "todos") {
+                    if (val.destinatario == user_logged || val.destinatario == "todos" || is_admin) {
 
                         if (user_logged == val.usuario) {
                             var onclick = "return editar_nota('"+val.id_nota+"')";
@@ -768,20 +782,19 @@ function editar_nota(id) {
         dataType: "json",
         success:function(response)
         {
-            console.log(response);
-            if (response != null) {
-                $("#modal_notas").find('#eliminar_nota').css('display','');
-                $("#modal_notas").find('select[name="destinatario_sel"]').val(response.destinatario);
-                $("#modal_notas").find('input[name="destinatario"]').val(response.destinatario);
-                $("#modal_notas").find('textarea[name="texto"]').val(response.texto);
-                $("#modal_notas").find('input[name="id_nota"]').val(response.id_nota);
-                $("#modal_notas").modal({
-                    show: true
-                });
-            }
-
+          if (response != null) {
+            $("#modal_notas").find('#eliminar_nota').css('visibility','visible');
+            $("#modal_notas").find('select[name="destinatario_sel"]').val(response.destinatario);
+            // $("#modal_notas").find('input[name="destinatario"]').val(response.destinatario);
+            $("#modal_notas").find('textarea[name="texto"]').val(response.texto);
+            $("#modal_notas").find('input[name="id_nota"]').val(response.id_nota);
+            $("#modal_notas").modal({
+                show: true
+            });
+          }
         }
     });
+
 }
 
 function eliminar_nota(event) {
@@ -819,7 +832,8 @@ function abrir_agenda() {
     $(".abrir_agenda").find("select[name='crear_agenda_hora_hasta']").val("");
     $(".abrir_agenda").find("select[name='crear_agenda_duracion']").val("30");
 
-    fecha = fecha_actual.getFullYear()+"-"+parseInt(fecha_actual.getMonth()+1)+"-"+fecha_actual.getDate();
+    fecha = format_date(FECHA_ACTUAL);
+    // fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
 
     esp_txt = $("#especialistas option:selected").text();
     esp = $("#especialistas").val();
@@ -858,7 +872,7 @@ function crear_agenda() {
         data: form.serialize(),
         success:function(response)
         {
-            get_turnos_mes();
+            get_turnos_mes(FECHA_ACTUAL);
             // get_notas();
         }
     });

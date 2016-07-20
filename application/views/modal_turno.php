@@ -54,12 +54,17 @@
                     <form method = "post" class="row form-horizontal">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <input type="hidden" class="form-control" id = "dni" name = "dni">
+                                <input type="hidden" class="form-control" id = "localidad" name = "localidad">
+                                <input type="hidden" class="form-control" id = "direccion" name = "direccion">
+                                <input type="hidden" class="form-control" id = "observaciones_paciente" name = "observaciones_paciente">
+                                <input type="hidden" class="form-control" id = "id_paciente" name = "id_paciente">
+                                <input type="hidden" class="form-control" name = "id_agenda">
+                                <input type="hidden" class="form-control" name = "id_turno">
+                                <input type="hidden" class="form-control" name = "estado" value = "">
                                 <label class="col-sm-3 control-label">Especialista</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control" name = "especialista" readonly>
-                                    <input type="hidden" class="form-control" name = "id_agenda">
-                                    <input type="hidden" class="form-control" name = "id_turno">
-                                    <input type="hidden" class="form-control" id = "id_paciente" name = "id_paciente">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -85,7 +90,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Observaciones</label>
                                 <div class="col-sm-9">
-                                     <textarea class="form-control" name = "observaciones"></textarea>
+                                     <textarea class="form-control" name = "observaciones_turno"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -122,29 +127,31 @@
             </div>
             <div class="modal-footer">
                 <button id = "anular" style = "visibility:hidden" onclick="anular_accion(event)"class="btn btn-default">Anular</button>
-                <button id = "am_turno" onclick="am_turno(event)" class="btn btn-default">Guardar</button>
+                <button id = "nuevo_turno" onclick="ok_nuevo_turno(event)" class="btn btn-default">Guardar</button>
                 <button id = "cancelar" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    $( "#apellido" ).autocomplete({
-        source: function( request, response ) {
-            $.ajax({
-                type: "POST",
-                url: base_url+"/main/autocomplete_pacientes",
-                dataType: "json",
-                data: {
-                    query: request.term
-                },
-                success: function( data ) {
-                    response(data);
-                }
-            });
-        },
-        minLength: 3,
-        select: function( event, ui ) {
+
+  $(document).ready(function () {
+      $( "#apellido" ).autocomplete({
+          source: function( request, response ) {
+              $.ajax({
+                  type: "POST",
+                  url: base_url+"/main/autocomplete_pacientes",
+                  dataType: "json",
+                  data: {
+                      query: request.term
+                  },
+                  success: function( data ) {
+                      response(data);
+                  }
+              });
+          },
+          minLength: 3,
+          select: function( event, ui ) {
 
             tel1 = "";
             tel2 = ui.item.tel;
@@ -167,22 +174,28 @@
             $( "#tel2" ).val(tel2);
             $( "#cel1" ).val(cel1);
             $( "#cel2" ).val(cel2);
+            $( "#dni").val(ui.item.dni);
+            $( "#direccion").val(ui.item.direccion);
+            $( "#localidad").val(ui.item.localidad);
+            $( "#observaciones_paciente").val(ui.item.observaciones);
+
             $( "#primera_vez" ).removeAttr('checked');
-        }
-    })
-    .autocomplete( "instance" )._renderItem = function( ul, item ) {
-      return $( "<li>" )
-        .append('<div style = "overflow:auto">'+
-                    '<div class = "lista_results">'+item.label+ ', '+item.nombre+'</div>'+
-                    '<div class = "lista_results">DNI: '+item.dni+'</div>'+
-                    '<div class = "lista_results">Direccion: '+item.direccion+'</div>'+
-                    '<div style = "width:100%">'+
-                        '<div style = "float:left" class = "lista_results">Tel: '+item.tel+'</div>'+
-                        '<div style = "float:right" class = "lista_results">Cel: '+item.cel+'</div>'+
-                    '</div>'+
-                '</div>'+
-                '<hr style = "margin-top:2px;margin-bottom:2px">'
-        )
-        .appendTo( ul );
-    };
+          }
+      })
+      .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+          .append('<div style = "overflow:auto">'+
+                      '<div class = "lista_results">'+item.label+ ', '+item.nombre+'</div>'+
+                      '<div class = "lista_results">DNI: '+item.dni+'</div>'+
+                      '<div class = "lista_results">Direccion: '+item.direccion+'</div>'+
+                      '<div style = "width:100%">'+
+                          '<div style = "float:left" class = "lista_results">Tel: '+item.tel+'</div>'+
+                          '<div style = "float:right" class = "lista_results">Cel: '+item.cel+'</div>'+
+                      '</div>'+
+                  '</div>'+
+                  '<hr style = "margin-top:2px;margin-bottom:2px">'
+          )
+          .appendTo( ul );
+      };
+  });
 </script>

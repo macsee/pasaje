@@ -291,10 +291,15 @@ class Main_model extends CI_Model {
 		$this->db->query($query, $data);
 	}
 
+	public function del_facturacion($id)
+	{
+		$this->db->delete("facturacion", array('id_facturacion' => $id));
+	}
+
 	public function am_paciente($data)
 	{
 		$query = "	INSERT INTO pacientes (id_paciente, nombre, apellido, dni, direccion, localidad, tel1, tel2, observaciones)
-					VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	nombre 			= VALUES(nombre),
+					VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	nombre = VALUES(nombre),
 																			apellido 		= VALUES(apellido),
 																			dni 			= VALUES(dni),
 																			direccion 		= VALUES(direccion),
@@ -436,6 +441,7 @@ class Main_model extends CI_Model {
 								"dni" 		=> $fila->dni,
 								"direccion" => $fila->direccion,
 								"localidad" => $fila->localidad,
+								"observaciones" => $fila->observaciones,
 								"tel"		=> $fila->tel1,
 								"cel"		=> $fila->tel2,
  				);

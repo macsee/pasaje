@@ -202,7 +202,7 @@
 
         <div class = "panel-body" style = "padding:0px;overflow:inherit;margin-bottom:30px">
 
-            <div class="row cabecera hidden-xs hidden-sm">
+            <!-- <div class="row cabecera hidden-xs hidden-sm">
                 <div class="col-md-2 cell_header">
                     Hora
                 </div>
@@ -218,7 +218,7 @@
                 <div class="col-md-1 cell_header">
 
                 </div>
-            </div>
+            </div> -->
 
             <div class="horarios">
               <!-- ACA VA TODO EL CONTENIDO -->
