@@ -212,6 +212,7 @@ function show_turnos(fecha) {
 
     get_notas();
     $(".horarios").empty();
+    $(".abrir_agenda").css('display','none');
 
     var esp = $("#especialistas").val();
 
@@ -248,11 +249,14 @@ function show_turnos(fecha) {
             });
           }
           else { // Si no los hay entonces ofrezco abrir agenda
-            html += '<div class = "panel panel-default" style = "padding:0px;overflow:inherit;margin-bottom:30px;height:300px">Abrir agenda</div>';
+            abrir_agenda();
           }
         }
         else { // Si no hay turnos y estoy en la vista de todos, entonces muestro un mensaje de que no hay turnos
-          html += '<div class = "panel panel-default text-muted" style = "padding:50px;overflow:inherit;margin-bottom:30px;height:150px;font-size:30px;text-align:center"><i>No hay turnos</i></div>';
+          if (HORARIOS_MES.hasOwnProperty(dia) || HORARIOS_EXTRA.hasOwnProperty(date))
+            html += '<div class = "panel panel-default text-muted" style = "padding:50px;overflow:inherit;margin-bottom:30px;height:150px;font-size:30px;text-align:center"><i>No hay turnos</i></div>';
+          else
+            html += '<div class = "panel panel-default text-muted" style = "padding:50px;overflow:inherit;margin-bottom:30px;height:150px;font-size:30px;text-align:center"><i>Disponible para abrir agenda <br> Seleccionar especialista</i></div>';
         }
     }
 
@@ -821,43 +825,22 @@ function error_nota() {
 }
 
 function abrir_agenda() {
-    $(".horarios").css('display','none');
-    $(".abrir_agenda").css('display','');
+  // $(".horarios").css('display','none');
 
-    $(".abrir_agenda").find("input[name='crear_agenda_fecha']").val("");
-    $(".abrir_agenda").find("input[name='crear_agenda_especialistas_txt']").val("");
-    $(".abrir_agenda").find("input[name='crear_agenda_especialistas']").val("");
-    $(".abrir_agenda").find("select[name='crear_agenda_especialidad']").val("");
-    $(".abrir_agenda").find("select[name='crear_agenda_hora_desde']").val("");
-    $(".abrir_agenda").find("select[name='crear_agenda_hora_hasta']").val("");
-    $(".abrir_agenda").find("select[name='crear_agenda_duracion']").val("30");
+  fecha = format_date(FECHA_ACTUAL);
+  esp_txt = $("#especialistas option:selected").text();
+  esp = $("#especialistas").val();
 
-    fecha = format_date(FECHA_ACTUAL);
-    // fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
+  $(".abrir_agenda").find("input[name='crear_agenda_fecha']").val(fecha);
+  $(".abrir_agenda").find("input[name='crear_agenda_id_txt']").val(esp_txt);
+  $(".abrir_agenda").find("input[name='crear_agenda_id']").val(esp);
+  $(".abrir_agenda").find("input[name='crear_agenda_hora_desde_man']").val("");
+  $(".abrir_agenda").find("input[name='crear_agenda_hora_hasta_man']").val("");
+  $(".abrir_agenda").find("input[name='crear_agenda_hora_desde_tar']").val("");
+  $(".abrir_agenda").find("input[name='crear_agenda_hora_hasta_tar']").val("");
+  $(".abrir_agenda").find("select[name='crear_agenda_duracion']").val("30");
 
-    esp_txt = $("#especialistas option:selected").text();
-    esp = $("#especialistas").val();
-
-    $(".abrir_agenda").find("input[name='crear_agenda_fecha']").val(fecha);
-    $(".abrir_agenda").find("input[name='crear_agenda_especialistas_txt']").val(esp_txt);
-    $(".abrir_agenda").find("input[name='crear_agenda_especialistas']").val(esp);
-
-    // $.ajax({
-    //     url: base_url+"/main/get_especialidades_json/"+esp,
-    //     dataType: 'json',
-    //     success:function(response)
-    //     {
-    //         if (response != null && response[0].especialidad != null) {
-    //             data = JSON.parse(response[0].especialidad);
-    //             $.each( data, function(key,val) {
-    //                 $(".abrir_agenda").find("select[name='crear_agenda_especialidad']").append($('<option>', {
-    //                         value: val,
-    //                         text : val
-    //                 }));
-    //             });
-    //         }
-    //     }
-    // });
+  $(".abrir_agenda").css('display','block');
 
 }
 
@@ -868,7 +851,7 @@ function crear_agenda() {
 
     $.ajax({
         type: "POST",
-        url: base_url+"/main/crear_agenda/",
+        url: base_url+"/main/crear_agenda_extra/",
         data: form.serialize(),
         success:function(response)
         {

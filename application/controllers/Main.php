@@ -580,27 +580,36 @@ class Main extends CI_Controller {
 
 	}
 
-	function crear_agenda()
+	function crear_agenda_extra()
 	{
-		$extra = $this->main_model->get_data("agendas", null, array('usuario' => $_POST['crear_agenda_especialistas']))[0];
-		$array = (array) json_decode($extra->agenda_extra);
 
-		$agenda = array(
-			"hora_desde" => $_POST['crear_agenda_hora_desde'],
-			"hora_hasta" => $_POST['crear_agenda_hora_hasta'],
-			"duracion" => $_POST['crear_agenda_duracion']
-		);
+		$agenda[1] = array();
+		$agenda[2] = array();
+
+		if ($_POST['crear_agenda_hora_desde_man'] != "" && $_POST['crear_agenda_hora_hasta_man'] != "") {
+			$agenda[1] = array(
+				"desde" => $_POST['crear_agenda_hora_desde_man'],
+				"hasta" => $_POST['crear_agenda_hora_hasta_man']
+			);
+		}
+
+		if ($_POST['crear_agenda_hora_desde_tar'] != "" && $_POST['crear_agenda_hora_hasta_tar'] != "") {
+			$agenda[2] = array(
+				"desde" => $_POST['crear_agenda_hora_desde_tar'],
+				"hasta" => $_POST['crear_agenda_hora_hasta_tar']
+			);
+		}
 
 		$fecha = date('Y-m-d', strtotime($_POST['crear_agenda_fecha']));
 
-		$array[$fecha] = $agenda;
-
 		$data = array(
-			"usuario" => $_POST['crear_agenda_especialistas'],
-			"agenda" => json_encode($array)
+			"id_agenda" => $_POST['crear_agenda_id'],
+			"fecha" => $fecha,
+			"horarios" => json_encode($agenda),
+			"duracion" => $_POST['crear_agenda_duracion']
 		);
 
-		$this->main_model->crear_agenda($data);
+		$this->main_model->crear_agenda_extra($data);
 	}
 
 	function amr_test()

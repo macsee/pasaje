@@ -200,76 +200,88 @@
             </div>
         </div>
 
-        <div class = "panel-body" style = "padding:0px;overflow:inherit;margin-bottom:30px">
-
-            <!-- <div class="row cabecera hidden-xs hidden-sm">
-                <div class="col-md-2 cell_header">
-                    Hora
-                </div>
-                <div class="col-md-4 cell_header">
-                    Paciente
-                </div>
-                <div class="col-md-3 cell_header">
-                    Especialidad
-                </div>
-                <div class="col-md-2 cell_header">
-                    Especialista
-                </div>
-                <div class="col-md-1 cell_header">
-
-                </div>
-            </div> -->
+        <!-- <div class = "panel-body" style = "padding:0px;overflow:inherit;margin-bottom:30px"> -->
+        <div style = "padding:0px;overflow:inherit;margin-bottom:30px">
 
             <div class="horarios">
-              <!-- ACA VA TODO EL CONTENIDO -->
+              <!-- ACA VAN TODOS LOS TURNOS Y HORARIOS -->
             </div>
 
-                <div class = "container-fluid abrir_agenda" style = "display:none">
-                <?php if ($is_admin) { ?>
-                    <h3>Crear Agenda</h3>
-                    <hr>
-                    <form method = "post" class="row form-horizontal">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">Especialista</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control" name = "crear_agenda_especialistas_txt" readonly required autocomplete="off">
-                                    <input type="hidden" class="form-control" name = "crear_agenda_especialistas">
-                                    <input type="hidden" class="form-control" name = "crear_agenda_fecha">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-1 control-label">Desde</label>
-                                <div class="col-sm-2">
-                                    <input type="time" class="form-control" name = "crear_agenda_hora_desde" required>
-                                </div>
-                                <label class="col-sm-1 control-label">Hasta</label>
-                                <div class="col-sm-2">
-                                    <input type="time" class="form-control" name = "crear_agenda_hora_hasta" required=>
-                                </div>
-                                <label class="col-md-1 control-label">Duración</label>
-                                <div class="col-md-2">
-                                    <select class="form-control" id = "crear_agenda_duracion" name = "crear_agenda_duracion" required>
-                                        <option value="30">30min</option>
-                                        <option value="40">40min</option>
-                                        <option value="60">60min</option>
-                                        <option value="90">90min</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="form-group">
-                                <div class="col-sm-offset-10 col-sm-2">
-                                    <button onclick="crear_agenda(event)" class="btn btn-default">Aceptar</button>
-                                </div>
+            <div class = "panel panel-default abrir_agenda" style = "display:none;padding:10px">
+            <?php if ($is_admin) { ?>
+                <h3>Crear Agenda</h3>
+                <hr>
+                <form method = "post" class="row form-horizontal">
+                    <div class="col-sm-4" style = "margin-top:30px">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Agenda</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name = "crear_agenda_id_txt" readonly autocomplete="off">
+                                <input type="hidden" class="form-control" name = "crear_agenda_id">
+                                <input type="hidden" class="form-control" name = "crear_agenda_fecha">
                             </div>
                         </div>
+                        <div class="form-group">
+                          <label class="col-md-4 control-label">Duración</label>
+                          <div class="col-md-8">
+                              <select class="form-control" id = "crear_agenda_duracion" name = "crear_agenda_duracion" required>
+                                  <option value="30">30min</option>
+                                  <option value="40">40min</option>
+                                  <option value="60">60min</option>
+                                  <option value="90">90min</option>
+                              </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-8">
+                            <div class="col-sm-6" style = "margin-bottom:15px">
+                              <div class="col-sm-12" style = "text-align:center;margin-bottom:10px;font-weight:500">
+                                Turno Mañana
+                              </div>
+                              <div class="form-group">
+                                <label class="col-sm-3 control-label">Desde</label>
+                                <div class="col-sm-9">
+                                    <input type="time" class="form-control" name = "crear_agenda_hora_desde_man" required>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="col-sm-3 control-label">Hasta</label>
+                                <div class="col-sm-9">
+                                    <input type="time" class="form-control" name = "crear_agenda_hora_hasta_man" required=>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-6">
+                              <div class="col-sm-12" style = "text-align:center;margin-bottom:10px;font-weight:500">
+                                Turno Tarde
+                              </div>
+                              <div class="form-group">
+                                <label class="col-sm-3 control-label">Desde</label>
+                                <div class="col-sm-9">
+                                    <input type="time" class="form-control" name = "crear_agenda_hora_desde_tar" required>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="col-sm-3 control-label">Hasta</label>
+                                <div class="col-sm-9">
+                                    <input type="time" class="form-control" name = "crear_agenda_hora_hasta_tar" required=>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <hr>
+                          <div class="col-sm-offset-10 col-sm-2">
+                              <button onclick="crear_agenda(event)" class="btn btn-default">Aceptar</button>
+                          </div>
+                        </div>
                     </form>
-                    <?php }
-                    else {
-                        echo '<h3>No hay agenda abierta para este día.</h3>';
-                    }?>
-                </div>
+                <?php }
+                else {
+                    echo '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
+                }?>
+            </div>
+
         </div>
 
     </div>

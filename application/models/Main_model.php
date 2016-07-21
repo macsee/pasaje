@@ -504,8 +504,8 @@ class Main_model extends CI_Model {
 		return $this->main_model->get_data('usuarios', array('funciones' => $rol), array('usuario' => $id)) != null;
 	}
 
-	public function crear_agenda($data)
+	public function crear_agenda_extra($data)
 	{
-		$this->db->update('agendas', array('agenda_extra' => $data['agenda']), array('usuario' => $data['usuario']));
+		$this->db->insert('agendas_extras', $data);
 	}
 }
