@@ -75,6 +75,8 @@ class Main extends CI_Controller {
 				$data['especialistas'] = $this->main_model->get_data('agendas');
 		}
 
+		$data["agenda_extra"] = $this->load->view('agenda_extra_view', '', true);
+
 		// if ($this->main_model->rol($this->session->userdata('usuario'),"especialista")) {
 		// 	$data['especialistas'] = null;
 		// 	$data['nom_especialista_sel'] = $this->session->userdata('apellido').', '.$this->session->userdata('nombre')[0];
@@ -104,11 +106,12 @@ class Main extends CI_Controller {
 			$this->load->view('navbar', $navbar);
 			$this->load->view('agenda_view',$data);
 			$this->load->view('modal_turno');
-			$this->load->view('modal_eliminar_turno');
+			$this->load->view('modal_confirmacion');
 			$this->load->view('modal_datos');
 			$this->load->view('modal_cambiar_turno');
 			$this->load->view('modal_notas', $data);
-			$this->load->view('modal_error_notas');
+			$this->load->view('modal_error');
+			$this->load->view('modal_agenda_extra',$data);
 		$this->load->view('footer');
 	}
 
@@ -503,7 +506,8 @@ class Main extends CI_Controller {
 		$usr = $this->session->userdata('usuario');
 
 		if ($id == "todas") {
-			$where = "fecha = '".$fecha."' AND (destinatario = 'todos' OR destinatario = '".$usr."' OR usuario = '".$usr."')";
+			// $where = "fecha = '".$fecha."' AND (destinatario = 'todos' OR destinatario = '".$usr."' OR usuario = '".$usr."')";
+			$where = array("fecha" => $fecha);
 			$notas = $this->main_model->get_data('notas', null, $where, array("last_update","desc"));
 
 			if ($notas != null) {
@@ -610,6 +614,23 @@ class Main extends CI_Controller {
 		);
 
 		$this->main_model->crear_agenda_extra($data);
+	}
+
+	public function get_agenda_extra($agenda, $fecha)
+	{
+		return $this->main_model->get_agenda_extra($agenda, $fecha);
+	}
+
+	public function get_agenda_extra_json($agenda, $fecha)
+	{
+		echo json_encode($this->get_agenda_extra($agenda, $fecha));
+	}
+
+	public function del_agenda_extra()
+	{
+		$data['agenda'] = $_POST['agenda'];
+		$data['fecha'] = $_POST['fecha'];
+		$this->main_model->del_agenda_extra($data);
 	}
 
 	function amr_test()

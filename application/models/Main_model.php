@@ -100,8 +100,8 @@ class Main_model extends CI_Model {
 		//
 		// }
 
-		// if (count($agenda) == 1)
-		// 	$this->db->where(array("agenda" => $agenda[0]->id_agenda));
+		if (count($agenda) == 1)
+			$this->db->where(array("agenda" => $agenda[0]->id_agenda));
 
 		$this->db->where(array("YEAR(fecha)" => $year, "MONTH(fecha)" => $month));
 		$this->db->order_by("hora","asc");
@@ -508,4 +508,15 @@ class Main_model extends CI_Model {
 	{
 		$this->db->insert('agendas_extras', $data);
 	}
+
+	public function get_agenda_extra($agenda, $fecha)
+	{
+		return $this->main_model->get_data('agendas_extras', null, array('id_agenda' => $agenda, 'fecha' => $fecha));
+	}
+
+	public function del_agenda_extra($data)
+	{
+		$this->db->delete("agendas_extras", array('id_agenda' => $data['agenda'], 'fecha' => $data['fecha']));
+	}
+
 }

@@ -77,8 +77,13 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Hora</label>
                                 <div class="col-sm-5">
-                                    <input type="hidden" class="form-control" name = "fecha" readonly>
-                                    <input type="time" class="form-control" name = "hora" readonly>
+                                  <input type="hidden" class="form-control" name = "fecha">
+                                  <div class='input-group date' id='hora_turno'>
+                                    <input type="text" id='hora_turno' class="form-control" name = "hora">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                  </div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -136,6 +141,12 @@
 <script type="text/javascript">
 
   $(document).ready(function () {
+
+      $('#hora_turno').datetimepicker({
+          format: 'HH:mm',
+          defaultDate:new Date()
+          // use24hours: true,
+      });
       $( "#apellido" ).autocomplete({
           source: function( request, response ) {
               $.ajax({

@@ -117,6 +117,7 @@
       font-size: 16px;
       font-weight: 400;
       font-size: 15px;
+      border-radius: 2px;
     }
 
     @media (max-width: 990px) {
@@ -149,17 +150,18 @@
     <div class="col-md-7 col-md-offset-1">
         <div class = "panel panel-default">
             <div class = "panel-body">
-                <div class = "col-md-4 col-xs-5 display_date" style = "padding:0px;padding-top:30px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px">
-                    <?php //echo $display_date;?>
-                </div>
-                <div class = "col-md-3 col-xs-7" style = "padding:0px;padding-top:22px;text-align:center">
-                    <input type="hidden" id = "usuario" name="usuario" value="<?php echo $usuario ?>">
-                    <input type="hidden" id = "is_admin" name="is_admin" value="<?php echo $is_admin ?>">
-                    <div class="btn-group" role="group">
-                        <a href="#" type="button" class="btn btn-default glyphicon glyphicon-chevron-left" onclick="return dia_anterior();"></a>
-                        <a href="#" type="button" class="btn btn-default glyphicon glyphicon-calendar" onclick="return dia_actual();"></a>
-                        <a href="#" type="button" class="btn btn-default glyphicon glyphicon-chevron-right" onclick="return dia_siguiente()";></a>
-                    </div>
+                <div class = "col-md-7 col-xs-12">
+                  <div class = "col-md-7 col-xs-5 display_date" style = "padding:0px;padding-top:10px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px"></div>
+                  <div class = "col-md-5 col-xs-7" style = "padding:0px;padding-top:5px;text-align:center">
+                      <input type="hidden" id = "usuario" name="usuario" value="<?php echo $usuario ?>">
+                      <input type="hidden" id = "is_admin" name="is_admin" value="<?php echo $is_admin ?>">
+                      <div class="btn-group" role="group">
+                          <a href="#" type="button" class="btn btn-default glyphicon glyphicon-chevron-left" onclick="return dia_anterior();"></a>
+                          <a href="#" type="button" class="btn btn-default glyphicon glyphicon-calendar" onclick="return dia_actual();"></a>
+                          <a href="#" type="button" class="btn btn-default glyphicon glyphicon-chevron-right" onclick="return dia_siguiente()";></a>
+                      </div>
+                  </div>
+                  <div class = "col-md-7 col-xs-12"></div>
                 </div>
                 <div class = "col-md-5 col-xs-12">
                     <div class = "col-md-5 col-xs-5" style = "padding-top:15px;">
@@ -172,7 +174,7 @@
                     </div>
 
                     <div class = "col-md-5 col-xs-5" style = "padding-top:20px;">
-                        <label class = "label-control">Especialista</label>
+                        <label class = "label-control">Agenda</label>
                     </div>
                     <div class = "col-md-7 col-xs-7" style = "padding-top:15px;">
                         <select class = "form-control" id = "especialistas">
@@ -208,78 +210,17 @@
             </div>
 
             <div class = "panel panel-default abrir_agenda" style = "display:none;padding:10px">
-            <?php if ($is_admin) { ?>
-                <h3>Crear Agenda</h3>
-                <hr>
-                <form method = "post" class="row form-horizontal">
-                    <div class="col-sm-4" style = "margin-top:30px">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Agenda</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" name = "crear_agenda_id_txt" readonly autocomplete="off">
-                                <input type="hidden" class="form-control" name = "crear_agenda_id">
-                                <input type="hidden" class="form-control" name = "crear_agenda_fecha">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="col-md-4 control-label">Duración</label>
-                          <div class="col-md-8">
-                              <select class="form-control" id = "crear_agenda_duracion" name = "crear_agenda_duracion" required>
-                                  <option value="30">30min</option>
-                                  <option value="40">40min</option>
-                                  <option value="60">60min</option>
-                                  <option value="90">90min</option>
-                              </select>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-8">
-                            <div class="col-sm-6" style = "margin-bottom:15px">
-                              <div class="col-sm-12" style = "text-align:center;margin-bottom:10px;font-weight:500">
-                                Turno Mañana
-                              </div>
-                              <div class="form-group">
-                                <label class="col-sm-3 control-label">Desde</label>
-                                <div class="col-sm-9">
-                                    <input type="time" class="form-control" name = "crear_agenda_hora_desde_man" required>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label class="col-sm-3 control-label">Hasta</label>
-                                <div class="col-sm-9">
-                                    <input type="time" class="form-control" name = "crear_agenda_hora_hasta_man" required=>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-sm-6">
-                              <div class="col-sm-12" style = "text-align:center;margin-bottom:10px;font-weight:500">
-                                Turno Tarde
-                              </div>
-                              <div class="form-group">
-                                <label class="col-sm-3 control-label">Desde</label>
-                                <div class="col-sm-9">
-                                    <input type="time" class="form-control" name = "crear_agenda_hora_desde_tar" required>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label class="col-sm-3 control-label">Hasta</label>
-                                <div class="col-sm-9">
-                                    <input type="time" class="form-control" name = "crear_agenda_hora_hasta_tar" required=>
-                                </div>
-                              </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                          <hr>
-                          <div class="col-sm-offset-10 col-sm-2">
-                              <button onclick="crear_agenda(event)" class="btn btn-default">Aceptar</button>
-                          </div>
-                        </div>
-                    </form>
-                <?php }
+              <?php
+                if ($is_admin) {
+                  echo '<h3>Crear Agenda</h3>';
+                  echo '<hr>';
+                  echo $agenda_extra;
+                }
                 else {
-                    echo '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
-                }?>
+                  echo '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
+                }
+              ?>
+
             </div>
 
         </div>

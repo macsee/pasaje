@@ -124,6 +124,7 @@ function get_turnos_mes(fecha)
       dataType: 'json',
       success:function(response)
       {
+        // console.log(response);
         var bloqueados = [];
         var t_mes = [];
         var h_mes = [];
@@ -266,22 +267,37 @@ function show_turnos(fecha) {
 
 function make_header_horarios() {
   html = '<div class="row cabecera hidden-xs hidden-sm">'
-      +'<div class="col-md-12 cell_header">Hora</div>'
+      +'<div class="col-md-11 cell_header">Hora</div>'
+      +'<div class="col-md-1 cell_header" style = "overflow:visible;text-align:right">'
+        +'<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" style = "color:white"><span class="glyphicon glyphicon-chevron-down"></span></a>'
+        +'<ul class="dropdown-menu pull-right" style = "margin-top:10px">'
+            +'<li><a href="#" onclick = "return nuevo_turno(\'\')" data-toggle="modal">Agregar Sobreturno</a></li>'
+            +'<li><a href="#" onclick = "return editar_agenda_extra_item(\'\')" data-toggle="modal">Editar Agenda Extra</a></li>'
+            +'<li><a href="#" onclick = "return eliminar_agenda_extra_item(\'\')" data-toggle="modal">Eliminar Agenda Extra</a></li>'
+        +'</ul>'
+      +'</div>'
   +'</div>';
 
   return html;
 }
 
 function make_header_turnos() {
-  html = '<div class="row cabecera hidden-xs hidden-sm">'
-      +'<div class="col-md-2 cell_header">Hora</div>'
-      +'<div class="col-md-4 cell_header">Paciente</div>'
-      +'<div class="col-md-3 cell_header">Especialidad</div>'
-      +'<div class="col-md-2 cell_header">Especialista</div>'
-      // <div class="col-md-1 cell_header">
-      //
-      // </div>
-  +'</div>';
+  var lala = "hola";
+
+  html =  '<div class="row cabecera hidden-xs hidden-sm">'
+            +'<div class="col-md-2 cell_header">Hora</div>'
+            +'<div class="col-md-4 cell_header">Paciente</div>'
+            +'<div class="col-md-3 cell_header">Especialidad</div>'
+            +'<div class="col-md-2 cell_header">Especialista</div>'
+            +'<div class="col-md-1 cell_header" style = "overflow:visible;text-align:right">'
+              +'<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" style = "color:white"><span class="glyphicon glyphicon-chevron-down"></span></a>'
+              +'<ul class="dropdown-menu pull-right" style = "margin-top:10px">'
+                  +'<li><a href="#" onclick = "return nuevo_turno(\'\')" data-toggle="modal">Agregar Sobreturno</a></li>'
+                  +'<li><a href="#" onclick = "return editar_agenda_extra_item(\'\')" data-toggle="modal">Editar Agenda Extra</a></li>'
+                  +'<li><a href="#" onclick = "return eliminar_agenda_extra_item(\'\')" data-toggle="modal">Eliminar Agenda Extra</a></li>'
+              +'</ul>'
+            +'</div>'
+          +'</div>';
 
   return html;
 }
@@ -412,11 +428,27 @@ $("#especialistas").change(function () {
 function nuevo_turno(hora) {
 
     esp = $("#especialistas").val();
-    fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
+
+    if (esp == "todos") {
+      return mensaje_error('Se debe seleccionar una agenda primero');
+    }
+
+    fecha = format_date(FECHA_ACTUAL); // FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
 
     clear_fields($("#modal_turno"));
 
     $("#modal_turno").find("#titulo").html("Nuevo Turno");
+
+    if (hora == "") {
+      $("#modal_turno").find("#hora_turno").css("pointer-events", "");
+      $("#modal_turno").find("input[name='hora']").attr('readonly', false);
+    }
+    else {
+      $("#modal_turno").find("input[name='hora']").attr('readonly',true);
+      $("#modal_turno").find("#hora_turno").css("pointer-events", "none");
+    }
+
+
     $("#modal_turno").find("input[name='hora']").val(hora);
     $("#modal_turno").find("input[name='fecha']").val(fecha);
     $("#modal_turno").find("input[name='id_agenda']").val(esp);
@@ -457,31 +489,40 @@ function ok_nuevo_turno(event) {
     });
 }
 
-function eliminar_turno_item(id)
+function confirmar(titulo, callback, form)
 {
-    $("#modal_eliminar_turno").find("input[name='id_turno']").val(id);
-
-    $("#modal_eliminar_turno").modal({
-        show: true
-    });
+  $("#modal_confirmacion").find("#titulo").html(titulo);
+  $("#modal_confirmacion").find("#aceptar").attr('onclick','ok_confirmar("'+callback+'","'+form+'")');
+  $("#modal_confirmacion").modal({
+      show: true
+  });
 }
 
-function ok_eliminar_turno(event) {
+function ok_confirmar(callback, form_id)
+{
+  var form = $("#"+form_id);
 
-    event.preventDefault();
-    form = $("#del_turno_form");
+  $.ajax({
+      type: "POST",
+      url: base_url+"/main/"+callback,
+      data: form.serialize(),
+      success:function(response)
+      {
+        get_turnos_mes(FECHA_ACTUAL);
+        $("#modal_confirmacion").modal('hide');
+      }
+  });
 
-    $.ajax({
-        type: "POST",
-        url: base_url+"/main/del_turno/",
-        data: form.serialize(),
-        success:function(response)
-        {
-            get_turnos_mes(FECHA_ACTUAL);
-            $("#modal_eliminar_turno").modal('hide');
+}
 
-        }
-    });
+function eliminar_turno_item(id)
+{
+  $("#modal_confirmacion").find("#form_content").html(
+    '<form id = "eliminar_turno_'+id+'">'
+      +'<input type="text" name = "id_turno" value="'+id+'">'
+    +'</form>');
+
+  confirmar("¿Eliminar Turno?", "del_turno", "eliminar_turno_"+id);
 }
 
 function modificar_datos_item(id)
@@ -579,7 +620,7 @@ function cambiar_turno_item(id) {
 
 function cambiar_turno(hora) {
 
-    fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
+    fecha = format_date(FECHA_ACTUAL); //FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
 
     $.ajax({
         type: "POST",
@@ -627,7 +668,7 @@ function proximo_turno_item(id) {
 function proximo_turno(hora) {
 
     esp = $("#especialistas").val();
-    fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
+    fecha = format_date(FECHA_ACTUAL); //FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
 
     clear_fields($("#modal_turno"));
 
@@ -747,17 +788,15 @@ function get_notas() {
         {
 
             if (response != null) {
-                notas = '<ul style = "margin-left:-25px">';
 
                 $.each( response, function(key,val) {
-
-                    if (val.destinatario == user_logged || val.destinatario == "todos" || is_admin) {
+                    if (val.destinatario == user_logged || val.destinatario == "todos" || val.usuario == user_logged || is_admin == 1) {
 
                         if (user_logged == val.usuario) {
                             var onclick = "return editar_nota('"+val.id_nota+"')";
                         }
                         else {
-                            var onclick = 'return error_nota()';
+                            var onclick = "return mensaje_error('No tiene permiso para editar esta nota')";
                         }
 
                         notas +=
@@ -768,7 +807,14 @@ function get_notas() {
                     }
 
                 });
-                notas += '</ul>';
+
+                if (notas != "") {
+                    notas = '<ul style = "margin-left:-25px">'+notas+'</ul>';
+                }
+                else {
+                  notas = '<i>No hay notas para la fecha</i>';
+                }
+
             }
             else {
                 notas = '<i>No hay notas para la fecha</i>';
@@ -818,8 +864,9 @@ function eliminar_nota(event) {
 
 }
 
-function error_nota() {
-    $("#modal_error_notas").modal({
+function mensaje_error(msg) {
+    $("#modal_error").find("#mensaje_error").html(msg);
+    $("#modal_error").modal({
         show: true
     });
 }
@@ -849,15 +896,89 @@ function crear_agenda() {
     event.preventDefault();
     form = $(".abrir_agenda").find('form');
 
+    console.log(form.serialize());
+    // $.ajax({
+    //     type: "POST",
+    //     url: base_url+"/main/crear_agenda_extra/",
+    //     data: form.serialize(),
+    //     success:function(response)
+    //     {
+    //       get_turnos_mes(FECHA_ACTUAL);
+    //     }
+    // });
+
+}
+
+function editar_agenda_extra_item() {
+
+  esp = $("#especialistas").val();
+  esp_txt = $("#especialistas option:selected").text();
+
+  if (esp == "todos") {
+    return mensaje_error('Seleccionar una agenda primero');
+  }
+
+  fecha = format_date(FECHA_ACTUAL);
+
+  if (HORARIOS_EXTRA.hasOwnProperty(fecha)) {
+
     $.ajax({
         type: "POST",
-        url: base_url+"/main/crear_agenda_extra/",
-        data: form.serialize(),
+        url: base_url+"/main/get_agenda_extra_json/"+esp+"/"+fecha,
+        dataType: "json",
         success:function(response)
         {
-            get_turnos_mes(FECHA_ACTUAL);
-            // get_notas();
+          console.log(fecha);
+          var horarios = JSON.parse(response[0].horarios);
+
+          $("#modal_agenda_extra").find("#crear_btn").css('visibility','hidden');
+          $("#modal_agenda_extra").find("#aceptar_btn").css('visibility','visible');
+          $("#modal_agenda_extra").find("#cancelar_btn").css('visibility','visible');
+
+          $("#modal_agenda_extra").find("input[name='crear_agenda_fecha']").val(fecha);
+          $("#modal_agenda_extra").find("input[name='crear_agenda_id_txt']").val(esp_txt);
+          $("#modal_agenda_extra").find("input[name='crear_agenda_id']").val(esp);
+
+          $("#modal_agenda_extra").find("input[name='crear_agenda_duracion']").val(response[0].duracion);
+          $("#modal_agenda_extra").find("input[name='desde_man']").val(horarios[1].hasOwnProperty("desde") ? horarios[1].desde : "");
+          $("#modal_agenda_extra").find("input[name='hasta_man']").val(horarios[1].hasOwnProperty("hasta") ? horarios[1].hasta : "");
+          $("#modal_agenda_extra").find("input[name='desde_tar']").val(horarios[2].hasOwnProperty("desde") ? horarios[2].desde : "");
+          $("#modal_agenda_extra").find("input[name='hasta_tar']").val(horarios[2].hasOwnProperty("hasta") ? horarios[2].hasta : "");
+
+          $("#modal_agenda_extra").modal({
+              show: true
+          });
         }
     });
+  }
+  else {
+    return mensaje_error('Seleccionar una fecha que haya sido designada como agenda extra');
+  }
+
+
+}
+
+function eliminar_agenda_extra_item() {
+
+  esp = $("#especialistas").val();
+  esp_txt = $("#especialistas option:selected").text();
+
+  if (esp == "todos") {
+    return mensaje_error('Se debe seleccionar una agenda primero');
+  }
+
+  fecha = format_date(FECHA_ACTUAL);
+
+  if (HORARIOS_EXTRA.hasOwnProperty(fecha)) {
+    $("#modal_confirmacion").find("#form_content").html(
+      '<form id = "eliminar_agenda_extra_'+esp+'" style = "display:none">'
+        +'<input type="text" name = "fecha" value="'+fecha+'">'
+        +'<input type="text" name = "agenda" value="'+esp+'">'
+      +'</form>');
+    confirmar("¿Eliminar Agenda Extra?", "del_agenda_extra", "eliminar_agenda_extra_"+esp);
+  }
+  else {
+    return mensaje_error('Seleccionar una fecha que haya sido designada como agenda extra');
+  }
 
 }
