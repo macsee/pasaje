@@ -338,13 +338,15 @@ class Main_model extends CI_Model {
 						$horarios_man = array();
 						$horarios_tar = array();
 
-						$desde_man = !isset($hora->{1}->desde) ? 0 : strtotime($hora->{1}->desde);
-						$hasta_man = !isset($hora->{1}->hasta) ? 0 : strtotime($hora->{1}->hasta);
+
+
+						$desde_man = $hora->{1}->desde == "" ? 0 : strtotime($hora->{1}->desde);
+						$hasta_man = $hora->{1}->hasta == "" ? 0 : strtotime($hora->{1}->hasta);
 						$diff = abs($hasta_man - $desde_man)/60;
 						$cant_turnos_man = $diff/$duracion;
 
-						$desde_tar = !isset($hora->{2}->desde) ? 0 : strtotime($hora->{2}->desde);
-						$hasta_tar = !isset($hora->{2}->hasta) ? 0 : strtotime($hora->{2}->hasta);
+						$desde_tar = $hora->{2}->desde == "" ? 0 : strtotime($hora->{2}->desde);
+						$hasta_tar = $hora->{2}->hasta == "" ? 0 : strtotime($hora->{2}->hasta);
 						$diff = abs($hasta_tar - $desde_tar)/60;
 						$cant_turnos_tar = $diff/$duracion;
 
@@ -393,13 +395,13 @@ class Main_model extends CI_Model {
 					$horarios_man = array();
 					$horarios_tar = array();
 
-					$desde_man = !isset($horas->{1}->desde) ? 0 : strtotime($horas->{1}->desde);
-					$hasta_man = !isset($horas->{1}->hasta) ? 0 : strtotime($horas->{1}->hasta);
+					$desde_man = $horas->{1}->desde == "" ? 0 : strtotime($horas->{1}->desde);
+					$hasta_man = $horas->{1}->hasta == "" ? 0 : strtotime($horas->{1}->hasta);
 					$diff = abs($hasta_man - $desde_man)/60;
 					$cant_turnos_man = $diff/$duracion;
 
-					$desde_tar = !isset($horas->{2}->desde) ? 0 : strtotime($horas->{2}->desde);
-					$hasta_tar = !isset($horas->{2}->hasta) ? 0 : strtotime($horas->{2}->hasta);
+					$desde_tar = $horas->{2}->desde == "" ? 0 : strtotime($horas->{2}->desde);
+					$hasta_tar = $horas->{2}->hasta == "" ? 0 : strtotime($horas->{2}->hasta);
 					$diff = abs($hasta_tar - $desde_tar)/60;
 					$cant_turnos_tar = $diff/$duracion;
 
@@ -504,9 +506,16 @@ class Main_model extends CI_Model {
 		return $this->main_model->get_data('usuarios', array('funciones' => $rol), array('usuario' => $id)) != null;
 	}
 
-	public function crear_agenda_extra($data)
+	public function am_agenda_extra($data)
 	{
-		$this->db->insert('agendas_extras', $data);
+
+		$query = "	INSERT INTO agendas_extras (id, id_agenda, fecha, horarios, duracion, usuario)
+					VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	horarios 			= VALUES(horarios),
+																												usuario 			= VALUES(usuario)";
+
+		$this->db->query($query, $data);
+
+		// $this->db->insert('agendas_extras', $data);
 	}
 
 	public function get_agenda_extra($agenda, $fecha)
@@ -517,6 +526,7 @@ class Main_model extends CI_Model {
 	public function del_agenda_extra($data)
 	{
 		$this->db->delete("agendas_extras", array('id_agenda' => $data['agenda'], 'fecha' => $data['fecha']));
+		$this->db->delete("turnos", array('agenda' => $data['agenda'], 'fecha' => $data['fecha']));
 	}
 
 }

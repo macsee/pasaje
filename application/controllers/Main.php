@@ -584,36 +584,50 @@ class Main extends CI_Controller {
 
 	}
 
-	function crear_agenda_extra()
+	function am_agenda_extra()
 	{
 
-		$agenda[1] = array();
-		$agenda[2] = array();
+		// $agenda[1] = array();
+		// $agenda[2] = array();
 
-		if ($_POST['crear_agenda_hora_desde_man'] != "" && $_POST['crear_agenda_hora_hasta_man'] != "") {
+		if ($_POST['crear_agenda_desde_man_hora'] != "" && $_POST['crear_agenda_hasta_man_min'] != "" && $_POST['crear_agenda_hasta_man_hora'] != "" && $_POST['crear_agenda_hasta_man_min'] != "") {
 			$agenda[1] = array(
-				"desde" => $_POST['crear_agenda_hora_desde_man'],
-				"hasta" => $_POST['crear_agenda_hora_hasta_man']
+				"desde" => $_POST['crear_agenda_desde_man_hora'].":".$_POST['crear_agenda_desde_man_min'],
+				"hasta" => $_POST['crear_agenda_hasta_man_hora'].":".$_POST['crear_agenda_hasta_man_min']
+			);
+		}
+		else {
+			$agenda[1] = array(
+				"desde" => "",
+				"hasta" => ""
 			);
 		}
 
-		if ($_POST['crear_agenda_hora_desde_tar'] != "" && $_POST['crear_agenda_hora_hasta_tar'] != "") {
+		if ($_POST['crear_agenda_desde_tar_hora'] != "" && $_POST['crear_agenda_hasta_tar_min'] != "" && $_POST['crear_agenda_hasta_tar_hora'] != "" && $_POST['crear_agenda_hasta_tar_min'] != "") {
 			$agenda[2] = array(
-				"desde" => $_POST['crear_agenda_hora_desde_tar'],
-				"hasta" => $_POST['crear_agenda_hora_hasta_tar']
+				"desde" => $_POST['crear_agenda_desde_tar_hora'].":".$_POST['crear_agenda_desde_tar_min'],
+				"hasta" => $_POST['crear_agenda_hasta_tar_hora'].":".$_POST['crear_agenda_desde_tar_min']
+			);
+		}
+		else {
+			$agenda[2] = array(
+				"desde" => "",
+				"hasta" => ""
 			);
 		}
 
 		$fecha = date('Y-m-d', strtotime($_POST['crear_agenda_fecha']));
 
 		$data = array(
+			"id" 				=> $_POST['crear_id'],
 			"id_agenda" => $_POST['crear_agenda_id'],
-			"fecha" => $fecha,
-			"horarios" => json_encode($agenda),
-			"duracion" => $_POST['crear_agenda_duracion']
+			"fecha" 		=> $fecha,
+			"horarios" 	=> json_encode($agenda),
+			"duracion" 	=> $_POST['crear_agenda_duracion'],
+			"usuario"		=> $this->session->userdata('usuario')
 		);
 
-		$this->main_model->crear_agenda_extra($data);
+		$this->main_model->am_agenda_extra($data);
 	}
 
 	public function get_agenda_extra($agenda, $fecha)

@@ -141,7 +141,7 @@ function get_turnos_mes(fecha)
 }
 
 function crear_calendario(fecha, h_mes, t_mes, h_extra, bloqueados) {
-
+  // console.log(h_extra);
   $('#datepicker').datepicker('remove');
 
   $('#datepicker').datepicker({
@@ -213,7 +213,7 @@ function show_turnos(fecha) {
 
     get_notas();
     $(".horarios").empty();
-    $(".abrir_agenda").css('display','none');
+    $(".abrir_agenda").css('visibility','hidden');
 
     var esp = $("#especialistas").val();
 
@@ -871,6 +871,21 @@ function mensaje_error(msg) {
     });
 }
 
+function clear_agenda_extra(form) {
+  form.find("input[name='crear_agenda_fecha']").val("");
+  form.find("input[name='crear_agenda_id_txt']").val("");
+  form.find("input[name='crear_agenda_id']").val("");
+  form.find("select[name='crear_agenda_desde_man_hora']").val("");
+  form.find("select[name='crear_agenda_desde_man_min']").val("");
+  form.find("select[name='crear_agenda_hasta_man_hora']").val("");
+  form.find("select[name='crear_agenda_hasta_man_min']").val("");
+  form.find("select[name='crear_agenda_desde_tar_hora']").val("");
+  form.find("select[name='crear_agenda_desde_tar_min']").val("");
+  form.find("select[name='crear_agenda_hasta_tar_hora']").val("");
+  form.find("select[name='crear_agenda_hasta_tar_min']").val("");
+  form.find("select[name='crear_agenda_duracion']").val("30");
+}
+
 function abrir_agenda() {
   // $(".horarios").css('display','none');
 
@@ -878,34 +893,57 @@ function abrir_agenda() {
   esp_txt = $("#especialistas option:selected").text();
   esp = $("#especialistas").val();
 
-  $(".abrir_agenda").find("input[name='crear_agenda_fecha']").val(fecha);
-  $(".abrir_agenda").find("input[name='crear_agenda_id_txt']").val(esp_txt);
-  $(".abrir_agenda").find("input[name='crear_agenda_id']").val(esp);
-  $(".abrir_agenda").find("input[name='crear_agenda_hora_desde_man']").val("");
-  $(".abrir_agenda").find("input[name='crear_agenda_hora_hasta_man']").val("");
-  $(".abrir_agenda").find("input[name='crear_agenda_hora_desde_tar']").val("");
-  $(".abrir_agenda").find("input[name='crear_agenda_hora_hasta_tar']").val("");
-  $(".abrir_agenda").find("select[name='crear_agenda_duracion']").val("30");
+  form = $(".abrir_agenda").find('#form_agenda_extra');
 
-  $(".abrir_agenda").css('display','block');
+  clear_agenda_extra(form);
+
+  form.find("input[name='crear_agenda_fecha']").val(fecha);
+  form.find("input[name='crear_agenda_id_txt']").val(esp_txt);
+  form.find("input[name='crear_agenda_id']").val(esp);
+  // form.find("input[name='crear_agenda_hora_desde_man']").val("");
+  // form.find("input[name='crear_agenda_hora_hasta_man']").val("");
+  // form.find("input[name='crear_agenda_hora_desde_tar']").val("");
+  // form.find("input[name='crear_agenda_hora_hasta_tar']").val("");
+  // form.find("select[name='crear_agenda_duracion']").val("30");
+
+  $(".abrir_agenda").css('visibility','visible');
 
 }
 
 function crear_agenda() {
 
     event.preventDefault();
-    form = $(".abrir_agenda").find('form');
+    form = $(".abrir_agenda").find('#form_agenda_extra');
 
     console.log(form.serialize());
-    // $.ajax({
-    //     type: "POST",
-    //     url: base_url+"/main/crear_agenda_extra/",
-    //     data: form.serialize(),
-    //     success:function(response)
-    //     {
-    //       get_turnos_mes(FECHA_ACTUAL);
-    //     }
-    // });
+    $.ajax({
+        type: "POST",
+        url: base_url+"/main/am_agenda_extra/",
+        data: form.serialize(),
+        success:function(response)
+        {
+          get_turnos_mes(FECHA_ACTUAL);
+        }
+    });
+
+}
+
+function editar_agenda() {
+
+    event.preventDefault();
+    form = $("#modal_agenda_extra").find('#form_agenda_extra');
+
+    // console.log(form.serialize());
+    $.ajax({
+        type: "POST",
+        url: base_url+"/main/am_agenda_extra/",
+        data: form.serialize(),
+        success:function(response)
+        {
+          get_turnos_mes(FECHA_ACTUAL);
+          $("#modal_agenda_extra").modal('hide');
+        }
+    });
 
 }
 
@@ -928,22 +966,79 @@ function editar_agenda_extra_item() {
         dataType: "json",
         success:function(response)
         {
-          console.log(fecha);
           var horarios = JSON.parse(response[0].horarios);
 
-          $("#modal_agenda_extra").find("#crear_btn").css('visibility','hidden');
-          $("#modal_agenda_extra").find("#aceptar_btn").css('visibility','visible');
-          $("#modal_agenda_extra").find("#cancelar_btn").css('visibility','visible');
+          form = $("#modal_agenda_extra").find('#form_agenda_extra');
 
-          $("#modal_agenda_extra").find("input[name='crear_agenda_fecha']").val(fecha);
-          $("#modal_agenda_extra").find("input[name='crear_agenda_id_txt']").val(esp_txt);
-          $("#modal_agenda_extra").find("input[name='crear_agenda_id']").val(esp);
+          form.find("#crear_btn").css('visibility','hidden');
+          form.find("#guardar_btn").css('visibility','visible');
+          form.find("#cancelar_btn").css('visibility','visible');
 
-          $("#modal_agenda_extra").find("input[name='crear_agenda_duracion']").val(response[0].duracion);
-          $("#modal_agenda_extra").find("input[name='desde_man']").val(horarios[1].hasOwnProperty("desde") ? horarios[1].desde : "");
-          $("#modal_agenda_extra").find("input[name='hasta_man']").val(horarios[1].hasOwnProperty("hasta") ? horarios[1].hasta : "");
-          $("#modal_agenda_extra").find("input[name='desde_tar']").val(horarios[2].hasOwnProperty("desde") ? horarios[2].desde : "");
-          $("#modal_agenda_extra").find("input[name='hasta_tar']").val(horarios[2].hasOwnProperty("hasta") ? horarios[2].hasta : "");
+          clear_agenda_extra(form);
+
+          form.find("input[name='crear_id']").val(response[0].id);
+          form.find("input[name='crear_agenda_fecha']").val(fecha);
+          form.find("input[name='crear_agenda_id_txt']").val(esp_txt);
+          form.find("input[name='crear_agenda_id']").val(esp);
+
+          form.find("input[name='crear_agenda_duracion']").val(response[0].duracion);
+
+          var desde_man = horarios[1].desde.split(":");
+          var hasta_man = horarios[1].hasta.split(":");
+
+          var desde_tar = horarios[2].desde.split(":");
+          var hasta_tar = horarios[2].hasta.split(":");
+
+          if (desde_man.length > 1) {
+            desde_man_hora = desde_man[0];
+            desde_man_min = desde_man[1];
+          }
+          else {
+            desde_man_hora = "";
+            desde_man_min = "";
+          }
+
+          if (hasta_man.length > 1) {
+            hasta_man_hora = hasta_man[0];
+            hasta_man_min = hasta_man[1];
+          }
+          else {
+            hasta_man_hora = "";
+            hasta_man_min = "";
+          }
+
+          if (desde_tar.length > 1) {
+            desde_tar_hora = desde_tar[0];
+            desde_tar_min = desde_tar[1];
+          }
+          else {
+            desde_tar_hora = "";
+            desde_tar_min = "";
+          }
+
+          if (hasta_tar.length > 1) {
+            hasta_tar_hora = hasta_tar[0];
+            hasta_tar_min = hasta_tar[1];
+          }
+          else {
+            hasta_tar_hora = "";
+            hasta_tar_min = "";
+          }
+
+          form.find("select[name='crear_agenda_desde_man_hora']").val(desde_man_hora);
+          form.find("select[name='crear_agenda_desde_man_min']").val(desde_man_min);
+          form.find("select[name='crear_agenda_hasta_man_hora']").val(hasta_man_hora);
+          form.find("select[name='crear_agenda_hasta_man_min']").val(hasta_man_min);
+          form.find("select[name='crear_agenda_desde_tar_hora']").val(desde_tar_hora);
+          form.find("select[name='crear_agenda_desde_tar_min']").val(desde_tar_min);
+          form.find("select[name='crear_agenda_hasta_tar_hora']").val(hasta_tar_hora);
+          form.find("select[name='crear_agenda_hasta_tar_min']").val(hasta_tar_min);
+
+
+          // form.find("input[name='crear_agenda_desde_man']").val(horarios[1].desde);
+          // form.find("input[name='crear_agenda_hasta_man']").val(horarios[1].hasta);
+          // form.find("input[name='crear_agenda_desde_tar']").val(horarios[2].desde);
+          // form.find("input[name='crear_agenda_hasta_tar']").val(horarios[2].hasta);
 
           $("#modal_agenda_extra").modal({
               show: true

@@ -54,6 +54,7 @@
     .datepicker table tr td.today {
         /*background-color: #99D0FF;
         border-color: #99D0FF;*/
+        background-color: transparent;;
         font-weight: 700;
         font-size: 20px;
     }
@@ -65,10 +66,6 @@
 
     .datepicker table tr td.highlighted {
         background-color: #EAEAEA;
-    }
-
-    .datepicker table tr td.today {
-        background-color: transparent;
     }
 
     .fila-turno {
@@ -209,7 +206,7 @@
               <!-- ACA VAN TODOS LOS TURNOS Y HORARIOS -->
             </div>
 
-            <div class = "panel panel-default abrir_agenda" style = "display:none;padding:10px">
+            <div class = "panel panel-default abrir_agenda" style = "visibility:hidden;padding:10px">
               <?php
                 if ($is_admin) {
                   echo '<h3>Crear Agenda</h3>';
