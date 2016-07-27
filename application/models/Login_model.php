@@ -13,11 +13,11 @@ class Login_model extends CI_Model {
         $query = $this->db->get_where("usuarios", array('usuario' => $array['usuario'], 'password' => $array['password']));
 
         if ($query->num_rows()>0) {
-			return $query->row();
-		}
-		else {
-			return null;
-		}
+					return $query->row();
+				}
+				else {
+					return null;
+				}
     }
 
     public function change_pass($array)

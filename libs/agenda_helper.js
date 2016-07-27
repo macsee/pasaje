@@ -425,6 +425,25 @@ $("#especialistas").change(function () {
     get_turnos_mes(FECHA_ACTUAL);
 });
 
+$("#especialidades").change(function () {
+
+  var esp = $(this).val();
+
+  $.ajax({
+      url: base_url+"/main/get_agendas_by_esp_json/"+esp,
+      dataType: 'json',
+      success:function(response)
+      {
+        $("#especialistas").empty();
+        $("#especialistas").append($("<option />").val("todos").text("Todos"));
+        $.each( response, function(key, value) {
+            $("#especialistas").append($("<option />").val(value.id_agenda).text(value.nombre_agenda));
+        });
+      }
+  });
+    // get_turnos_mes(FECHA_ACTUAL);
+});
+
 function nuevo_turno(hora) {
 
     esp = $("#especialistas").val();

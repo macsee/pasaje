@@ -69,16 +69,18 @@ class Main extends CI_Controller {
 		$data['is_admin'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? 1 : 0;
 
 		if ($data['especialista_sel'] != "todos") {
-				$data['especialistas'] = $this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
+				$data['agendas'] = $this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
+				$data['especialidades'] = $this->get_especialidades($data['especialista_sel']);
 		}
 		else {
-				$data['especialistas'] = $this->main_model->get_data('agendas');
+				$data['agendas'] = $this->main_model->get_data('agendas');
+				$data['especialidades'] = $this->get_especialidades("todos");
 		}
 
 		$data["agenda_extra"] = $this->load->view('agenda_extra_view', '', true);
 
 		// if ($this->main_model->rol($this->session->userdata('usuario'),"especialista")) {
-		// 	$data['especialistas'] = null;
+		// 	$data['agendas'] = null;
 		// 	$data['nom_especialista_sel'] = $this->session->userdata('apellido').', '.$this->session->userdata('nombre')[0];
 		// }
 		// else
@@ -256,6 +258,41 @@ class Main extends CI_Controller {
 		echo json_encode($this->get_data_agenda($id));
 	}
 
+	public function get_especialidades($especialista)
+	{
+		$data = [];
+
+		if ($especialista == "todos")
+			$agendas = $this->main_model->get_data("agendas",null, null);
+		else
+			$agendas = $this->main_model->get_data("agendas",null, array('usuario' => $especialista));
+
+		foreach ($agendas as $key => $value) {
+			$data = array_merge($data, json_decode($value->especialidad));
+		}
+
+		return array_unique($data);
+	}
+
+	public function get_especialidades_json()
+	{
+		echo json_encode($this->get_especialidades());
+	}
+
+	public function get_agendas_by_esp($esp)
+	{
+		if ($esp == "todos")
+			$where = null;
+		else
+			$where = array('especialidad' => $esp);
+
+		return $this->main_model->get_data("agendas", $where, null);
+	}
+
+	public function get_agendas_by_esp_json($esp)
+	{
+		echo json_encode($this->get_agendas_by_esp($esp));
+	}
 	// Horarios de la agenda de un especialista para la fecha en cuestion. No se muestra la agenda de TODOS
 
 	public function get_horarios($id_agenda)

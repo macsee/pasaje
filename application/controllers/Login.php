@@ -53,10 +53,10 @@ class Login extends CI_Controller {
 		// echo json_encode($_POST);
 
 		$loginArray = array(
-			'usuario' 		=> $_POST['usuario'],
-			'nombre' 		=> $_POST['nombre'],
-			'apellido' 		=> $_POST['apellido'],
-			'is_logged' 	=> true,
+			'usuario' 			=> $_POST['usuario'],
+			'nombre' 				=> $_POST['nombre'],
+			'apellido' 			=> $_POST['apellido'],
+			'is_logged' 		=> true,
 			'especialista'	=> ($this->main_model->rol($_POST['usuario'],"especialista") ? $_POST['usuario'] : "todos"),
 			'especialidad' 	=> "",
 			'last_session' 	=> date('Y-m-d H:i')
