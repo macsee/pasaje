@@ -151,7 +151,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Hora</label>
                                 <div class="col-sm-9">
-                                    <input type="time" class="form-control" id = "hora" name = "hora" readonly>
+                                    <input type="text" class="form-control" id = "hora" name = "hora" readonly>
                                 </div>
                                 <!-- <div id = "hora" class="datos_turno col-sm-6"></div> -->
                             </div>

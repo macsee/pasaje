@@ -346,17 +346,19 @@ class Main extends CI_Controller {
 
 	}
 
-	public function get_data_turnos($year, $month, $id_agenda)
+	public function get_data_turnos($year, $month, $id_agenda, $esp="")
 	{
 
 		$resultado = [];
 
 		$array_dias = array('do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa');
 
-		$datos_agenda = $this->main_model->get_datos_agenda($id_agenda);
+		$datos_agenda = $this->main_model->get_datos_agenda($id_agenda, $esp);
 		$turnos = $this->main_model->get_turnos_mes($year, $month, $datos_agenda); // Turnos del mes para todos o para la agenda seleccionada
-		$horarios = $this->main_model->get_horarios($id_agenda);
-		$horarios_extra = $this->main_model->get_horarios_extra($year, $month, $id_agenda);
+		$horarios = $this->main_model->get_horarios($datos_agenda);
+		// $horarios = $this->main_model->get_horarios($id_agenda, $esp);
+		// $horarios_extra = $this->main_model->get_horarios_extra($year, $month, $id_agenda, $esp);
+		$horarios_extra = $this->main_model->get_horarios_extra($year, $month, $datos_agenda);
 
 		foreach ($turnos as $fecha => $datos) {
 
@@ -391,9 +393,9 @@ class Main extends CI_Controller {
 
 	}
 
-	public function get_data_turnos_json($year, $month, $id_agenda)
+	public function get_data_turnos_json($year, $month, $id_agenda, $esp="")
 	{
-			echo json_encode($this->get_data_turnos($year, $month, $id_agenda));
+			echo json_encode($this->get_data_turnos($year, $month, $id_agenda, $esp));
 	}
 
 /******************************************TURNOS******************************************/

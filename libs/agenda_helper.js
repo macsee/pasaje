@@ -117,10 +117,11 @@ function format_date(fecha) {
 
 function get_turnos_mes(fecha)
 {
-  var esp = $("#especialistas").val();
+  var agenda = $("#agendas").val();
+  var esp = $("#especialidades").val();
 
   $.ajax({
-      url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+esp,
+      url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+agenda+"/"+esp,
       dataType: 'json',
       success:function(response)
       {
@@ -215,7 +216,7 @@ function show_turnos(fecha) {
     $(".horarios").empty();
     $(".abrir_agenda").css('visibility','hidden');
 
-    var esp = $("#especialistas").val();
+    var esp = $("#agendas").val();
 
     var html = "";
     var primera_vez = "";
@@ -421,7 +422,7 @@ function fill_especialidades(esp, callback) {
 
 }
 
-$("#especialistas").change(function () {
+$("#agendas").change(function () {
     get_turnos_mes(FECHA_ACTUAL);
 });
 
@@ -434,11 +435,16 @@ $("#especialidades").change(function () {
       dataType: 'json',
       success:function(response)
       {
-        $("#especialistas").empty();
-        $("#especialistas").append($("<option />").val("todos").text("Todos"));
+        $("#agendas").empty();
+
+        if (response.length > 1)
+          $("#agendas").append($("<option />").val("todos").text("Todos"));
         $.each( response, function(key, value) {
-            $("#especialistas").append($("<option />").val(value.id_agenda).text(value.nombre_agenda));
+            $("#agendas").append($("<option />").val(value.id_agenda).text(value.nombre_agenda));
         });
+
+        get_turnos_mes(FECHA_ACTUAL);
+        //$("#agendas").val($("#agendas option:first").val());
       }
   });
     // get_turnos_mes(FECHA_ACTUAL);
@@ -446,7 +452,7 @@ $("#especialidades").change(function () {
 
 function nuevo_turno(hora) {
 
-    esp = $("#especialistas").val();
+    esp = $("#agendas").val();
 
     if (esp == "todos") {
       return mensaje_error('Se debe seleccionar una agenda primero');
@@ -459,19 +465,21 @@ function nuevo_turno(hora) {
     $("#modal_turno").find("#titulo").html("Nuevo Turno");
 
     if (hora == "") {
-      $("#modal_turno").find("#hora_turno").css("pointer-events", "");
-      $("#modal_turno").find("input[name='hora']").attr('readonly', false);
+      $("#modal_turno").find("select[name='hora_turno']").attr('disabled', false);
+      $("#modal_turno").find("select[name='min_turno']").attr('disabled', false);
     }
     else {
-      $("#modal_turno").find("input[name='hora']").attr('readonly',true);
-      $("#modal_turno").find("#hora_turno").css("pointer-events", "none");
+      $("#modal_turno").find("select[name='hora_turno']").attr('disabled', true);
+      $("#modal_turno").find("select[name='min_turno']").attr('disabled', true);
     }
 
-
+    var hora_split = hora.split(":");
     $("#modal_turno").find("input[name='hora']").val(hora);
+    $("#modal_turno").find("select[name='hora_turno']").val(hora_split[0]);
+    $("#modal_turno").find("select[name='min_turno']").val(hora_split[1]);
     $("#modal_turno").find("input[name='fecha']").val(fecha);
     $("#modal_turno").find("input[name='id_agenda']").val(esp);
-    $("#modal_turno").find("input[name='especialista']").val($("#especialistas option:selected").text());
+    $("#modal_turno").find("input[name='especialista']").val($("#agendas option:selected").text());
 
     fill_especialidades(esp, function(data){
 
@@ -490,6 +498,10 @@ function nuevo_turno(hora) {
 
 function ok_nuevo_turno(event) {
     event.preventDefault();
+
+    var hora = $("#modal_turno").find("select[name='hora_turno']").val()+":"+$("#modal_turno").find("select[name='min_turno']").val();
+
+    $("#modal_turno").find("input[name='hora']").val(hora);
 
     form = $("#modal_turno").find('form');
 
@@ -562,7 +574,7 @@ function modificar_datos_item(id)
             $("#modal_datos").find("#titulo").html("Confirmar Datos");
 
             $("#modal_datos").find("input[name='id_turno']").val(id);
-            $("#modal_datos").find("input[name='hora']").val(datos_turno.hora); //.substring(0,datos_turno.hora.length - 3)
+            $("#modal_datos").find("input[name='hora']").val(datos_turno.hora.substring(0,datos_turno.hora.length - 3)); //.substring(0,datos_turno.hora.length - 3)
             $("#modal_datos").find("input[name='fecha']").val(datos_turno.fecha);
             $("#modal_datos").find("input[name='especialista']").val(datos_turno.name_especialista);
             $("#modal_datos").find("input[name='id_agenda']").val(datos_turno.agenda);
@@ -686,7 +698,7 @@ function proximo_turno_item(id) {
 
 function proximo_turno(hora) {
 
-    esp = $("#especialistas").val();
+    esp = $("#agendas").val();
     fecha = format_date(FECHA_ACTUAL); //FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
 
     clear_fields($("#modal_turno"));
@@ -695,7 +707,7 @@ function proximo_turno(hora) {
     $("#modal_turno").find("input[name='hora']").val(hora);
     $("#modal_turno").find("input[name='fecha']").val(fecha);
     $("#modal_turno").find("input[name='id_agenda']").val(esp);
-    $("#modal_turno").find("input[name='especialista']").val($("#especialistas option:selected").text());
+    $("#modal_turno").find("input[name='especialista']").val($("#agendas option:selected").text());
 
     $.ajax({
         type: "POST",
@@ -753,7 +765,7 @@ function anular_accion(id) {
 
 function add_notas() {
 
-    esp = $("#especialistas").val();
+    esp = $("#agendas").val();
     // fecha = FECHA_ACTUAL.getFullYear()+"-"+parseInt(FECHA_ACTUAL.getMonth()+1)+"-"+FECHA_ACTUAL.getDate();
     fecha = format_date(FECHA_ACTUAL);
 
@@ -793,7 +805,7 @@ function get_notas() {
     is_admin = $("#is_admin").val();
     notas = "";
 
-    // esp = $("#especialistas").val();
+    // esp = $("#agendas").val();
     $('.notas_body').empty();
     $('.notas_body').html(notas);
 
@@ -909,8 +921,8 @@ function abrir_agenda() {
   // $(".horarios").css('display','none');
 
   fecha = format_date(FECHA_ACTUAL);
-  esp_txt = $("#especialistas option:selected").text();
-  esp = $("#especialistas").val();
+  esp_txt = $("#agendas option:selected").text();
+  esp = $("#agendas").val();
 
   form = $(".abrir_agenda").find('#form_agenda_extra');
 
@@ -968,8 +980,8 @@ function editar_agenda() {
 
 function editar_agenda_extra_item() {
 
-  esp = $("#especialistas").val();
-  esp_txt = $("#especialistas option:selected").text();
+  esp = $("#agendas").val();
+  esp_txt = $("#agendas option:selected").text();
 
   if (esp == "todos") {
     return mensaje_error('Seleccionar una agenda primero');
@@ -1074,8 +1086,8 @@ function editar_agenda_extra_item() {
 
 function eliminar_agenda_extra_item() {
 
-  esp = $("#especialistas").val();
-  esp_txt = $("#especialistas option:selected").text();
+  esp = $("#agendas").val();
+  esp_txt = $("#agendas option:selected").text();
 
   if (esp == "todos") {
     return mensaje_error('Se debe seleccionar una agenda primero');

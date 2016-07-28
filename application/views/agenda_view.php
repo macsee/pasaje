@@ -166,8 +166,9 @@
                     </div>
                     <div class = "col-md-7 col-xs-7" style = "padding-top:7px;">
                         <select class = "form-control" id = "especialidades">
-                          <option value = "todos" selected >Todas</option>
                           <?php
+                              if (count($especialidades) > 1)
+                                echo '<option value = "todos">Todas</option>';
                               foreach ($especialidades as $key => $value) {
                                 echo '<option value = "'.$value.'">'.$value.'</option>';
                               }
@@ -179,7 +180,7 @@
                         <label class = "label-control">Agenda</label>
                     </div>
                     <div class = "col-md-7 col-xs-7" style = "padding-top:15px;">
-                        <select class = "form-control" id = "especialistas">
+                        <select class = "form-control" id = "agendas">
                             <?php
                                 if ($especialista_sel == "todos")
                                     echo '<option value = "todos">Todos</option>';

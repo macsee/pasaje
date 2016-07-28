@@ -26,11 +26,12 @@ class Main_model extends CI_Model {
 		// $this->output->enable_profiler(TRUE);
 		if ($query->num_rows()>0)
 		{
-			foreach ($query->result() as $fila)
-			{
-				$data[] = $fila;
-			}
-			return $data;
+			// foreach ($query->result() as $fila)
+			// {
+			// 	$data[] = $fila;
+			// }
+			// return $data;
+			return $query->result();
 		}
 		else
 		{
@@ -64,53 +65,37 @@ class Main_model extends CI_Model {
 // Como los turnos solo registran especialista y especialidad, al seleccionar un id_agenda, debo obtener el especialista y las especialidades relacionadas
 // y buscar los turnos del mes que cumplan con esos requisitos.
 
-	public function get_turnos_mes($year, $month, $agenda)
+	public function get_turnos_mes($year, $month, $datos_agenda)
 	{
-
 		$data = [];
 
-		// $especialistas = "";
-		// $especialidades = "";
-		//
-		// if($agenda != null)
-		// {
-		// 	foreach ($agenda as $index => $fila)
-		// 	{
-		// 		$or = " OR ";
-		//
-		// 		if ($index == count($agenda)-1)
-		// 			$or = "";
-		//
-		// 		$especialistas .= "especialista = '".$fila->usuario."'".$or;
-		//
-		// 		$aux = json_decode($fila->especialidad);
-		//
-		// 		foreach ($aux as $key => $value) {
-		// 			$or = " OR ";
-		//
-		// 			if ($index == count($agenda)-1)
-		// 				$or = "";
-		//
-		// 			$especialidades .= "especialidad = '".$value."'".$or;
-		// 		}
-		//
-		// 	}
-		//
-		// 	$this->db->where("(".$especialistas.") AND (".$especialidades.")");
-		//
-		// }
+		$like = null;
+		$where = "";
 
-		if (count($agenda) == 1)
-			$this->db->where(array("agenda" => $agenda[0]->id_agenda));
+		$where = "(";
+		foreach ($datos_agenda as $key => $value) {
+			$where .= "agenda = '".$value->id_agenda."'";
+			if ($key < count($datos_agenda)-1)
+				$where .= " OR ";
 
-		$this->db->where(array("YEAR(fecha)" => $year, "MONTH(fecha)" => $month));
-		$this->db->order_by("hora","asc");
-		$query = $this->db->get("turnos");
-		// $this->output->enable_profiler(TRUE);
+		}
+		$where .= ")";
 
-		if ($query->num_rows()>0)
+		$where .= " AND YEAR(fecha) = '".$year."' AND MONTH(fecha) = '".$month."'";
+
+		$query = $this->main_model->get_data("turnos", $like, $where, array('hora','asc'));
+
+
+		// if (count($agenda) == 1)
+		// 	$this->db->where(array("agenda" => $agenda[0]->id_agenda));
+		//
+		// $this->db->where(array("YEAR(fecha)" => $year, "MONTH(fecha)" => $month));
+		// $this->db->order_by("hora","asc");
+		// $query = $this->db->get("turnos");
+		//
+		if ($query != null)
 		{
-			foreach ($query->result() as $fila)
+			foreach ($query as $fila)
 			{
 				// $data[$fila->fecha][date("H:i",strtotime($fila->hora))] = $this->format_turno($fila);
 				$data[$fila->fecha][] = $this->format_turno($fila);
@@ -134,13 +119,18 @@ class Main_model extends CI_Model {
 		return $this->main_model->get_data("agendas", $like, $where);
 	}
 
-	public function get_datos_agenda($id)
+	public function get_datos_agenda($id, $esp ="")
 	{
 		$like = null;
 		$where = null;
 
-		if ($id != "todos")
+		if ($id != "todos") {
 			$where = array('id_agenda' => $id);
+		}
+
+		if ($id == "todos" && $esp != "" && $esp != "todos") {
+			$like = array('especialidad' => $esp);
+		}
 
 		// if ($especialidad != "")
 		// 	$like = array('especialidad' => $especialidad);
@@ -148,18 +138,22 @@ class Main_model extends CI_Model {
 		return $this->main_model->get_data("agendas", $like, $where);
 	}
 
-	public function get_datos_agenda_extra($year, $month, $id)
+	// public function get_datos_agenda_extra($year, $month, $id, $esp = "")
+	public function get_datos_agenda_extra($year, $month, $datos_agenda)
 	{
 		$like = null;
-		$where = [];
+		$where = "";
 
-		if ($id != "todos")
-			$where = array('id_agenda' => $id);
+		$where = "(";
+		foreach ($datos_agenda as $key => $value) {
+			$where .= "id_agenda = '".$value->id_agenda."'";
+			if ($key < count($datos_agenda)-1)
+				$where .= " OR ";
 
-		// if ($especialidad != "")
-		// 	$like = array('especialidad' => $especialidad);
+		}
+		$where .= ")";
 
-		$where += array("YEAR(fecha)" => $year, "MONTH(fecha)" => $month);
+		$where .= " AND YEAR(fecha) = '".$year."' AND MONTH(fecha) = '".$month."'";
 
 		return $this->main_model->get_data("agendas_extras", $like, $where);
 	}
@@ -187,7 +181,7 @@ class Main_model extends CI_Model {
 		$query = "	INSERT INTO agendas (usuario) VALUES (?)";
 					// VALUES (?) ON DUPLICATE KEY UPDATE usuario = VALUES(usuario)";
 
-			if ($this->get_datos_especialista($id,"") == null)
+			if ($this->get_datos_especialista($id) == null)
 				$this->db->query($query, array('usuario' => $id));
 	}
 
@@ -210,11 +204,11 @@ class Main_model extends CI_Model {
 		}
 
 		$data = array(
-			'id'	  		=> $array['esp_id'],
-			'usuario' 		=> $array['esp_usuario'],
-		   	'especialidad' 	=> json_encode($especialidades),
+			'id'	  				=> $array['esp_id'],
+			'usuario' 			=> $array['esp_usuario'],
+		  'especialidad' 	=> json_encode($especialidades),
 			'dias_horarios' => json_encode($horarios),
-		   	'duracion'		=> $array['duracion']
+		  'duracion'			=> $array['duracion']
 		);
 
 
@@ -316,11 +310,12 @@ class Main_model extends CI_Model {
 			return $this->db->insert_id();
 	}
 
-	public function get_horarios($id)
+	// public function get_horarios($id, $esp = "")
+	public function get_horarios($agenda_esp)
 	{
 		$turnos = array();
 
-		$agenda_esp = $this->get_datos_agenda($id);
+		// $agenda_esp = $this->get_datos_agenda($id, $esp);
 
 		if ($agenda_esp != null) {
 
@@ -373,11 +368,13 @@ class Main_model extends CI_Model {
 		return $turnos;
 	}
 
-	public function get_horarios_extra($year, $month, $id_agenda)
+	// public function get_horarios_extra($year, $month, $agendas)
+	public function get_horarios_extra($year, $month, $datos_agenda)
 	{
 		$turnos = array();
 
-		$agenda_extra = $this->get_datos_agenda_extra($year, $month, $id_agenda);
+		// $agenda_extra = $this->get_datos_agenda_extra($year, $month, $id_agenda, $esp);
+		$agenda_extra = $this->get_datos_agenda_extra($year, $month, $datos_agenda);
 
 		// print_r($agenda_extra);
 
