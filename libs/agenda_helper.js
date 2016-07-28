@@ -728,10 +728,10 @@ function proximo_turno(hora) {
           $("#modal_turno").find("input[name='tel2']").val(split_telefono(datos_paciente.tel1).telefono);
           $("#modal_turno").find("input[name='cel1']").val(split_telefono(datos_paciente.tel2).prefijo);
           $("#modal_turno").find("input[name='cel2']").val(split_telefono(datos_paciente.tel2).telefono);
-          $("#modal_turno").find("input[name='dni']").val(datos_paciente.dni);
-          $("#modal_turno").find("input[name='localidad']").val(datos_paciente.localidad);
-          $("#modal_turno").find("input[name='direccion']").val(datos_paciente.direccion);
-          $("#modal_turno").find("textarea[name='observaciones_paciente']").val(datos_paciente.observaciones);
+          // $("#modal_turno").find("input[name='dni']").val(datos_paciente.dni);
+          // $("#modal_turno").find("input[name='localidad']").val(datos_paciente.localidad);
+          // $("#modal_turno").find("input[name='direccion']").val(datos_paciente.direccion);
+          // $("#modal_turno").find("textarea[name='observaciones_paciente']").val(datos_paciente.observaciones);
 
           $("#modal_turno").find("input[name='primera_vez']").removeAttr('checked');
           $("#modal_turno").find("#anular").css('visibility','visible')

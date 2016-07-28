@@ -431,6 +431,7 @@ class Main extends CI_Controller {
 
 	public function modificar_datos()
 	{
+		// $this->am_paciente($_POST);
 		$this->am_turno($_POST);
 		$this->am_facturacion($_POST);
 	}
@@ -487,6 +488,14 @@ class Main extends CI_Controller {
 		$tel1 = $this->main_model->join_telefono($data['tel1'], $data['tel2']);
 		$tel2 = $this->main_model->join_telefono($data['cel1'], $data['cel2']);
 
+		if ($data['id_paciente'] != "") {
+			$paciente = $this->get_paciente($data['id_paciente']);
+			$data['dni'] = $paciente->dni;
+			$data['direccion'] = $paciente->direccion;
+			$data['localidad'] = $paciente->localidad;
+			$data['observaciones_paciente'] = $paciente->observaciones;
+		}
+
 		$data_paciente = array(
 			'id_paciente' 	=> $data['id_paciente'],
 		  'nombre' 				=> ucwords(strtolower($data['nombre'])),
@@ -496,7 +505,7 @@ class Main extends CI_Controller {
 			'localidad'			=> isset($data['localidad']) ? ucwords(strtolower($data['localidad'])) : "",
 		  'tel1' 					=> $tel1,
 		  'tel2' 					=> $tel2,
-			'observaciones'	=> isset($data['observaciones_paciente']) ? $data['observaciones_paciente'] : "",
+			'observaciones'	=> isset($data['observaciones_paciente']) ? $data['observaciones_paciente'] : ""
 		);
 
 		return $this->main_model->am_paciente($data_paciente);
@@ -509,6 +518,12 @@ class Main extends CI_Controller {
 			return $val[0];
 		else
 			return null;
+	}
+
+	public function get_paciente_json($id)
+	{
+			// echo json_encode($this->get_paciente($id));
+			echo $this->get_paciente($id)->dni;
 	}
 
 	public function get_nombre_paciente($id)

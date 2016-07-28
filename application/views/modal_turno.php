@@ -54,9 +54,9 @@
                     <form method = "post" class="row form-horizontal">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="hidden" class="form-control" id = "dni" name = "dni">
+                                <!-- <input type="hidden" class="form-control" id = "dni" name = "dni">
                                 <input type="hidden" class="form-control" id = "localidad" name = "localidad">
-                                <input type="hidden" class="form-control" id = "direccion" name = "direccion">
+                                <input type="hidden" class="form-control" id = "direccion" name = "direccion"> -->
                                 <input type="hidden" class="form-control" id = "observaciones_paciente" name = "observaciones_paciente">
                                 <input type="hidden" class="form-control" id = "id_paciente" name = "id_paciente">
                                 <input type="hidden" class="form-control" name = "id_agenda">
@@ -215,10 +215,10 @@
             $( "#tel2" ).val(tel2);
             $( "#cel1" ).val(cel1);
             $( "#cel2" ).val(cel2);
-            $( "#dni").val(ui.item.dni);
-            $( "#direccion").val(ui.item.direccion);
-            $( "#localidad").val(ui.item.localidad);
-            $( "#observaciones_paciente").val(ui.item.observaciones);
+            // $( "#dni").val(ui.item.dni);
+            // $( "#direccion").val(ui.item.direccion);
+            // $( "#localidad").val(ui.item.localidad);
+            // $( "#observaciones_paciente").val(ui.item.observaciones);
 
             $( "#primera_vez" ).removeAttr('checked');
           }
