@@ -30,6 +30,12 @@
         cursor: pointer;
     }
 
+    .heading {
+      height:40px;
+      padding-left:0px;
+      font-weight:700
+    }
+
 </style>
 
 <div class="container-fluid">
@@ -39,9 +45,9 @@
             <li><a href="#especialistas">Especialistas</a></li>
           </ul>
     </div>
-    <div class = "col-md-10 col-md-offset-2">
-        <div id = "usuarios" class="row" style = "height:700px">
-            <h3 class="page-header">Usuarios</h3>
+    <div class = "col-md-8 col-md-offset-2">
+        <!-- <div id = "usuarios" class="row" style = "height:700px"> -->
+            <!-- <h3 class="page-header">Usuarios</h3>
             <div class="col-md-7">
                 <form class="form-horizontal" method="post">
                     <div class="form-group">
@@ -100,50 +106,87 @@
                         <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/am_usuario')?>">Guardar</button>
                     </div>
                 </form>
+            </div> -->
+        <div id = "usuarios" class="col-md-12">
+          <h3 class="page-header">Usuarios</h3>
+          <div class="panel panel-default">
+            <div class="panel-heading heading">
+              <div class="col-md-4">
+                Nombre
+              </div>
+              <div class="col-md-2">
+                Usuario
+              </div>
+              <div class="col-md-6">
+                Funciones
+              </div>
             </div>
-            <div class="col-md-5">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Usuarios Registrados
-                    </div>
-                    <div class="panel-body" style = "height: 450px;overflow-y: scroll;">
-                        <table class = "table">
-                            <thead>
-                                <th>
-                                    Nombre
-                                </th>
-                                <th>
-                                    Usuario
-                                </th>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    if (isset($usuarios))
-                                        foreach ($usuarios as $key => $value) {
-                                            echo '<tr id = "'.$value->usuario.'" class = "sel_user">';
-                                                echo '<td>'.$value->apellido.", ".$value->nombre.'</td>';
-                                                echo '<td>'.$value->usuario.'</td>';
-                                            echo '</tr>';
-                                        }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="panel-body" style = "height: 400px;overflow-y: scroll;">
+            <?php
+                if (isset($usuarios))
+                    foreach ($usuarios as $key => $value) {
+                      $replace = array('"','[',']');
+                      echo '<div id = "'.$value->usuario.'" class="row sel_user" style = "margin-bottom:15px;border-bottom: 1px solid #ddd;">';
+                        echo '<div class="col-md-4">';
+                          echo $value->apellido.", ".$value->nombre;
+                        echo '</div>';
+                        echo '<div class="col-md-2">';
+                          echo $value->usuario;
+                        echo '</div>';
+                        echo '<div class="col-md-6">';
+                          echo str_replace($replace," ",$value->funciones);
+                        echo '</div>';
+                      echo '</div>';
+                    }
+            ?>
             </div>
-        </div> <!--row-->
-        <div id = "especialistas" class="row">
-            <h3 class="page-header">Especialistas</h3>
+          </div>
+        </div>
+
+        <div id = "especialistas" class="col-md-12">
+          <h3 class="page-header">Especialistas</h3>
+          <div class="panel panel-default">
+            <div class="panel-heading heading">
+              <div class="col-md-3">
+                Nombre Agenda
+              </div>
+              <div class="col-md-3">
+                Usuario
+              </div>
+              <div class="col-md-6">
+                Especialidades
+              </div>
+            </div>
+            <div class="panel-body" style = "height: 400px;overflow-y: scroll;">
+            <?php
+              if (isset($especialistas)) {
+                  foreach ($especialistas as $key => $value) {
+                      $replace = array('"','[',']');
+                      echo '<div id = "'.$value->id_agenda.'" class="row sel_agenda" style = "margin-bottom:15px;border-bottom: 1px solid #ddd;">';
+                        echo '<div class="col-md-3">';
+                          echo $value->nombre_agenda;
+                        echo '</div>';
+                        echo '<div class="col-md-3">';
+                          echo $value->usuario;
+                        echo '</div>';
+                        echo '<div class="col-md-6">';
+                          echo str_replace($replace," ",$value->especialidad);
+                        echo '</div>';
+                      echo '</div>';
+                  }
+              }
+            ?>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div id = "especialistas" class="row">
+          <h3 class="page-header">Especialistas</h3> -->
+            <!-- <h3 class="page-header">Especialistas</h3>
             <div class="col-md-7">
                 <form class="form-horizontal" method="post">
                     <div class="form-group">
-                        <!-- <div class="col-md-6" style ="padding-left:0px">
-                            <label class="col-md-2 control-label">Especialista</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id = "esp_especialista" name = "esp_especialista" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-5"> -->
+
                             <label class="col-md-2 control-label">Usuario</label>
                             <div class="col-md-4">
                                 <input style = "text-transform:none" type="text"    class="form-control"    id = "esp_usuario"  name = "esp_usuario" readonly required>
@@ -155,7 +198,7 @@
                             <div class ="col-md-2">
                                 <button id = "agregar" class="btn btn-default">Agregar</button>
                             </div>
-                        <!-- </div> -->
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">Especialidad</label>
@@ -244,39 +287,7 @@
                         <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/add_agenda')?>">Guardar</button>
                     </div>
                 </form>
-            </div>
-            <div class="col-md-5">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Especialidades y Especialistas Registrados
-                    </div>
-                    <div class="panel-body" style = "height: 450px;overflow-y: scroll;">
-                        <table class = "table">
-                            <thead>
-                                <th>
-                                    Usuario
-                                </th>
-                                <th>
-                                    Especialidades
-                                </th>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    if (isset($especialistas)) {
-                                        foreach ($especialistas as $key => $value) {
-                                            $replace = array('"','[',']');
-                                            echo '<tr class = "sel_agenda" id = "'.$value->id.'">';
-                                                echo '<td>'.$value->usuario.'</td>';
-                                                echo '<td>'.str_replace($replace," ",$value->especialidad).'</td>';
-                                            echo '</tr>';
-                                        }
-                                    }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            </div> -->
         </div> <!--row-->
     </div><!--col-md-10-->
 </div>
