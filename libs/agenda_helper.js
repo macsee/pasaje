@@ -63,7 +63,7 @@ function split_telefono(t1)
 function init()
 {
     FECHA_ACTUAL = new Date();
-    get_turnos_mes(FECHA_ACTUAL);
+    get_turnos_mes();
     actualizar_datos();
 }
 
@@ -104,7 +104,8 @@ function set_fecha(fecha)
     show_turnos(FECHA_ACTUAL);
 }
 
-function format_date(fecha) {
+function format_date(fecha)
+{
 
     var day = fecha.getDay();
     var mm = (fecha.getMonth() + 1).toString();
@@ -115,29 +116,60 @@ function format_date(fecha) {
     return date;
 }
 
-function get_turnos_mes(fecha)
+function get_data_turnos_mes(func) {
+
+    var fecha = FECHA_ACTUAL;
+    var agenda = $("#agendas").val();
+    var esp = $("#especialidades").val();
+
+    $.ajax({
+        url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+agenda+"/"+esp,
+        dataType: 'json',
+        success:function(response)
+        {
+          // console.log(response);
+          var bloqueados = [];
+          var t_mes = [];
+          var h_mes = [];
+
+          TURNOS_MES = response.turnos; // Aca seteo las variables locales TURNOS_MES y HORARIOS_MES
+          HORARIOS_MES = response.horarios; // que contienen toda la info de los turnos
+          HORARIOS_EXTRA = response.horarios_extra;
+
+          crear_calendario(fecha, HORARIOS_MES, TURNOS_MES, HORARIOS_EXTRA, bloqueados);
+
+          if (func != null)
+            func(fecha);
+        //   show_turnos(fecha);
+        }
+    });
+}
+
+function get_turnos_mes()
 {
-  var agenda = $("#agendas").val();
-  var esp = $("#especialidades").val();
-
-  $.ajax({
-      url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+agenda+"/"+esp,
-      dataType: 'json',
-      success:function(response)
-      {
-        // console.log(response);
-        var bloqueados = [];
-        var t_mes = [];
-        var h_mes = [];
-
-        TURNOS_MES = response.turnos; // Aca seteo las variables locales TURNOS_MES y HORARIOS_MES
-        HORARIOS_MES = response.horarios; // que contienen toda la info de los turnos
-        HORARIOS_EXTRA = response.horarios_extra;
-
-        crear_calendario(fecha, HORARIOS_MES, TURNOS_MES, HORARIOS_EXTRA, bloqueados);
-        show_turnos(fecha);
-      }
-  });
+    get_data_turnos_mes(show_turnos);
+  // var fecha = FECHA_ACTUAL;
+  // var agenda = $("#agendas").val();
+  // var esp = $("#especialidades").val();
+  //
+  // $.ajax({
+  //     url: base_url+"/main/get_data_turnos_json/"+fecha.getFullYear()+"/"+parseInt(fecha.getMonth()+1)+"/"+agenda+"/"+esp,
+  //     dataType: 'json',
+  //     success:function(response)
+  //     {
+  //       // console.log(response);
+  //       var bloqueados = [];
+  //       var t_mes = [];
+  //       var h_mes = [];
+  //
+  //       TURNOS_MES = response.turnos; // Aca seteo las variables locales TURNOS_MES y HORARIOS_MES
+  //       HORARIOS_MES = response.horarios; // que contienen toda la info de los turnos
+  //       HORARIOS_EXTRA = response.horarios_extra;
+  //
+  //       crear_calendario(fecha, HORARIOS_MES, TURNOS_MES, HORARIOS_EXTRA, bloqueados);
+  //       show_turnos(fecha);
+  //     }
+  // });
 
 }
 
@@ -382,7 +414,9 @@ $('#datepicker').on("changeDate", function(e) {
 $('#datepicker').on("changeMonth", function(e) {
 
     var fecha = new Date(e.date);
-    get_turnos_mes(fecha);
+    FECHA_ACTUAL = fecha;
+    get_data_turnos_mes(null);
+    // get_turnos_mes();
 
  });
 
@@ -407,7 +441,7 @@ function dias_turnos_array_inv(num)
 function fill_especialidades(esp, callback) {
 
     $.ajax({
-        url: base_url+"/main/get_data_agenda_json/"+esp,
+        url: base_url+"/main/get_agenda_json/"+esp,
         dataType: 'json',
         success:function(response)
         {
@@ -423,7 +457,7 @@ function fill_especialidades(esp, callback) {
 }
 
 $("#agendas").change(function () {
-    get_turnos_mes(FECHA_ACTUAL);
+    get_turnos_mes();
 });
 
 $("#especialidades").change(function () {
@@ -443,11 +477,11 @@ $("#especialidades").change(function () {
             $("#agendas").append($("<option />").val(value.id_agenda).text(value.nombre_agenda));
         });
 
-        get_turnos_mes(FECHA_ACTUAL);
+        get_turnos_mes();
         //$("#agendas").val($("#agendas option:first").val());
       }
   });
-    // get_turnos_mes(FECHA_ACTUAL);
+    // get_turnos_mes();
 });
 
 function nuevo_turno(hora) {
@@ -514,7 +548,7 @@ function ok_nuevo_turno(event) {
         {
           // console.log(response);
           PROX_TURNO = "";
-          get_turnos_mes(FECHA_ACTUAL);
+          get_turnos_mes();
           $("#modal_turno").modal('hide');
         }
     });
@@ -539,7 +573,7 @@ function ok_confirmar(callback, form_id)
       data: form.serialize(),
       success:function(response)
       {
-        get_turnos_mes(FECHA_ACTUAL);
+        get_turnos_mes();
         $("#modal_confirmacion").modal('hide');
       }
   });
@@ -638,7 +672,7 @@ function ok_modificar_datos(event) {
         success:function(response)
         {
           // console.log(response);
-          get_turnos_mes(FECHA_ACTUAL);
+          get_turnos_mes();
           $("#modal_datos").modal('hide');
         }
     });
@@ -646,7 +680,7 @@ function ok_modificar_datos(event) {
 
 function cambiar_turno_item(id) {
     CAMBIO_TURNO = id;
-    get_turnos_mes(FECHA_ACTUAL);
+    get_turnos_mes();
 }
 
 function cambiar_turno(hora) {
@@ -685,7 +719,7 @@ function ok_cambiar_turno(event) {
         success:function(response)
         {
           CAMBIO_TURNO = "";
-          get_turnos_mes(FECHA_ACTUAL);
+          get_turnos_mes();
           $("#modal_cambiar_turno").modal('hide');
         }
     });
@@ -693,7 +727,7 @@ function ok_cambiar_turno(event) {
 
 function proximo_turno_item(id) {
     PROX_TURNO = id;
-    get_turnos_mes(FECHA_ACTUAL);
+    get_turnos_mes();
 }
 
 function proximo_turno(hora) {
@@ -760,7 +794,7 @@ function anular_accion(id) {
     $("#modal_turno").find("#anular").css("visibility", "hidden");
 
     $("#modal_cambiar_turno").modal('hide');
-    get_turnos_mes(FECHA_ACTUAL);
+    get_turnos_mes();
 }
 
 function add_notas() {
@@ -946,14 +980,14 @@ function crear_agenda() {
     event.preventDefault();
     form = $(".abrir_agenda").find('#form_agenda_extra');
 
-    console.log(form.serialize());
+    // console.log(form.serialize());
     $.ajax({
         type: "POST",
         url: base_url+"/main/am_agenda_extra/",
         data: form.serialize(),
         success:function(response)
         {
-          get_turnos_mes(FECHA_ACTUAL);
+          get_turnos_mes();
         }
     });
 
@@ -971,7 +1005,7 @@ function editar_agenda() {
         data: form.serialize(),
         success:function(response)
         {
-          get_turnos_mes(FECHA_ACTUAL);
+          get_turnos_mes();
           $("#modal_agenda_extra").modal('hide');
         }
     });

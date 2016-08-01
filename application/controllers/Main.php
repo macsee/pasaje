@@ -65,27 +65,19 @@ class Main extends CI_Controller {
 		$data['especialista_sel'] = $this->session->userdata('especialista');
 		// $data['especialidad_sel'] = $this->session->userdata('especialidad');
 		$data['usuario'] = $this->session->userdata('usuario');
-		$data['usuarios'] = $this->main_model->get_data('usuarios');
+		$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data('usuarios');
 		$data['is_admin'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? 1 : 0;
 
 		if ($data['especialista_sel'] != "todos") {
-				$data['agendas'] = $this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
+				$data['agendas'] = $this->get_agendas($data['especialista_sel']);//$this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
 				$data['especialidades'] = $this->get_especialidades($data['especialista_sel']);
 		}
 		else {
-				$data['agendas'] = $this->main_model->get_data('agendas');
+				$data['agendas'] = $this->get_agendas("todos");
 				$data['especialidades'] = $this->get_especialidades("todos");
 		}
 
 		$data["agenda_extra"] = $this->load->view('agenda_extra_view', '', true);
-
-		// if ($this->main_model->rol($this->session->userdata('usuario'),"especialista")) {
-		// 	$data['agendas'] = null;
-		// 	$data['nom_especialista_sel'] = $this->session->userdata('apellido').', '.$this->session->userdata('nombre')[0];
-		// }
-		// else
-		// 	$data['especialistas'] = $this->main_model->get_data('agendas', array('usuario' => $this->session->userdata('usuario')));
-			// $data['especialistas'] = $this->main_model->get_data('usuarios', array('funciones' => 'especialista'));
 
 		$arraybar = array (
 			'admin_act' 		=> "",
@@ -122,8 +114,9 @@ class Main extends CI_Controller {
 		if (!$this->main_model->rol($this->session->userdata('usuario'),"admin"))
 			redirect('main/agenda');
 		else {
-			$data['usuarios'] = $this->main_model->get_data("usuarios");
-			$data['especialistas'] = $this->main_model->get_data("agendas");
+			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
+			$data['agendas'] = $this->get_agendas("todos");
+			$data['especialistas'] = $this->get_especialistas();
 
 			$arraybar = array (
 				'admin_act' 		=> "active",
@@ -144,6 +137,9 @@ class Main extends CI_Controller {
 
 			$this->load->view('header', array('title' => "Admin"));
 				$this->load->view('navbar', $navbar);
+				$this->load->view('modal_confirmacion');
+				$this->load->view('modal_usuario',$data);
+				$this->load->view('modal_agenda',$data);
 				$this->load->view('admin_view', $data);
 			$this->load->view('footer');
 		}
@@ -151,8 +147,8 @@ class Main extends CI_Controller {
 
 	public function pacientes()
 	{
-		$data['usuarios'] = $this->main_model->get_data("usuarios");
-		$data['especialistas'] = $this->main_model->get_data("agendas");
+		$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
+		$data['agendas'] = $this->get_agendas("todos");
 
 		$arraybar = array (
 			'admin_act' 		=> "",
@@ -184,8 +180,8 @@ class Main extends CI_Controller {
 			redirect('main/agenda');
 		else {
 
-			$data['usuarios'] = $this->main_model->get_data("usuarios");
-			$data['especialistas'] = $this->main_model->get_data("agendas");
+			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
+			$data['agendas'] = $this->get_agendas("todos");
 
 			$arraybar = array (
 				'admin_act' 		=> "",
@@ -217,46 +213,141 @@ class Main extends CI_Controller {
 
 	public function am_usuario()
 	{
-		if ($this->main_model->rol($_POST['usr_usuario'], "especialista"))
-			$this->main_model->am_especialista($_POST['usr_usuario']);
+		// if ($this->main_model->rol($_POST['usr_usuario'], "especialista"))
+		// 	$this->main_model->am_especialista($_POST['usr_usuario']);
 
-		$this->main_model->am_usuario($_POST);
-		redirect('main/admin#usuarios');
+		$data = array(
+		   	'usuario' => $_POST['usr_usuario'],
+		   	'nombre' => ucwords(strtolower($_POST['usr_nombre'])),
+		   	'apellido' => ucwords(strtolower($_POST['usr_apellido'])),
+		   	'password' => $_POST['usr_usuario'],
+		   	'funciones' => json_encode($_POST['usr_funciones'])
+		);
+
+		$this->main_model->am_usuario($data);
+		// redirect('main/admin#usuarios');
+	}
+
+	public function reset_usuario()
+	{
+		$usuario = $this->get_usuarios($_POST['usr_usuario']);
+
+		$data = array(
+		   	'usuario' => $_POST['usr_usuario'],
+		   	'nombre' => $usuario->nombre,
+		   	'apellido' => $usuario->apellido,
+		   	'password' => $_POST['usr_usuario'],
+		   	'funciones' => $usuario->functiones
+		);
+
+		$this->main_model->am_usuario($data);
+
 	}
 
 	public function del_usuario()
 	{
-		$this->main_model->del_usuario($_POST['usr_usuario']);
-		redirect('main/admin#usuarios');
+		$id = $_POST['id_usuario'];
+		$this->main_model->del_usuario($id);
+		// redirect('main/admin#usuarios');
 	}
 
-	public function get_usuario($id)
+	// public function get_usuarios("todos")
+	// {
+	// 	return $this->main_model->get_data('usuarios');
+	// }
+
+	// public function get_usuarios_json()
+	// {
+	// 	echo json_encode($this->get_usuarios("todos"));
+	// }
+
+	public function get_usuarios($id)
 	{
-		return $this->main_model->get_data("usuarios",null,array('usuario' => $id))[0];
+		if ($id == "todos")
+			$agendas = $this->main_model->get_data("usuarios",null, null);
+		else
+			$agendas = $this->main_model->get_data("usuarios",null, array('usuario' => $id))[0];
+
+		return $agendas;//$this->get_agendas();
+
+		// return $this->main_model->get_data("usuarios",null,array('usuario' => $id))[0];
 	}
 
-	public function get_usuario_json($id)
+	public function get_usuarios_json($id)
 	{
-		echo json_encode($this->get_usuario($id));
+		echo json_encode($this->get_usuarios($id));
 	}
 
 /******************************************AGENDAS******************************************/
 
-	public function add_agenda()
+	// public function add_agenda()
+	// {
+	// 	$this->main_model->add_agenda($_POST);
+	// 	redirect('main/admin#especialistas');
+	// }
+
+	public function am_agenda()
 	{
-		$this->main_model->add_agenda($_POST);
-		redirect('main/admin#especialistas');
+		// error_reporting(E_ALL); ini_set('display_errors', 1);
+		$horarios = array();
+		$especialidades = array();
+
+		foreach ($_POST['agenda_dias'] as $key => $dia)
+		{
+			$horarios[$dia][1] = array(
+				"desde"	=>	$_POST[$dia."_desde_man"],
+				"hasta" =>	$_POST[$dia."_hasta_man"]
+			);
+
+			$horarios[$dia][2] = array(
+				"desde"	=>	$_POST[$dia."_desde_tar"],
+				"hasta" =>	$_POST[$dia."_hasta_tar"]
+			);
+		}
+
+		$data = array(
+			'id_agenda'	  		=> 	$_POST['agenda_id'],
+			'nombre_agenda'		=>	ucwords(strtolower($_POST['agenda_nombre'])),
+			'usuario' 			=> 	$_POST['agenda_usuario'],
+		  	'especialidad' 		=> 	$_POST['agenda_especialidades'],//json_encode($especialidades),
+			'dias_horarios' 	=> 	json_encode($horarios),
+		  	'duracion'			=> 	$_POST['agenda_duracion']
+		);
+
+		// echo json_encode($data);
+		$this->main_model->am_agenda($data);
 	}
 
-	public function get_data_agenda($id)
+	public function del_agenda($id)
 	{
-		return $this->main_model->get_data("agendas", null, array('id_agenda' => $id))[0];
+		$id = $_POST['id_agenda'];
+		$this->main_model->del_agenda($id);
 	}
 
-	public function get_data_agenda_json($id)
+	public function get_agendas($id)
 	{
-		echo json_encode($this->get_data_agenda($id));
+		if ($id == "todos")
+			$agendas = $this->main_model->get_data("agendas",null, null);
+		else
+			$agendas = $this->main_model->get_data("agendas",null, array('id_agenda' => $id))[0];
+
+		return $agendas;
 	}
+
+	public function get_agendas_json($id)
+	{
+		echo json_encode($this->get_agendas($id));
+	}
+
+	// public function get_agenda($id)
+	// {
+	// 	return $this->main_model->get_data("agendas", null, array('id_agenda' => $id))[0];
+	// }
+
+	// public function get_agenda_json($id)
+	// {
+	// 	echo json_encode($this->get_agenda($id));
+	// }
 
 	public function get_especialidades($especialista)
 	{
@@ -274,9 +365,23 @@ class Main extends CI_Controller {
 		return array_unique($data);
 	}
 
-	public function get_especialidades_json()
+	public function get_especialidades_json($especialista)
 	{
-		echo json_encode($this->get_especialidades());
+		echo json_encode($this->get_especialidades($especialista));
+	}
+
+	public function get_especialistas()
+	{
+		$agendas = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
+
+		foreach ($agendas as $key => $value) {
+			if (stripos($value->funciones,"especialista") !== false)
+				$data[] = (object) array('usuario' => $value->usuario,
+								'nombre' => $value->apellido.', '.$value->nombre[0]
+						);
+		}
+
+		return $data;
 	}
 
 	public function get_agendas_by_esp($esp)
@@ -402,7 +507,7 @@ class Main extends CI_Controller {
 
 	public function get_turno($id)
 	{
-		// $especialista = $this->get_usuario($turno->especialista);
+		// $especialista = $this->get_usuarios($turno->especialista);
 		$turno = $this->main_model->get_data("turnos",null,array('id_turno' => $id))[0];
 		$agenda = $this->main_model->get_data("agendas",null,array('id_agenda' => $turno->agenda))[0];
 		// $agenda = $this->main_model->get_datos_agenda($turno->agenda)[0]->usuario;
@@ -448,16 +553,16 @@ class Main extends CI_Controller {
 		$usuario = $this->session->userdata('usuario');
 
 		$data_turno = array(
-			'id_turno' 			=> $array['id_turno'],
-		  'id_paciente' 	=> $id,
-		  'fecha' 				=> $array['fecha'],
-		  'hora' 					=> $array['hora'],
-			'agenda'				=> $array['id_agenda'],
-		  'especialidad' 	=> $array['especialidad'],
+			'id_turno' 		=> $array['id_turno'],
+		  	'id_paciente' 	=> $id,
+		  	'fecha' 		=> $array['fecha'],
+		  	'hora' 			=> $array['hora'],
+			'agenda'		=> $array['id_agenda'],
+		  	'especialidad' 	=> $array['especialidad'],
 			'observaciones' => $array['observaciones_turno'],
-			'data_extra'		=> json_encode($extra),
-			'estado'				=> $array['estado'],
-			'usuario'				=> $usuario
+			'data_extra'	=> json_encode($extra),
+			'estado'		=> $array['estado'],
+			'usuario'		=> $usuario
 		);
 
 		// echo json_encode($data_turno);
@@ -498,13 +603,13 @@ class Main extends CI_Controller {
 
 		$data_paciente = array(
 			'id_paciente' 	=> $data['id_paciente'],
-		  'nombre' 				=> ucwords(strtolower($data['nombre'])),
-		  'apellido' 			=> ucwords(strtolower($data['apellido'])),
-			'dni'						=> isset($data['dni']) ? $data['dni'] : "",
-			'direccion'			=> isset($data['direccion']) ? ucwords(strtolower($data['direccion'])) : "",
-			'localidad'			=> isset($data['localidad']) ? ucwords(strtolower($data['localidad'])) : "",
-		  'tel1' 					=> $tel1,
-		  'tel2' 					=> $tel2,
+		  	'nombre' 		=> ucwords(strtolower($data['nombre'])),
+		  	'apellido' 		=> ucwords(strtolower($data['apellido'])),
+			'dni'			=> isset($data['dni']) ? $data['dni'] : "",
+			'direccion'		=> isset($data['direccion']) ? ucwords(strtolower($data['direccion'])) : "",
+			'localidad'		=> isset($data['localidad']) ? ucwords(strtolower($data['localidad'])) : "",
+		  	'tel1' 			=> $tel1,
+		  	'tel2' 			=> $tel2,
 			'observaciones'	=> isset($data['observaciones_paciente']) ? $data['observaciones_paciente'] : ""
 		);
 
@@ -566,7 +671,7 @@ class Main extends CI_Controller {
 
 			if ($notas != null) {
 				foreach ($notas as $key => $value) {
-					$usuario = $this->get_usuario($value->usuario);
+					$usuario = $this->get_usuarios($value->usuario);
 					$value->nombre_usuario = $usuario->apellido.', '.$usuario->nombre[0];
 				}
 			}

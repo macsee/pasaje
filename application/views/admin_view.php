@@ -39,293 +39,321 @@
 </style>
 
 <div class="container-fluid">
-    <div class="col-md-2 sidebar" style = "width:15%">
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a data-toggle="tab" href="#usuarios">Usuarios</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#agendas">Agendas</a></li>
+    </ul>
+    <!-- <div class="col-md-2 sidebar" style = "background-color: white;border-color: #e7e7e7">
         <ul class="nav nav-sidebar">
             <li><a href="#usuarios">Usuarios</a></li>
-            <li><a href="#especialistas">Especialistas</a></li>
+            <li><a href="#agendas"">Especialistas</a></li>
           </ul>
-    </div>
-    <div class = "col-md-8 col-md-offset-2">
-        <!-- <div id = "usuarios" class="row" style = "height:700px"> -->
-            <!-- <h3 class="page-header">Usuarios</h3>
-            <div class="col-md-7">
-                <form class="form-horizontal" method="post">
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Apellido</label>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" id = "usr_apellido" name = "usr_apellido" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Nombre</label>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" id = "usr_nombre" name = "usr_nombre" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Usuario</label>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" id = "usr_usuario" name = "usr_usuario" style = "text-transform:none" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Funciones</label>
-                        <div class="col-md-10">
-                            <div class="form-group">
-                                <label class="col-md-3 col-xs-4 control-label opciones">Especialista</label>
-                                <div class="col-md-1 col-xs-1 checkbox">
-                                     <input type="checkbox" id = "chk_esp" name = "usr_funciones[]" value = "especialista">
-                                </div>
-                                <label class="col-md-3 col-xs-4 control-label opciones">Facturacion</label>
-                                <div class="col-md-1 col-xs-1 checkbox">
-                                     <input type="checkbox" id = "chk_fac" name = "usr_funciones[]" value = "facturacion">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-3 col-xs-4 control-label opciones">Turnos</label>
-                                <div class="col-md-1 col-xs-1 checkbox">
-                                     <input type="checkbox" id = "chk_tur" name = "usr_funciones[]" value = "turnos">
-                                </div>
-                                <label class="col-md-3 col-xs-4 control-label opciones">Pacientes</label>
-                                <div class="col-md-1 col-xs-1 checkbox">
-                                     <input type="checkbox" id = "chk_pac" name = "usr_funciones[]" value = "pacientes">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-3 col-xs-4 control-label opciones">Admin</label>
-                                <div class="col-md-1 col-xs-1 checkbox">
-                                     <input type="checkbox" id = "chk_adm" name = "usr_funciones[]" value = "admin">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-md-offset-6" style = "margin-bottom:20px">
-                        <hr>
-                        <button id = "reset" type="submit" class="btn btn-warning" formaction="<?php echo base_url('index.php/main/rst_usuario')?>">Resetear</button>
-                        <button id = "eliminar" type="submit" class="btn btn-danger" formaction="<?php echo base_url('index.php/main/del_usuario')?>">Eliminar</button>
-                        <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/am_usuario')?>">Guardar</button>
-                    </div>
-                </form>
-            </div> -->
-        <div id = "usuarios" class="col-md-12">
-          <h3 class="page-header">Usuarios</h3>
-          <div class="panel panel-default">
-            <div class="panel-heading heading">
-              <div class="col-md-4">
-                Nombre
-              </div>
-              <div class="col-md-2">
-                Usuario
-              </div>
-              <div class="col-md-6">
-                Funciones
-              </div>
+    </div> -->
+    <div class="tab-content">
+
+        <div id = "usuarios" class="tab-pane fade in active col-md-10">
+            <div class="col-md-2 page-header">
+                <h3>Usuarios</h3>
             </div>
-            <div class="panel-body" style = "height: 400px;overflow-y: scroll;">
-            <?php
-                if (isset($usuarios))
-                    foreach ($usuarios as $key => $value) {
-                      $replace = array('"','[',']');
-                      echo '<div id = "'.$value->usuario.'" class="row sel_user" style = "margin-bottom:15px;border-bottom: 1px solid #ddd;">';
-                        echo '<div class="col-md-4">';
-                          echo $value->apellido.", ".$value->nombre;
-                        echo '</div>';
-                        echo '<div class="col-md-2">';
-                          echo $value->usuario;
-                        echo '</div>';
-                        echo '<div class="col-md-6">';
-                          echo str_replace($replace," ",$value->funciones);
-                        echo '</div>';
-                      echo '</div>';
-                    }
-            ?>
+            <div class="col-md-10 page-header" style = "padding-top:15px">
+                <button class="btn btn-primary dropdown-toggle" onclick = "return nuevo_usuario()">Nuevo Usuario</button>
             </div>
-          </div>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading heading">
+                        <div class="col-md-4">
+                            Nombre
+                        </div>
+                        <div class="col-md-2">
+                            Usuario
+                        </div>
+                        <div class="col-md-5">
+                            Funciones
+                        </div>
+                        <div class="col-md-1">
+                            Acciones
+                        </div>
+                    </div>
+                    <div class="panel-body content_usuario">
+                    <?php
+                        // if (isset($usuarios))
+                        //     foreach ($usuarios as $key => $value) {
+                        //       $replace = array('"','[',']');
+                        //       echo '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">';
+                        //         echo '<div class="col-md-4">';
+                        //           echo $value->apellido.", ".$value->nombre;
+                        //         echo '</div>';
+                        //         echo '<div class="col-md-2">';
+                        //           echo $value->usuario;
+                        //         echo '</div>';
+                        //         echo '<div class="col-md-5">';
+                        //           echo str_replace($replace," ",$value->funciones);
+                        //         echo '</div>';
+                        //         echo '<div class="col-md-1" style = "padding-top:0px">';
+                        //             echo '<div class = "dropdown">';
+                        //                 echo '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>';
+                        //                 echo '<ul class="dropdown-menu pull-right">';
+                        //                     echo '<li><a href="#" onclick = "return modificar_datos_usuario_item(\''.$value->usuario.'\')" data-toggle="modal">Modificar Datos</a></li>';
+                        //                     echo '<li><a href="#" onclick = "return eliminar_usuario_item()" data-toggle="modal">Eliminar Usuario</a></li>';
+                        //                     echo '<li><a href="#" onclick = "return reset_pass_item()" data-toggle="modal">Resetear Password</a></li>';
+                        //                 echo '</ul>';
+                        //             echo '</div>';
+                        //         echo '</div>';
+                        //       echo '</div>';
+                        //     }
+                    ?>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <div id = "especialistas" class="col-md-12">
-          <h3 class="page-header">Especialistas</h3>
-          <div class="panel panel-default">
-            <div class="panel-heading heading">
-              <div class="col-md-3">
-                Nombre Agenda
-              </div>
-              <div class="col-md-3">
-                Usuario
-              </div>
-              <div class="col-md-6">
-                Especialidades
-              </div>
+        <div id = "agendas" class="tab-pane fade col-md-10">
+            <div class="col-md-2 page-header">
+                <h3>Agendas</h3>
             </div>
-            <div class="panel-body" style = "height: 400px;overflow-y: scroll;">
-            <?php
-              if (isset($especialistas)) {
-                  foreach ($especialistas as $key => $value) {
-                      $replace = array('"','[',']');
-                      echo '<div id = "'.$value->id_agenda.'" class="row sel_agenda" style = "margin-bottom:15px;border-bottom: 1px solid #ddd;">';
-                        echo '<div class="col-md-3">';
-                          echo $value->nombre_agenda;
-                        echo '</div>';
-                        echo '<div class="col-md-3">';
-                          echo $value->usuario;
-                        echo '</div>';
-                        echo '<div class="col-md-6">';
-                          echo str_replace($replace," ",$value->especialidad);
-                        echo '</div>';
-                      echo '</div>';
-                  }
-              }
-            ?>
+            <div class="col-md-10 page-header" style = "padding-top:15px">
+                <button class="btn btn-primary dropdown-toggle" onclick = "return nueva_agenda()">Nueva Agenda</button>
             </div>
-          </div>
-        </div>
-
-        <!-- <div id = "especialistas" class="row">
-          <h3 class="page-header">Especialistas</h3> -->
-            <!-- <h3 class="page-header">Especialistas</h3>
-            <div class="col-md-7">
-                <form class="form-horizontal" method="post">
-                    <div class="form-group">
-
-                            <label class="col-md-2 control-label">Usuario</label>
-                            <div class="col-md-4">
-                                <input style = "text-transform:none" type="text"    class="form-control"    id = "esp_usuario"  name = "esp_usuario" readonly required>
-                                <input style = "text-transform:none" type="hidden"  class="form-control"    id = "esp_id"       name = "esp_id">
-                            </div>
-                            <div class ="col-md-2">
-                                <button id = "nuevo" class="btn btn-default">Limpiar</button>
-                            </div>
-                            <div class ="col-md-2">
-                                <button id = "agregar" class="btn btn-default">Agregar</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Especialidad</label>
-                        <div class="col-md-4 especialidades">
-                            <input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Días</label>
-                        <div class="col-md-10">
-                            <div class="form-group">
-                                <label class="col-md-2 control-label opciones">Lu</label>
-                                <div class="col-md-1 checkbox">
-                                     <input type="checkbox" name = "esp_dias[]" id = "lu" value = "lu">
-                                </div>
-                                <div class="col-md-3">
-                                    Desde <input type="time" class="form-control" id = "lu_desde" name = "lu_desde">
-                                </div>
-                                <div class="col-md-3">
-                                    Hasta <input type="time" class="form-control" id = "lu_hasta" name = "lu_hasta">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label opciones">Ma</label>
-                                <div class="col-md-1 checkbox">
-                                     <input type="checkbox" name = "esp_dias[]" id = "ma" value = "ma">
-                                </div>
-                                <div class="col-md-3">
-                                    Desde <input type="time" class="form-control" id = "ma_desde" name = "ma_desde">
-                                </div>
-                                <div class="col-md-3">
-                                    Hasta <input type="time" class="form-control" id = "ma_hasta" name = "ma_hasta">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label opciones">Mi</label>
-                                <div class="col-md-1 checkbox">
-                                     <input type="checkbox" name = "esp_dias[]" id = "mi" value = "mi">
-                                </div>
-                                <div class="col-md-3">
-                                    Desde <input type="time" class="form-control" id = "mi_desde" name = "mi_desde">
-                                </div>
-                                <div class="col-md-3">
-                                    Hasta <input type="time" class="form-control" id = "mi_hasta" name = "mi_hasta">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label opciones">Ju</label>
-                                <div class="col-md-1 checkbox">
-                                     <input type="checkbox" name = "esp_dias[]" id = "ju" value = "ju">
-                                </div>
-                                <div class="col-md-3">
-                                    Desde <input type="time" class="form-control" id = "ju_desde" name = "ju_desde">
-                                </div>
-                                <div class="col-md-3">
-                                    Hasta <input type="time" class="form-control" id = "ju_hasta" name = "ju_hasta">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label opciones">Vi</label>
-                                <div class="col-md-1 checkbox">
-                                     <input type="checkbox" name = "esp_dias[]" id = "vi" value = "vi">
-                                </div>
-                                <div class="col-md-3">
-                                    Desde <input type="time" class="form-control" id = "vi_desde" name = "vi_desde">
-                                </div>
-                                <div class="col-md-3">
-                                    Hasta <input type="time" class="form-control" id = "vi_hasta" name = "vi_hasta">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Duración</label>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading heading">
                         <div class="col-md-3">
-                            <select class="form-control" id = "esp_duracion" name = "duracion" required>
-                                <option value="30">30min</option>
-                                <option value="40">40min</option>
-                                <option value="60">60min</option>
-                                <option value="90">90min</option>
-                            </select>
+                            Nombre Agenda
+                        </div>
+                        <div class="col-md-3">
+                            Usuario
+                        </div>
+                        <div class="col-md-5">
+                            Especialidades
+                        </div>
+                        <div class="col-md-1">
+                            Acciones
                         </div>
                     </div>
-                    <div class="col-md-2 col-md-offset-10" style = "margin-bottom:20px">
-                        <hr>
-                        <button id = "aceptar" type="submit" class="btn btn-success" formaction="<?php echo base_url('index.php/main/add_agenda')?>">Guardar</button>
+                    <div class="panel-body content_agenda">
+                    <?php
+                    //   if (isset($agendas)) {
+                    //       foreach ($agendas as $key => $value) {
+                    //           $replace = array('"','[',']');
+                    //           echo '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">';
+                    //             echo '<div class="col-md-3">';
+                    //               echo $value->nombre_agenda;
+                    //             echo '</div>';
+                    //             echo '<div class="col-md-3">';
+                    //               echo $value->usuario;
+                    //             echo '</div>';
+                    //             echo '<div class="col-md-5">';
+                    //               echo str_replace($replace," ",$value->especialidad);
+                    //             echo '</div>';
+                    //             echo '<div class="col-md-1" style = "padding-top:0px">';
+                    //                 echo '<div class = "dropdown">';
+                    //                     echo '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>';
+                    //                     echo '<ul class="dropdown-menu pull-right">';
+                    //                         echo '<li><a href="#" onclick = "return modificar_datos_agenda_item(\''.$value->id_agenda.'\')" data-toggle="modal">Modificar Datos</a></li>';
+                    //                         echo '<li><a href="#" onclick = "return eliminar_agenda_item()" data-toggle="modal">Eliminar Usuario</a></li>';
+                    //                     echo '</ul>';
+                    //                 echo '</div>';
+                    //             echo '</div>';
+                    //           echo '</div>';
+                    //       }
+                    //   }
+                    ?>
                     </div>
-                </form>
-            </div> -->
-        </div> <!--row-->
+                </div>
+            </div>
+        </div>
     </div><!--col-md-10-->
 </div>
 <script type="text/javascript">
-    function clear_esp() {
 
-        $('.especialidades').html(
-            '<input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" autocomplete="off" required>'
-        );
+    $(document).ready(function() {
+        get_datos_usuarios();
+        get_datos_agendas();
+    });
 
-        $("#esp_duracion").val("30");
-        $("#esp_id").val("");
+    function confirmar_admin(titulo, tipo, callback, form)
+    {
+        $("#modal_confirmacion").find("#titulo").html(titulo);
+            if (tipo == "usuario")
+                $("#modal_confirmacion").find("#aceptar").attr('onclick','ok_confirmar_usuario("'+callback+'","'+form+'")');
+            else
+                $("#modal_confirmacion").find("#aceptar").attr('onclick','ok_confirmar_agenda("'+callback+'","'+form+'")');
+
+        $("#modal_confirmacion").modal({
+          show: true
+        });
+    }
+
+    function ok_confirmar_usuario(callback, form_id)
+    {
+      var form = $("#"+form_id);
+
+      $.ajax({
+          type: "POST",
+          url: base_url+"/main/"+callback,
+          data: form.serialize(),
+          success:function(response)
+          {
+              get_datos_usuarios();
+              $("#modal_confirmacion").modal('hide');
+          }
+      });
+
+    }
+
+    function ok_confirmar_agenda(callback, form_id)
+    {
+      var form = $("#"+form_id);
+
+      $.ajax({
+          type: "POST",
+          url: base_url+"/main/"+callback,
+          data: form.serialize(),
+          success:function(response)
+          {
+              get_datos_agendas()
+              $("#modal_confirmacion").modal('hide');
+          }
+      });
+
+    }
+
+    function get_datos_agendas() {
+
+        $.ajax({
+            url: base_url+"/main/get_agendas_json/todos",
+            dataType: 'json',
+            success:function(response)
+            {
+                if (response != null) {
+                    html = "";
+                    $.each(response, function(key,val) {
+
+                        // $replace = array('"','[',']');
+                        html +=  '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">'
+                                    +'<div class="col-md-3">'
+                                        +val.nombre_agenda
+                                    +'</div>'
+                                    +'<div class="col-md-3">'
+                                            +val.usuario
+                                    +'</div>'
+                                    +'<div class="col-md-5">'
+                                        // +val.especialidad.split(",").join(", ")
+                                        +JSON.parse(val.especialidad).toString().split(",").join(", ")// +str_replace($replace," ",$value->especialidad);
+                                    +'</div>'
+                                    +'<div class="col-md-1" style = "padding-top:0px">'
+                                        +'<div class = "dropdown">'
+                                            +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>'
+                                            +'<ul class="dropdown-menu pull-right">'
+                                                +'<li><a href="#" onclick = "return modificar_datos_agenda_item(\''+val.id_agenda+'\')" data-toggle="modal">Modificar Datos</a></li>'
+                                                +'<li><a href="#" onclick = "return eliminar_agenda_item(\''+val.id_agenda+'\')" data-toggle="modal">Eliminar Usuario</a></li>'
+                                            +'</ul>'
+                                        +'</div>'
+                                    +'</div>'
+                                +'</div>'
+
+                    });
+
+                    $(".content_agenda").html(html);
+                }
+            }
+        });
+    }
+
+    function get_datos_usuarios() {
+
+        $.ajax({
+            url: base_url+"/main/get_usuarios_json/todos",
+            dataType: 'json',
+            success:function(response)
+            {
+                if (response != null) {
+                    html = "";
+                    $.each(response, function(key,val) {
+
+                        // $replace = array('"','[',']');
+                        html += '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">'
+                                    +'<div class="col-md-4">'
+                                        +val.apellido+", "+val.nombre
+                                    +'</div>'
+                                    +'<div class="col-md-2">'
+                                        +val.usuario
+                                    +'</div>'
+                                    +'<div class="col-md-5">'
+                                        +JSON.parse(val.funciones).toString().split(",").join(", ")// +str_replace($replace," ",$value->especialidad);
+                                        // str_replace($replace," ",$value->funciones)
+                                    +'</div>'
+                                    +'<div class="col-md-1" style = "padding-top:0px">'
+                                        +'<div class = "dropdown">'
+                                            +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>'
+                                            +'<ul class="dropdown-menu pull-right">'
+                                                +'<li><a href="#" onclick = "return modificar_datos_usuario_item(\''+val.usuario+'\')" data-toggle="modal">Modificar Datos</a></li>'
+                                                +'<li><a href="#" onclick = "return eliminar_usuario_item(\''+val.usuario+'\')" data-toggle="modal">Eliminar Usuario</a></li>'
+                                                +'<li><a href="#" onclick = "return reset_pass_item(\''+val.usuario+'\')" data-toggle="modal">Resetear Password</a></li>'
+                                            +'</ul>'
+                                        +'</div>'
+                                    +'</div>'
+                                +'</div>';
+
+                    });
+
+                    $(".content_usuario").html(html);
+                }
+            }
+        });
+    }
+
+    function clear_agd() {
+
+        $('#especialidades').val("");
+        $('.tag-editor').empty();
+
+        $("#agenda_duracion").val("30");
+        $("#agenda_id").val("");
 
         $("#lu").prop('checked', false);
-        $("#lu_desde").val("");
-        $("#lu_hasta").val("");
+        $("#lu_desde_man").val("");
+        $("#lu_hasta_man").val("");
+        $("#lu_desde_tar").val("");
+        $("#lu_hasta_tar").val("");
 
         $("#ma").prop('checked', false);
-        $("#ma_desde").val("");
-        $("#ma_hasta").val("");
+        $("#ma_desde_man").val("");
+        $("#ma_hasta_man").val("");
+        $("#ma_desde_tar").val("");
+        $("#ma_hasta_tar").val("");
 
         $("#mi").prop('checked', false);
-        $("#mi_desde").val("");
-        $("#mi_hasta").val("");
+        $("#mi_desde_man").val("");
+        $("#mi_hasta_man").val("");
+        $("#mi_desde_tar").val("");
+        $("#mi_hasta_tar").val("");
 
         $("#ju").prop('checked', false);
-        $("#ju_desde").val("");
-        $("#ju_hasta").val("");
+        $("#ju_desde_man").val("");
+        $("#ju_hasta_man").val("");
+        $("#ju_desde_tar").val("");
+        $("#ju_hasta_tar").val("");
 
         $("#vi").prop('checked', false);
-        $("#vi_desde").val("");
-        $("#vi_hasta").val("");
+        $("#vi_desde_man").val("");
+        $("#vi_hasta_man").val("");
+        $("#vi_desde_tar").val("");
+        $("#vi_hasta_tar").val("");
+
+        $("#sa").prop('checked', false);
+        $("#sa_desde_man").val("");
+        $("#sa_hasta_man").val("");
+        $("#sa_desde_tar").val("");
+        $("#sa_hasta_tar").val("");
     }
 
     function clear_usr() {
         $("#usr_nombre").val("");
         $("#usr_apellido").val("");
         $("#usr_usuario").val("");
+        $("#usr_usuario").attr('readonly',false);
 
         $("#chk_tur").prop('checked', false);
         $("#chk_pac").prop('checked', false);
@@ -334,16 +362,43 @@
         $("#chk_adm").prop('checked', false);
     }
 
-    $(".sel_user").click(function(){
+    function nuevo_usuario() {
 
         clear_usr();
-        id = $(this).attr('id');
+
+        $("#modal_usuario").modal({
+            show: true
+        });
+    }
+
+    function eliminar_usuario_item(id) {
+
+        $("#modal_confirmacion").find("#form_content").html(
+          '<form id = "eliminar_usuario_'+id+'">'
+            +'<input type="text" name = "id_usuario" value="'+id+'">'
+          +'</form>');
+
+        confirmar_admin("¿Eliminar Usuario?", "usuario", "del_usuario", "eliminar_usuario_"+id);
+    }
+
+    function reset_pass_item(id) {
+        $("#modal_confirmacion").find("#form_content").html(
+          '<form id = "reset_usuario_'+id+'">'
+            +'<input type="text" name = "usr_usuario" value="'+id+'">'
+          +'</form>');
+
+        confirmar_admin("¿Resetear Password Usuario?", "usuario", "reset_usuario", "reset_usuario_"+id);
+    }
+
+    function modificar_datos_usuario_item(id) {
+
+        clear_usr();
         $("#usr_usuario").attr('readonly',true);
 
         $.ajax({
-            url: base_url+"/main/get_usuario_json/"+id,
+            url: base_url+"/main/get_usuarios_json/"+id,
             dataType: 'json',
-    	 	success: function(response) {
+    	 	    success: function(response) {
 
                 $("#usr_nombre").val(response.nombre);
                 $("#usr_apellido").val(response.apellido);
@@ -370,85 +425,149 @@
                     }
 
                 });
+
+                $("#modal_usuario").modal({
+                    show: true
+                });
+
             }
         });
-    });
+    }
 
-    $(".sel_agenda").click(function(){
+    function guardar_datos_usuario(){
 
-        clear_esp();
-        id = $(this).attr('id');
-        $("#esp_id").val(id);
+        var form = $("#modal_usuario").find('form');
 
         $.ajax({
-            url: base_url+"/main/get_agenda_json/"+id,
+            type: "POST",
+            url: base_url+"/main/am_usuario",
+            data: form.serialize(),
+            // dataType: "json",
+            success:function(response)
+            {
+                get_datos_usuarios();
+                $("#modal_usuario").modal('hide');
+            }
+        });
+
+    }
+
+    function nueva_agenda() {
+
+        clear_agd();
+
+        $("#modal_agenda").modal({
+            show: true
+        });
+    }
+
+    function eliminar_agenda_item(id) {
+
+        $("#modal_confirmacion").find("#form_content").html(
+          '<form id = "eliminar_agenda_'+id+'">'
+            +'<input type="text" name = "id_agenda" value="'+id+'">'
+          +'</form>');
+
+        confirmar_admin("¿Eliminar Agenda?", "agenda", "del_agenda", "eliminar_agenda_"+id);
+
+    }
+
+    function modificar_datos_agenda_item(id){
+
+        clear_agd();
+        $("#agenda_id").val(id);
+
+        $.ajax({
+            url: base_url+"/main/get_agendas_json/"+id,
             dataType: 'json',
     	 	success: function(response) {
 
-                $("#esp_usuario").val(response.usuario);
+                $("#agenda_nombre").val(response.nombre_agenda);
+                $("#agenda_usuario").val(response.usuario);
                 if (response.dias_horarios != "") {
-                    $("#esp_duracion").val(response.duracion);
+                    $("#agenda_duracion").val(response.duracion);
                     $.each(JSON.parse(response.dias_horarios), function(key, value)
                     {
+
                         switch(key) {
                             case "lu":
                                 $("#lu").prop('checked', true);
-                                $("#lu_desde").val(value.desde);
-                                $("#lu_hasta").val(value.hasta);
+                                $("#lu_desde_man").val(value['1'].desde);
+                                $("#lu_hasta_man").val(value['1'].hasta);
+                                $("#lu_desde_tar").val(value['2'].desde);
+                                $("#lu_hasta_tar").val(value['2'].hasta);
                                 break;
                             case "ma":
                                 $("#ma").prop('checked', true);
-                                $("#ma_desde").val(value.desde);
-                                $("#ma_hasta").val(value.hasta);
+                                $("#ma_desde_man").val(value['1'].desde);
+                                $("#ma_hasta_man").val(value['1'].hasta);
+                                $("#ma_desde_tar").val(value['2'].desde);
+                                $("#ma_hasta_tar").val(value['2'].hasta);
                                 break;
                             case "mi":
                                 $("#mi").prop('checked', true);
-                                $("#mi_desde").val(value.desde);
-                                $("#mi_hasta").val(value.hasta);
+                                $("#mi_desde_man").val(value['1'].desde);
+                                $("#mi_hasta_man").val(value['1'].hasta);
+                                $("#mi_desde_tar").val(value['2'].desde);
+                                $("#mi_hasta_tar").val(value['2'].hasta);
                                 break;
                             case "ju":
                                 $("#ju").prop('checked', true);
-                                $("#ju_desde").val(value.desde);
-                                $("#ju_hasta").val(value.hasta);
+                                $("#ju_desde_man").val(value['1'].desde);
+                                $("#ju_hasta_man").val(value['1'].hasta);
+                                $("#ju_desde_tar").val(value['2'].desde);
+                                $("#ju_hasta_tar").val(value['2'].hasta);
+                                break;
+                            case "vi":
+                                $("#vi").prop('checked', true);
+                                $("#vi_desde_man").val(value['1'].desde);
+                                $("#vi_hasta_man").val(value['1'].hasta);
+                                $("#vi_desde_tar").val(value['2'].desde);
+                                $("#vi_hasta_tar").val(value['2'].hasta);
                                 break;
                             default:
-                                $("#vi").prop('checked', true);
-                                $("#vi_desde").val(value.desde);
-                                $("#vi_hasta").val(value.hasta);
+                                $("#sa").prop('checked', true);
+                                $("#sa_desde_man").val(value['1'].desde);
+                                $("#sa_hasta_man").val(value['1'].hasta);
+                                $("#sa_desde_tar").val(value['2'].desde);
+                                $("#sa_hasta_tar").val(value['2'].hasta);
                         }
 
                     });
                 }
 
+                $("#modal_agenda").modal({
+                    show: true
+                });
+
                 if (response.especialidad != "") {
-                    flag = 0;
                     $.each(JSON.parse(response.especialidad), function(key, value)
                     {
-                        if (flag == 0) {
-                            $("input[name='esp_especialidad[]']").val(value);
-                            flag = 1;
-                        }
-                        else {
-                            $(".especialidades").append(
-                                '<input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" value = "'+value+'" autocomplete="off">'
-                            );
-                        }
-
+                        $('#agenda_especialidades').tagEditor('addTag', value);
                     });
                 }
             }
         });
-    });
+    }
 
-    $("#nuevo").click( function(event){
-        event.preventDefault();
-        clear_esp();
-    })
+    function guardar_datos_agenda(){
+        tags = $('#agenda_especialidades').tagEditor('getTags')[0].tags;
 
-    $("#agregar").click( function(event){
-        event.preventDefault();
-        $(".especialidades").append(
-            '<input style = "margin-top:10px" type="text" class="form-control" name = "esp_especialidad[]" autocomplete="off">'
-        );
-    })
+        $('#agenda_especialidades').val(JSON.stringify(tags));
+
+        var form = $("#modal_agenda").find('form');
+
+        $.ajax({
+            type: "POST",
+            url: base_url+"/main/am_agenda",
+            data: form.serialize(),
+            success:function(response)
+            {
+                get_datos_agendas();
+                $("#modal_agenda").modal('hide');
+            }
+        });
+
+    }
+
 </script>

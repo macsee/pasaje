@@ -160,19 +160,11 @@ class Main_model extends CI_Model {
 
 	public function am_usuario($array)
 	{
-		$data = array(
-		   	'usuario' => $array['usr_usuario'],
-		   	'nombre' => ucwords(strtolower($array['usr_nombre'])),
-		   	'apellido' => ucwords(strtolower($array['usr_apellido'])),
-		   	'password' => $array['usr_usuario'],
-		   	'funciones' => json_encode($array['usr_funciones'])
-		);
-
 		$query = "	INSERT INTO usuarios (usuario, nombre, apellido, password, funciones)
 					VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE 	nombre = VALUES(nombre),
 																apellido = VALUES(apellido),
 																funciones = VALUES(funciones)";
-		$this->db->query($query, $data);
+		$this->db->query($query, $array);
 	}
 
 	public function am_especialista($id)
@@ -185,31 +177,31 @@ class Main_model extends CI_Model {
 				$this->db->query($query, array('usuario' => $id));
 	}
 
-	public function add_agenda($array)
+	public function am_agenda($array)
 	{
-		$horarios = array();
-		$especialidades = array();
-
-		foreach ($array['esp_dias'] as $key => $dia)
-		{
-			$horarios[$dia] = array(
-				"desde"	=>	$array[$dia."_desde"],
-				"hasta" =>	$array[$dia."_hasta"]
-			);
-		}
-
-		foreach ($array['esp_especialidad'] as $key =>$esp)
-		{
-			$especialidades[] = ucwords(strtolower($esp));
-		}
-
-		$data = array(
-			'id'	  				=> $array['esp_id'],
-			'usuario' 			=> $array['esp_usuario'],
-		  'especialidad' 	=> json_encode($especialidades),
-			'dias_horarios' => json_encode($horarios),
-		  'duracion'			=> $array['duracion']
-		);
+		// $horarios = array();
+		// $especialidades = array();
+		//
+		// foreach ($array['agenda_especialidades'] as $key => $dia)
+		// {
+		// 	$horarios[$dia] = array(
+		// 		"desde"	=>	$array[$dia."_desde"],
+		// 		"hasta" =>	$array[$dia."_hasta"]
+		// 	);
+		// }
+		//
+		// foreach ($array['esp_especialidad'] as $key =>$esp)
+		// {
+		// 	$especialidades[] = ucwords(strtolower($esp));
+		// }
+		//
+		// $data = array(
+		// 	'id'	  			=> $array['esp_id'],
+		// 	'usuario' 			=> $array['esp_usuario'],
+		//   	'especialidad' 		=> json_encode($especialidades),
+		// 	'dias_horarios' 	=> json_encode($horarios),
+		//   	'duracion'			=> $array['duracion']
+		// );
 
 
 		// if ($this->first_esp($array['esp_usuario']))
@@ -218,13 +210,19 @@ class Main_model extends CI_Model {
 		// }
 		// else
 		// {
-			$query = "	INSERT INTO agendas (id, usuario, especialidad, dias_horarios, duracion)
-						VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE 	especialidad = VALUES(especialidad),
-																	usuario = VALUES(usuario),
-																	duracion = VALUES(duracion),
-																	dias_horarios = VALUES(dias_horarios)";
-			$this->db->query($query, $data);
+			$query = "	INSERT INTO agendas (id_agenda, nombre_agenda, usuario, especialidad, dias_horarios, duracion)
+						VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	especialidad = VALUES(especialidad),
+																		nombre_agenda = VALUES(nombre_agenda),
+																		usuario = VALUES(usuario),
+																		duracion = VALUES(duracion),
+																		dias_horarios = VALUES(dias_horarios)";
+			$this->db->query($query, $array);
 		// }
+	}
+
+	function del_agenda($id)
+	{
+		$this->db->delete("agendas", array('id_agenda' => $id));
 	}
 
 	function first_esp($id)
