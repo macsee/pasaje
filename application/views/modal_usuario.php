@@ -49,7 +49,7 @@
                                     <input type="checkbox" id = "chk_pac" name = "usr_funciones[]" value = "pacientes">
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group admin">
                                 <label class="col-md-3 col-xs-4 control-label opciones">Admin</label>
                                 <div class="col-md-1 col-xs-1 checkbox">
                                     <input type="checkbox" id = "chk_adm" name = "usr_funciones[]" value = "admin">

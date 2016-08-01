@@ -167,6 +167,11 @@ class Main_model extends CI_Model {
 		$this->db->query($query, $array);
 	}
 
+	public function reset_usuario($usuario)
+	{
+		$this->db->update('usuarios', array('password' => $usuario), array('usuario' => $usuario));
+	}
+
 	public function am_especialista($id)
 	{
 

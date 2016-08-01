@@ -114,6 +114,7 @@ class Main extends CI_Controller {
 		if (!$this->main_model->rol($this->session->userdata('usuario'),"admin"))
 			redirect('main/agenda');
 		else {
+			$data['usuario'] = $this->session->userdata('usuario');
 			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
 			$data['agendas'] = $this->get_agendas("todos");
 			$data['especialistas'] = $this->get_especialistas();
@@ -217,10 +218,10 @@ class Main extends CI_Controller {
 		// 	$this->main_model->am_especialista($_POST['usr_usuario']);
 
 		$data = array(
-		   	'usuario' => $_POST['usr_usuario'],
-		   	'nombre' => ucwords(strtolower($_POST['usr_nombre'])),
-		   	'apellido' => ucwords(strtolower($_POST['usr_apellido'])),
-		   	'password' => $_POST['usr_usuario'],
+		   	'usuario' 	=> $_POST['usr_usuario'],
+		   	'nombre' 	=> ucwords(strtolower($_POST['usr_nombre'])),
+		   	'apellido' 	=> ucwords(strtolower($_POST['usr_apellido'])),
+			'password'	=> $_POST['usr_usuario'],
 		   	'funciones' => json_encode($_POST['usr_funciones'])
 		);
 
@@ -230,18 +231,7 @@ class Main extends CI_Controller {
 
 	public function reset_usuario()
 	{
-		$usuario = $this->get_usuarios($_POST['usr_usuario']);
-
-		$data = array(
-		   	'usuario' => $_POST['usr_usuario'],
-		   	'nombre' => $usuario->nombre,
-		   	'apellido' => $usuario->apellido,
-		   	'password' => $_POST['usr_usuario'],
-		   	'funciones' => $usuario->functiones
-		);
-
-		$this->main_model->am_usuario($data);
-
+		$this->main_model->reset_usuario($_POST['usr_usuario']);
 	}
 
 	public function del_usuario()

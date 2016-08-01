@@ -193,8 +193,10 @@
           type: "POST",
           url: base_url+"/main/"+callback,
           data: form.serialize(),
+        //   dataType: 'json',
           success:function(response)
           {
+              console.log(response);
               get_datos_usuarios();
               $("#modal_confirmacion").modal('hide');
           }
@@ -394,6 +396,7 @@
 
         clear_usr();
         $("#usr_usuario").attr('readonly',true);
+        var usr_logged = "<?php echo $usuario?>";
 
         $.ajax({
             url: base_url+"/main/get_usuarios_json/"+id,
@@ -403,6 +406,11 @@
                 $("#usr_nombre").val(response.nombre);
                 $("#usr_apellido").val(response.apellido);
                 $("#usr_usuario").val(response.usuario);
+
+                if (response.usuario == usr_logged)
+                    $(".admin").css('visibility','hidden');
+                else
+                    $(".admin").css('visibility','visible');
 
                 $.each(JSON.parse(response.funciones), function(key, value)
                 {
