@@ -96,7 +96,6 @@
       font-size: 15px;
       padding-left:5px;
       padding-top: 10px;
-      /*border-right:1px solid #e8e8e5;*/
       overflow: hidden;
       color: white;
       font-weight: 400;
