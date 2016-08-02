@@ -6,7 +6,8 @@
     <meta charset="utf-8">
     <title><?php echo (isset($title) ? $title : "")?></title>
 
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+    <!-- <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'> -->
+    <link rel="stylesheet" href="<?php echo base_url('fonts/fonts.css')?>">
     <link rel="stylesheet" href="<?php echo base_url('libs/jquery/jquery-ui.min.css')?>">
     <link rel="stylesheet" href="<?php echo base_url('libs/bootstrap/css/bootstrap.css')?>">
     <link rel="stylesheet" href="<?php echo base_url('libs/datepicker/bootstrap-datepicker3.min.css')?>">
@@ -26,18 +27,18 @@
     </script>
 
     <style>
-      body {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 300;
-        background-color: #f1f1f1; //#f5f8fa
-      }
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            background-color: #f1f1f1; //#f5f8fa
+          }
 
-      .cabecera th{
-          background-color: #454545;
-          color:white;
-          font-size: 16px;
-          font-weight: 400;
-      }
+          .cabecera th{
+              background-color: #454545;
+              color:white;
+              font-size: 16px;
+              font-weight: 400;
+          }
     </style>
   </head>
   <body>
