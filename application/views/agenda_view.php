@@ -196,27 +196,28 @@
         </div>
 
         <!-- <div class = "panel-body" style = "padding:0px;overflow:inherit;margin-bottom:30px"> -->
-        <div style = "padding:0px;overflow:inherit;margin-bottom:30px">
+        <!-- <div style = "padding:0px;overflow:inherit;margin-bottom:30px"> -->
 
             <div class="horarios">
               <!-- ACA VAN TODOS LOS TURNOS Y HORARIOS -->
             </div>
 
-            <div class = "panel panel-default abrir_agenda" style = "visibility:hidden;padding:10px">
+            <div class = "panel panel-default abrir_agenda" style = "display:none;padding:10px">
               <?php
-                if ($is_admin) {
-                  echo '<h3>Crear Agenda</h3>';
-                  echo '<hr>';
-                  echo $agenda_extra;
-                }
-                else {
-                  echo '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
-                }
-              ?>
+                echo $agenda_extra;
+                // if ($is_admin) {
+                //   echo '<h3>Crear Agenda</h3>';
+                //   echo '<hr>';
+                //   echo $agenda_extra;
+                // }
+                // else {
+                //   echo '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
+                // }
+            //   ?>
 
             </div>
 
-        </div>
+        <!-- </div> -->
 
     </div>
     <div class="col-md-3">

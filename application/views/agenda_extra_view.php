@@ -1,5 +1,3 @@
-<!-- <h3>Crear Agenda</h3>
-<hr> -->
 <form id = "form_agenda_extra" method = "post" class="row form-horizontal">
     <div class="col-sm-4" style = "margin-top:30px">
         <div class="form-group">
@@ -60,12 +58,6 @@
                       <option value="50">50</option>
                     </select>
                   </div>
-                  <!-- <div class='input-group date' id='desde_man'>
-                    <input type='text' name = "crear_agenda_desde_man" class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-time"></span>
-                    </span>
-                  </div> -->
                 </div>
 
               </div>
@@ -101,13 +93,6 @@
                       <option value="50">50</option>
                     </select>
                   </div>
-                <!-- <div class="col-sm-9">
-                  <div class='input-group date' id='hasta_man'>
-                    <input type='text' name = "crear_agenda_hasta_man" class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-time"></span>
-                    </span>
-                  </div> -->
                 </div>
               </div>
 
@@ -148,13 +133,6 @@
                       <option value="50">50</option>
                     </select>
                   </div>
-                <!-- <div class="col-sm-9">
-                  <div class='input-group date' id='desde_tar'>
-                    <input type='text' name = "crear_agenda_desde_tar" class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-time"></span>
-                    </span>
-                  </div> -->
                 </div>
               </div>
               <div class="form-group">
@@ -189,13 +167,6 @@
                         <option value="50">50</option>
                       </select>
                     </div>
-                <!-- <div class="col-sm-9">
-                  <div class='input-group date' id='hasta_tar'>
-                    <input type='text' name = "crear_agenda_hasta_tar" class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-time"></span>
-                    </span>
-                  </div> -->
                 </div>
 
               </div>
@@ -210,30 +181,3 @@
           </div>
         </div>
     </form>
-    <script type="text/javascript">
-        // $(function () {
-        //     $('#desde_man').datetimepicker({
-        //         format: 'HH:mm',
-        //         // defaultDate:new Date()
-        //         // use24hours: true,
-        //     });
-        //
-        //     $('#hasta_man').datetimepicker({
-        //         format: 'HH:mm',
-        //         // defaultDate:new Date()
-        //         // use24hours: true,
-        //     });
-        //
-        //     $('#desde_tar').datetimepicker({
-        //         format: 'HH:mm',
-        //         // defaultDate:new Date()
-        //         // use24hours: true,
-        //     });
-        //
-        //     $('#hasta_tar').datetimepicker({
-        //         format: 'HH:mm',
-        //         // defaultDate:new Date()
-        //         // use24hours: true,
-        //     });
-        // });
-    </script>

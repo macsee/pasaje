@@ -77,7 +77,12 @@ class Main extends CI_Controller {
 				$data['especialidades'] = $this->get_especialidades("todos");
 		}
 
-		$data["agenda_extra"] = $this->load->view('agenda_extra_view', '', true);
+		if ($data['is_admin']) {
+			$data["agenda_extra"] = '<h3>Crear Agenda</h3><hr>';
+			$data["agenda_extra"] .= $this->load->view('agenda_extra_view', '', true);
+		}
+		else
+			$data["agenda_extra"] = '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
 
 		$arraybar = array (
 			'admin_act' 		=> "",

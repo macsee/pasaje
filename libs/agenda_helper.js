@@ -246,7 +246,7 @@ function show_turnos(fecha) {
 
     get_notas();
     $(".horarios").empty();
-    $(".abrir_agenda").css('visibility','hidden');
+    $(".abrir_agenda").css('display','none');
 
     var esp = $("#agendas").val();
 
@@ -965,13 +965,8 @@ function abrir_agenda() {
   form.find("input[name='crear_agenda_fecha']").val(fecha);
   form.find("input[name='crear_agenda_id_txt']").val(esp_txt);
   form.find("input[name='crear_agenda_id']").val(esp);
-  // form.find("input[name='crear_agenda_hora_desde_man']").val("");
-  // form.find("input[name='crear_agenda_hora_hasta_man']").val("");
-  // form.find("input[name='crear_agenda_hora_desde_tar']").val("");
-  // form.find("input[name='crear_agenda_hora_hasta_tar']").val("");
-  // form.find("select[name='crear_agenda_duracion']").val("30");
 
-  $(".abrir_agenda").css('visibility','visible');
+  $(".abrir_agenda").css('display','block');
 
 }
 

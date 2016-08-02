@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Nombre Agenda</label>
                         <div class="col-md-4">
-                            <input style = "text-transform:none" type="text"    class="form-control" id = "agenda_nombre"  name = "agenda_nombre" required>
+                            <input style = "text-transform:none" type="text"    class="form-control" id = "agenda_nombre"  name = "agenda_nombre" required autocomplete="off">
                             <input style = "text-transform:none" type="hidden"  class="form-control" id = "agenda_id"  name = "agenda_id">
                         </div>
                         <label class="col-md-2 control-label">Usuario</label>
