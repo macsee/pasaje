@@ -254,7 +254,7 @@
         $('.tag-editor').empty();
 
         $("#agenda_nombre").val("");
-        $("#agenda_usuario").val("");
+        $("#agenda_usuario").empty();
 
         $("#agenda_duracion").val("30");
         $("#agenda_id").val("");
@@ -408,6 +408,7 @@
     function nueva_agenda() {
 
         clear_agd();
+        get_especialistas();
 
         $("#modal_agenda").modal({
             show: true
@@ -425,27 +426,31 @@
 
     }
 
+    function get_especialistas() {
+        $.ajax({
+            url: base_url+"/main/get_especialistas_json/",
+            dataType: 'json',
+            success:function(response)
+            {
+                console.log(response);
+                if (response != null) {
+
+                    $.each(response, function(key,val) {
+
+                        $("#agenda_usuario").append($('<option>', {
+                                value: val.usuario,
+                                text : val.nombre
+                        }));
+                    });
+                }
+            }
+        });
+    }
+
     function modificar_datos_agenda_item(id){
 
         clear_agd();
-
-        // $.ajax({
-        //     url: base_url+"/main/get_especialistas_json/",
-        //     dataType: 'json',
-        //     success:function(response)
-        //     {
-        //         if (response != null) {
-        //
-        //             $.each(response, function(key,val) {
-        //
-        //                 $("#agenda_usuario").append($('<option>', {
-        //                         value: val.usuario,
-        //                         text : val.usuario
-        //                 }));
-        //             });
-        //         }
-        //     }
-        // });
+        get_especialistas();
 
         $.ajax({
             url: base_url+"/main/get_agendas_json/"+id,

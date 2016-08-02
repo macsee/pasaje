@@ -30,9 +30,9 @@
                         <div class="col-md-4">
                             <select class="form-control" id = "agenda_usuario" name="agenda_usuario" required>
                                 <?php
-                                    foreach ($especialistas as $key => $value) {
-                                        echo '<option value="'.$value->usuario.'">'.$value->nombre.'</option>';
-                                    }
+                                    // foreach ($especialistas as $key => $value) {
+                                    //     echo '<option value="'.$value->usuario.'">'.$value->nombre.'</option>';
+                                    // }
                                  ?>
                             </select>
                         </div>
