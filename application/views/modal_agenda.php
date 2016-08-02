@@ -28,10 +28,9 @@
                         </div>
                         <label class="col-md-2 control-label">Usuario</label>
                         <div class="col-md-4">
-                            <select class="form-control" id = "agenda_usuario" name="agenda_usuario">
+                            <select class="form-control" id = "agenda_usuario" name="agenda_usuario" required>
                                 <?php
                                     foreach ($especialistas as $key => $value) {
-                                        // if (strpos($value->especialidad, $findme))
                                         echo '<option value="'.$value->usuario.'">'.$value->nombre.'</option>';
                                     }
                                  ?>

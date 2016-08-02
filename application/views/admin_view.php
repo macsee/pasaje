@@ -75,33 +75,6 @@
                         </div>
                     </div>
                     <div class="panel-body content_usuario">
-                    <?php
-                        // if (isset($usuarios))
-                        //     foreach ($usuarios as $key => $value) {
-                        //       $replace = array('"','[',']');
-                        //       echo '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">';
-                        //         echo '<div class="col-md-4">';
-                        //           echo $value->apellido.", ".$value->nombre;
-                        //         echo '</div>';
-                        //         echo '<div class="col-md-2">';
-                        //           echo $value->usuario;
-                        //         echo '</div>';
-                        //         echo '<div class="col-md-5">';
-                        //           echo str_replace($replace," ",$value->funciones);
-                        //         echo '</div>';
-                        //         echo '<div class="col-md-1" style = "padding-top:0px">';
-                        //             echo '<div class = "dropdown">';
-                        //                 echo '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>';
-                        //                 echo '<ul class="dropdown-menu pull-right">';
-                        //                     echo '<li><a href="#" onclick = "return modificar_datos_usuario_item(\''.$value->usuario.'\')" data-toggle="modal">Modificar Datos</a></li>';
-                        //                     echo '<li><a href="#" onclick = "return eliminar_usuario_item()" data-toggle="modal">Eliminar Usuario</a></li>';
-                        //                     echo '<li><a href="#" onclick = "return reset_pass_item()" data-toggle="modal">Resetear Password</a></li>';
-                        //                 echo '</ul>';
-                        //             echo '</div>';
-                        //         echo '</div>';
-                        //       echo '</div>';
-                        //     }
-                    ?>
                     </div>
                 </div>
             </div>
@@ -132,33 +105,6 @@
                         </div>
                     </div>
                     <div class="panel-body content_agenda">
-                    <?php
-                    //   if (isset($agendas)) {
-                    //       foreach ($agendas as $key => $value) {
-                    //           $replace = array('"','[',']');
-                    //           echo '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">';
-                    //             echo '<div class="col-md-3">';
-                    //               echo $value->nombre_agenda;
-                    //             echo '</div>';
-                    //             echo '<div class="col-md-3">';
-                    //               echo $value->usuario;
-                    //             echo '</div>';
-                    //             echo '<div class="col-md-5">';
-                    //               echo str_replace($replace," ",$value->especialidad);
-                    //             echo '</div>';
-                    //             echo '<div class="col-md-1" style = "padding-top:0px">';
-                    //                 echo '<div class = "dropdown">';
-                    //                     echo '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>';
-                    //                     echo '<ul class="dropdown-menu pull-right">';
-                    //                         echo '<li><a href="#" onclick = "return modificar_datos_agenda_item(\''.$value->id_agenda.'\')" data-toggle="modal">Modificar Datos</a></li>';
-                    //                         echo '<li><a href="#" onclick = "return eliminar_agenda_item()" data-toggle="modal">Eliminar Usuario</a></li>';
-                    //                     echo '</ul>';
-                    //                 echo '</div>';
-                    //             echo '</div>';
-                    //           echo '</div>';
-                    //       }
-                    //   }
-                    ?>
                     </div>
                 </div>
             </div>
@@ -232,7 +178,6 @@
                     html = "";
                     $.each(response, function(key,val) {
 
-                        // $replace = array('"','[',']');
                         html +=  '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">'
                                     +'<div class="col-md-3">'
                                         +val.nombre_agenda
@@ -249,7 +194,7 @@
                                             +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>'
                                             +'<ul class="dropdown-menu pull-right">'
                                                 +'<li><a href="#" onclick = "return modificar_datos_agenda_item(\''+val.id_agenda+'\')" data-toggle="modal">Modificar Datos</a></li>'
-                                                +'<li><a href="#" onclick = "return eliminar_agenda_item(\''+val.id_agenda+'\')" data-toggle="modal">Eliminar Usuario</a></li>'
+                                                +'<li><a href="#" onclick = "return eliminar_agenda_item(\''+val.id_agenda+'\')" data-toggle="modal">Eliminar Agenda</a></li>'
                                             +'</ul>'
                                         +'</div>'
                                     +'</div>'
@@ -274,7 +219,6 @@
                     html = "";
                     $.each(response, function(key,val) {
 
-                        // $replace = array('"','[',']');
                         html += '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">'
                                     +'<div class="col-md-4">'
                                         +val.apellido+", "+val.nombre
@@ -283,8 +227,7 @@
                                         +val.usuario
                                     +'</div>'
                                     +'<div class="col-md-5">'
-                                        +JSON.parse(val.funciones).toString().split(",").join(", ")// +str_replace($replace," ",$value->especialidad);
-                                        // str_replace($replace," ",$value->funciones)
+                                        +JSON.parse(val.funciones).toString().split(",").join(", ")
                                     +'</div>'
                                     +'<div class="col-md-1" style = "padding-top:0px">'
                                         +'<div class = "dropdown">'
@@ -307,9 +250,11 @@
     }
 
     function clear_agd() {
-
         $('#especialidades').val("");
         $('.tag-editor').empty();
+
+        $("#agenda_nombre").val("");
+        $("#agenda_usuario").val("");
 
         $("#agenda_duracion").val("30");
         $("#agenda_id").val("");
@@ -483,13 +428,31 @@
     function modificar_datos_agenda_item(id){
 
         clear_agd();
-        $("#agenda_id").val(id);
+
+        // $.ajax({
+        //     url: base_url+"/main/get_especialistas_json/",
+        //     dataType: 'json',
+        //     success:function(response)
+        //     {
+        //         if (response != null) {
+        //
+        //             $.each(response, function(key,val) {
+        //
+        //                 $("#agenda_usuario").append($('<option>', {
+        //                         value: val.usuario,
+        //                         text : val.usuario
+        //                 }));
+        //             });
+        //         }
+        //     }
+        // });
 
         $.ajax({
             url: base_url+"/main/get_agendas_json/"+id,
             dataType: 'json',
     	 	success: function(response) {
 
+                $("#agenda_id").val(id);
                 $("#agenda_nombre").val(response.nombre_agenda);
                 $("#agenda_usuario").val(response.usuario);
                 if (response.dias_horarios != "") {

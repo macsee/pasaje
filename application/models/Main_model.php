@@ -129,6 +129,7 @@ class Main_model extends CI_Model {
 		}
 
 		if ($id == "todos" && $esp != "" && $esp != "todos") {
+			$esp = str_replace("%20"," ",$esp);
 			$like = array('especialidad' => $esp);
 		}
 

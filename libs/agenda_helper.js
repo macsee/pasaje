@@ -441,7 +441,7 @@ function dias_turnos_array_inv(num)
 function fill_especialidades(esp, callback) {
 
     $.ajax({
-        url: base_url+"/main/get_agenda_json/"+esp,
+        url: base_url+"/main/get_agendas_json/"+esp,
         dataType: 'json',
         success:function(response)
         {

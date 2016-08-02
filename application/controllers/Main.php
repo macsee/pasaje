@@ -379,8 +379,15 @@ class Main extends CI_Controller {
 		return $data;
 	}
 
+	public function get_especialistas_json()
+	{
+		echo json_encode($this->get_especialistas());
+	}
+
 	public function get_agendas_by_esp($esp)
 	{
+		$esp = str_replace("%20"," ",$esp);
+
 		if ($esp == "todos")
 			$where = null;
 		else
@@ -505,7 +512,6 @@ class Main extends CI_Controller {
 		// $especialista = $this->get_usuarios($turno->especialista);
 		$turno = $this->main_model->get_data("turnos",null,array('id_turno' => $id))[0];
 		$agenda = $this->main_model->get_data("agendas",null,array('id_agenda' => $turno->agenda))[0];
-		// $agenda = $this->main_model->get_datos_agenda($turno->agenda)[0]->usuario;
 		$especialista = $this->main_model->get_data("usuarios",null,array('usuario' => $agenda->usuario))[0];
 		$paciente = $this->get_paciente($turno->id_paciente);
 		$facturacion = $this->main_model->get_data("facturacion",null,array('id_turno' => $id))[0];
@@ -526,7 +532,17 @@ class Main extends CI_Controller {
 
 	public function nuevo_turno()
 	{
-		$this->am_turno($_POST);
+		$data = $_POST;
+
+		if ($data['id_paciente'] != "") {
+			$paciente = $this->get_paciente($data['id_paciente']);
+			$data['dni'] = $paciente->dni;
+			$data['direccion'] = $paciente->direccion;
+			$data['localidad'] = $paciente->localidad;
+			$data['observaciones_paciente'] = $paciente->observaciones;
+		}
+
+		$this->am_turno($data);
 	}
 
 	public function modificar_datos()
@@ -587,14 +603,6 @@ class Main extends CI_Controller {
 	{
 		$tel1 = $this->main_model->join_telefono($data['tel1'], $data['tel2']);
 		$tel2 = $this->main_model->join_telefono($data['cel1'], $data['cel2']);
-
-		if ($data['id_paciente'] != "") {
-			$paciente = $this->get_paciente($data['id_paciente']);
-			$data['dni'] = $paciente->dni;
-			$data['direccion'] = $paciente->direccion;
-			$data['localidad'] = $paciente->localidad;
-			$data['observaciones_paciente'] = $paciente->observaciones;
-		}
 
 		$data_paciente = array(
 			'id_paciente' 	=> $data['id_paciente'],
