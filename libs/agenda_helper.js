@@ -524,6 +524,8 @@ function nuevo_turno(hora) {
             }));
         });
 
+        $("#modal_turno").find("select[name='especialidad']").val($("#especialidades").val());
+
         $("#modal_turno").modal({
             show: true
         });
@@ -738,7 +740,12 @@ function proximo_turno(hora) {
     clear_fields($("#modal_turno"));
 
     $("#modal_turno").find("#titulo").html("Nuevo Turno");
+
+    var hora_split = hora.split(":");
     $("#modal_turno").find("input[name='hora']").val(hora);
+    $("#modal_turno").find("select[name='hora_turno']").val(hora_split[0]);
+    $("#modal_turno").find("select[name='min_turno']").val(hora_split[1]);
+    
     $("#modal_turno").find("input[name='fecha']").val(fecha);
     $("#modal_turno").find("input[name='id_agenda']").val(esp);
     $("#modal_turno").find("input[name='especialista']").val($("#agendas option:selected").text());
