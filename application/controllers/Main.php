@@ -319,30 +319,20 @@ class Main extends CI_Controller {
 		$this->main_model->del_agenda($id);
 	}
 
-	public function get_agendas($id)
+	public function get_agendas($id) //id es de usuario especialista
 	{
 		if ($id == "todos")
 			$agendas = $this->main_model->get_data("agendas",null, null);
 		else
-			$agendas = $this->main_model->get_data("agendas",null, array('id_agenda' => $id))[0];
+			$agendas = $this->main_model->get_data("agendas",null, array('usuario' => $id));
 
 		return $agendas;
 	}
 
-	public function get_agendas_json($id)
+	public function get_agenda_json($id) //id es de id_agenda
 	{
-		echo json_encode($this->get_agendas($id));
+		echo json_encode($this->main_model->get_data("agendas",null, array('id_agenda' => $id))[0]);
 	}
-
-	// public function get_agenda($id)
-	// {
-	// 	return $this->main_model->get_data("agendas", null, array('id_agenda' => $id))[0];
-	// }
-
-	// public function get_agenda_json($id)
-	// {
-	// 	echo json_encode($this->get_agenda($id));
-	// }
 
 	public function get_especialidades($especialista)
 	{

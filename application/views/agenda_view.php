@@ -141,14 +141,18 @@
       border-color: transparent;
     }
 
+    .btn-group a {
+        font-size: 12px;
+    }
+
 </style>
 <div class="container-fluid">
     <div class="col-md-7 col-md-offset-1">
         <div class = "panel panel-default">
             <div class = "panel-body">
                 <div class = "col-md-7 col-xs-12">
-                  <div class = "col-md-7 col-xs-5 display_date" style = "padding:0px;padding-top:10px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px"></div>
-                  <div class = "col-md-5 col-xs-7" style = "padding:0px;padding-top:5px;text-align:center">
+                  <div class = "col-md-8 col-xs-5 display_date" style = "padding:0px;padding-top:10px;font-size:18px;font-weight:400;text-align:center;margin-bottom:20px"></div>
+                  <div class = "col-md-4 col-xs-7" style = "padding:0px;padding-top:5px;text-align:center">
                       <input type="hidden" id = "usuario" name="usuario" value="<?php echo $usuario ?>">
                       <input type="hidden" id = "is_admin" name="is_admin" value="<?php echo $is_admin ?>">
                       <div class="btn-group" role="group">
@@ -183,9 +187,8 @@
                             <?php
                                 if ($especialista_sel == "todos")
                                     echo '<option value = "todos">Todos</option>';
-
                                 foreach ($agendas as $key => $value) {
-                                  echo '<option value = "'.$value->id_agenda.'">'.$value->nombre_agenda.'</option>';
+                                    echo '<option value = "'.$value->id_agenda.'">'.$value->nombre_agenda.'</option>';
                                 }
                             ?>
                         </select>

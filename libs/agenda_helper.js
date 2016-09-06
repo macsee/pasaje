@@ -441,11 +441,12 @@ function dias_turnos_array_inv(num)
 function fill_especialidades(esp, callback) {
 
     $.ajax({
-        url: base_url+"/main/get_agendas_json/"+esp,
+        url: base_url+"/main/get_agenda_json/"+esp,
         dataType: 'json',
         success:function(response)
         {
             data = [];
+            console.log(response);
             if (response != null && response.especialidad != null) {
                 data = JSON.parse(response.especialidad);
             }
@@ -745,7 +746,7 @@ function proximo_turno(hora) {
     $("#modal_turno").find("input[name='hora']").val(hora);
     $("#modal_turno").find("select[name='hora_turno']").val(hora_split[0]);
     $("#modal_turno").find("select[name='min_turno']").val(hora_split[1]);
-    
+
     $("#modal_turno").find("input[name='fecha']").val(fecha);
     $("#modal_turno").find("input[name='id_agenda']").val(esp);
     $("#modal_turno").find("input[name='especialista']").val($("#agendas option:selected").text());
