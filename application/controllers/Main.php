@@ -319,7 +319,7 @@ class Main extends CI_Controller {
 		$this->main_model->del_agenda($id);
 	}
 
-	public function get_agendas($id) //id es de usuario especialista
+	public function get_agendas($id) //agenda basada en id de usuario especialista
 	{
 		if ($id == "todos")
 			$agendas = $this->main_model->get_data("agendas",null, null);
@@ -329,9 +329,12 @@ class Main extends CI_Controller {
 		return $agendas;
 	}
 
-	public function get_agenda_json($id) //id es de id_agenda
+	public function get_agenda_json($id) //agenda basada en id de agenda
 	{
-		echo json_encode($this->main_model->get_data("agendas",null, array('id_agenda' => $id))[0]);
+		if ($id == "todos")
+			echo json_encode($this->main_model->get_data("agendas",null, null));
+		else
+			echo json_encode($this->main_model->get_data("agendas",null, array('id_agenda' => $id))[0]);
 	}
 
 	public function get_especialidades($especialista)

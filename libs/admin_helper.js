@@ -50,7 +50,7 @@ function ok_confirmar_agenda(callback, form_id)
 function get_datos_agendas() {
 
     $.ajax({
-        url: base_url+"/main/get_agendas_json/todos",
+        url: base_url+"/main/get_agenda_json/todos",
         dataType: 'json',
         success:function(response)
         {
@@ -332,7 +332,7 @@ function modificar_datos_agenda_item(id){
     get_especialistas();
 
     $.ajax({
-        url: base_url+"/main/get_agendas_json/"+id,
+        url: base_url+"/main/get_agenda_json/"+id,
         dataType: 'json',
         success: function(response) {
 
