@@ -446,7 +446,7 @@ function fill_especialidades(esp, callback) {
         success:function(response)
         {
             data = [];
-            console.log(response);
+            // console.log(response);
             if (response != null && response.especialidad != null) {
                 data = JSON.parse(response.especialidad);
             }
@@ -525,7 +525,8 @@ function nuevo_turno(hora) {
             }));
         });
 
-        $("#modal_turno").find("select[name='especialidad']").val($("#especialidades").val());
+        if ($("#especialidades").val() != "todos")
+            $("#modal_turno").find("select[name='especialidad']").val($("#especialidades").val());
 
         $("#modal_turno").modal({
             show: true

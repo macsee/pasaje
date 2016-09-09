@@ -205,8 +205,8 @@
             }
 
             if (ui.item.cel.indexOf("-") > 0) {
-                cel1 = ui.item.tel.split("-")[0];
-                cel2 = ui.item.tel.split("-")[1];
+                cel1 = ui.item.cel.split("-")[0];
+                cel2 = ui.item.cel.split("-")[1];
             }
 
             $("#id_paciente").val(ui.item.id);
