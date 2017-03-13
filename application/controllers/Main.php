@@ -33,9 +33,48 @@ class Main extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->agenda_turnos();
+		if ($this->main_model->rol($this->session->userdata('usuario'),"pacientes"))
+			redirect('main/pacientes');
+		else if ($this->main_model->rol($this->session->userdata('usuario'),"turnos"))
+			redirect('main/agenda_turnos');
+		else if ($this->main_model->rol($this->session->userdata('usuario'),"grupos"))
+			redirect('main/agenda_grupos');
+		else if ($this->main_model->rol($this->session->userdata('usuario'),"facturacion"))
+			redirect('main/facturacion');
+		else if ($this->main_model->rol($this->session->userdata('usuario'),"admin"))
+			redirect('main/admin');
+		else
+			$this->error();
 	}
 
+	public function error() {
+		$data['url'] = base_url('index.php/login/logout');
+
+		// $arraybar = array (
+		// 	'admin_act' 		=> "",
+		// 	'admin_url' 		=> base_url('index.php/main/admin'),
+		// 	'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+		// 	'turnos_act' 		=> "",
+		// 	'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
+		// 	'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos"),
+		// 	'pacientes_act' 	=> "",
+		// 	'pacientes_url' 	=> base_url('index.php/main/pacientes'),
+		// 	'pacientes_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"pacientes"),
+		// 	'facturacion_act' 	=> "",
+		// 	'facturacion_url' 	=> base_url('index.php/main/facturacion'),
+		// 	'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"facturacion"),
+		// 	'grupos_act' 	=> "",
+		// 	'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
+		// 	'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+		// );
+		//
+		// $data['navbar'] = $this->create_navbar($arraybar);
+
+		$this->load->view('header', array('title' => "Error"));
+			// $this->load->view('navbar', $data);
+			$this->load->view('error_view',$data);
+		$this->load->view('footer');
+	}
 	public function create_navbar($array)
 	{
 		$navbar = "";
@@ -65,59 +104,64 @@ class Main extends CI_Controller {
 
 	public function agenda_turnos()
 	{
-		$data['especialista_sel'] = $this->session->userdata('especialista');
-		// $data['especialidad_sel'] = $this->session->userdata('especialidad');
-		$data['usuario'] = $this->session->userdata('usuario');
-		$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data('usuarios');
-		$data['is_admin'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? 1 : 0;
-
-		if ($data['especialista_sel'] != "todos") {
-				$data['agendas'] = $this->get_agendas($data['especialista_sel']);//$this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
-				$data['especialidades'] = $this->get_especialidades($data['especialista_sel']);
-		}
+		if (!$this->main_model->rol($this->session->userdata('usuario'),"turnos") && !$this->main_model->rol($this->session->userdata('usuario'),"admin"))
+			redirect('main');
 		else {
-				$data['agendas'] = $this->get_agendas("todos");
-				$data['especialidades'] = $this->get_especialidades("todos");
+
+			$data['especialista_sel'] = $this->session->userdata('especialista');
+			// $data['especialidad_sel'] = $this->session->userdata('especialidad');
+			$data['usuario'] = $this->session->userdata('usuario');
+			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data('usuarios');
+			$data['is_admin'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? 1 : 0;
+
+			if ($data['especialista_sel'] != "todos") {
+					$data['agendas'] = $this->get_agendas($data['especialista_sel']);//$this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
+					$data['especialidades'] = $this->get_especialidades($data['especialista_sel']);
+			}
+			else {
+					$data['agendas'] = $this->get_agendas("todos");
+					$data['especialidades'] = $this->get_especialidades("todos");
+			}
+
+			if ($data['is_admin']) {
+				$data["agenda_extra"] = '<h3>Crear Agenda</h3><hr>';
+				$data["agenda_extra"] .= $this->load->view('agenda_extra_view', '', true);
+			}
+			else
+				$data["agenda_extra"] = '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
+
+			$arraybar = array (
+				'admin_act' 		=> "",
+				'admin_url' 		=> base_url('index.php/main/admin'),
+				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'turnos_act' 		=> "active",
+				'turnos_url' 		=> "#",
+				'turnos_show' 		=> true,
+				'pacientes_act' 	=> "",
+				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
+				'pacientes_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"pacientes"),
+				'facturacion_act' 	=> "",
+				'facturacion_url' 	=> base_url('index.php/main/facturacion'),
+				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"facturacion"),
+				'grupos_act' 	=> "",
+				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
+				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+			);
+
+			$navbar['navbar'] = $this->create_navbar($arraybar);
+
+			$this->load->view('header', array('title' => "Agenda Turnos"));
+				$this->load->view('navbar', $navbar);
+				$this->load->view('agenda_view',$data);
+				$this->load->view('modal_turno');
+				$this->load->view('modal_confirmacion');
+				$this->load->view('modal_datos');
+				$this->load->view('modal_cambiar_turno');
+				$this->load->view('modal_notas', $data);
+				$this->load->view('modal_error');
+				$this->load->view('modal_agenda_extra',$data);
+			$this->load->view('footer');
 		}
-
-		if ($data['is_admin']) {
-			$data["agenda_extra"] = '<h3>Crear Agenda</h3><hr>';
-			$data["agenda_extra"] .= $this->load->view('agenda_extra_view', '', true);
-		}
-		else
-			$data["agenda_extra"] = '<div class = "text-muted" style = "font-size:30px;text-align:center;height:150px;padding:50px"><i>No hay agenda abierta para este día</i></div>';
-
-		$arraybar = array (
-			'admin_act' 		=> "",
-			'admin_url' 		=> base_url('index.php/main/admin'),
-			'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-			'turnos_act' 		=> "active",
-			'turnos_url' 		=> "#",
-			'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos") || $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-			'pacientes_act' 	=> "",
-			'pacientes_url' 	=> base_url('index.php/main/pacientes'),
-			'pacientes_show' 	=> true,
-			'facturacion_act' 	=> "",
-			'facturacion_url' 	=> base_url('index.php/main/facturacion'),
-			'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-			'grupos_act' 	=> "",
-			'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
-			'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos") || $this->main_model->rol($this->session->userdata('usuario'),"admin")
-		);
-
-		$navbar['navbar'] = $this->create_navbar($arraybar);
-
-		$this->load->view('header', array('title' => "Agenda Turnos"));
-			$this->load->view('navbar', $navbar);
-			$this->load->view('agenda_view',$data);
-			$this->load->view('modal_turno');
-			$this->load->view('modal_confirmacion');
-			$this->load->view('modal_datos');
-			$this->load->view('modal_cambiar_turno');
-			$this->load->view('modal_notas', $data);
-			$this->load->view('modal_error');
-			$this->load->view('modal_agenda_extra',$data);
-		$this->load->view('footer');
 	}
 
 	public function admin()
@@ -134,19 +178,19 @@ class Main extends CI_Controller {
 			$arraybar = array (
 				'admin_act' 		=> "active",
 				'admin_url' 		=> "#",
-				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'admin_show' 		=> true,
 				'turnos_act' 		=> "",
 				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
-				'turnos_show' 		=> true,
+				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos"),
 				'pacientes_act' 	=> "",
 				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
-				'pacientes_show' 	=> true,
+				'pacientes_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"pacientes"),
 				'facturacion_act' 	=> "",
 				'facturacion_url' 	=> base_url('index.php/main/facturacion'),
 				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'grupos_act' 	=> "",
 				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
-				'grupos_show' 	=> true
+				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -165,7 +209,7 @@ class Main extends CI_Controller {
 	public function pacientes()
 	{
 
-		if (!$this->main_model->rol($this->session->userdata('usuario'),"pacientes") || !$this->main_model->rol($this->session->userdata('usuario'),"admin"))
+		if (!$this->main_model->rol($this->session->userdata('usuario'),"pacientes") && !$this->main_model->rol($this->session->userdata('usuario'),"admin"))
 			redirect('main');
 		else {
 			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
@@ -177,13 +221,13 @@ class Main extends CI_Controller {
 				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'turnos_act' 		=> "",
 				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
-				'turnos_show' 		=> true,
+				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos"),
 				'pacientes_act' 	=> "active",
 				'pacientes_url' 	=> "#",
 				'pacientes_show' 	=> true,
 				'facturacion_act' 	=> "",
 				'facturacion_url' 	=> base_url('index.php/main/facturacion'),
-				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"facturacion"),
 				'grupos_act' 	=> "",
 				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
 				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
@@ -214,16 +258,16 @@ class Main extends CI_Controller {
 				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'turnos_act' 		=> "",
 				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
-				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos"),
 				'pacientes_act' 	=> "",
 				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
-				'pacientes_show' 	=> true,
+				'pacientes_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"pacientes"),
 				'facturacion_act' 	=> "active",
 				'facturacion_url' 	=> "#",
-				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'facturacion_show' 	=> true,
 				'grupos_act' 	=> "",
 				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
-				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin")
+				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"agenda_grupos")
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -254,7 +298,7 @@ class Main extends CI_Controller {
 		// 		$data['especialidades'] = $this->get_especialidades("todos");
 		// }
 
-		if (!$this->main_model->rol($this->session->userdata('usuario'),"grupos") || !$this->main_model->rol($this->session->userdata('usuario'),"admin"))
+		if (!$this->main_model->rol($this->session->userdata('usuario'),"grupos") && !$this->main_model->rol($this->session->userdata('usuario'),"admin"))
 			redirect('main');
 		else {
 
@@ -277,16 +321,16 @@ class Main extends CI_Controller {
 				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'turnos_act' 		=> "",
 				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
-				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos") || $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos"),
 				'pacientes_act' 	=> "",
 				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
 				'pacientes_show' 	=> true,
 				'facturacion_act' 	=> "",
 				'facturacion_url' 	=> base_url('index.php/main/facturacion'),
-				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"facturacion"),
 				'grupos_act' 		=> "active",
 				'grupos_url' 		=> "#",
-				'grupos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"grupos") || $this->main_model->rol($this->session->userdata('usuario'),"admin")
+				'grupos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);

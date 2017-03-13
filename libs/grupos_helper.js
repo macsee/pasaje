@@ -157,42 +157,54 @@ function html_tab_header(content)
 function html_tab_body(content)
 {
     var tab_content = '<div class="tab-content">';
+    var text = false;
 
     if (content.hasOwnProperty('Lu')) {
         tab_content += '<div class="tab-pane" style ="padding-top:10px" id="lunes">';
         tab_content += get_data_grupo_dia(content.Lu);
         tab_content += '</div>';
+        text = true;
     }
-
 
     if (content.hasOwnProperty('Ma')) {
         tab_content += '<div class="tab-pane" style ="padding-top:10px" id="martes">';
         tab_content += get_data_grupo_dia(content.Ma);
         tab_content += '</div>';
+        text = true;
     }
 
     if (content.hasOwnProperty('Mi')) {
         tab_content += '<div class="tab-pane" style ="padding-top:10px" id="miercoles">';
         tab_content += get_data_grupo_dia(content.Mi);
         tab_content += '</div>';
+        text = true;
     }
 
     if (content.hasOwnProperty('Ju')) {
         tab_content += '<div class="tab-pane" style ="padding-top:10px" id="jueves">';
         tab_content += get_data_grupo_dia(content.Ju);
         tab_content += '</div>';
+        text = true;
     }
 
     if (content.hasOwnProperty('Vi')) {
         tab_content += '<div class="tab-pane" style ="padding-top:10px" id="viernes">';
         tab_content += get_data_grupo_dia(content.Vi);
         tab_content += '</div>';
+        text = true;
     }
 
     if (content.hasOwnProperty('Sa')) {
         tab_content += '<div class="tab-pane" style ="padding-top:10px" id="sabado">';
         tab_content += get_data_grupo_dia(content.Sa);
         tab_content += '</div>';
+        text = true;
+    }
+
+    if (!text) {
+        tab_content += '<div class="panel panel-default text-muted" style="padding:50px;overflow:inherit;margin-bottom:30px;height:150px;font-size:30px;text-align:center">'+
+            '<i>No existen grupos para seleccion actual</i>'+
+        '</div>';
     }
 
     tab_content += '</div>'
