@@ -67,7 +67,7 @@ class Login extends CI_Controller {
 		if ($this->login_model->check_function($_POST['usuario'],"grupos"))
 			echo "agenda_grupos";
 		else
-			echo "agenda_grupos";
+			echo "agenda_turnos";
 	}
 
 	public function change_pass()

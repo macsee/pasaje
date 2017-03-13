@@ -93,7 +93,7 @@ class Main extends CI_Controller {
 			'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 			'turnos_act' 		=> "active",
 			'turnos_url' 		=> "#",
-			'turnos_show' 		=> true,
+			'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos") || $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 			'pacientes_act' 	=> "",
 			'pacientes_url' 	=> base_url('index.php/main/pacientes'),
 			'pacientes_show' 	=> true,
@@ -102,7 +102,7 @@ class Main extends CI_Controller {
 			'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 			'grupos_act' 	=> "",
 			'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
-			'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+			'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos") || $this->main_model->rol($this->session->userdata('usuario'),"admin")
 		);
 
 		$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -146,7 +146,7 @@ class Main extends CI_Controller {
 				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'grupos_act' 	=> "",
 				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
-				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+				'grupos_show' 	=> true
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -209,7 +209,7 @@ class Main extends CI_Controller {
 				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'turnos_act' 		=> "",
 				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
-				'turnos_show' 		=> true,
+				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'pacientes_act' 	=> "",
 				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
 				'pacientes_show' 	=> true,
@@ -218,7 +218,7 @@ class Main extends CI_Controller {
 				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'grupos_act' 	=> "",
 				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
-				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin")
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -272,7 +272,7 @@ class Main extends CI_Controller {
 				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'turnos_act' 		=> "",
 				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
-				'turnos_show' 		=> true,
+				'turnos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"turnos") || $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'pacientes_act' 	=> "",
 				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
 				'pacientes_show' 	=> true,
@@ -281,7 +281,7 @@ class Main extends CI_Controller {
 				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
 				'grupos_act' 		=> "active",
 				'grupos_url' 		=> "#",
-				'grupos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+				'grupos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"grupos") || $this->main_model->rol($this->session->userdata('usuario'),"admin")
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -413,6 +413,9 @@ class Main extends CI_Controller {
 		else
 			$agendas = $this->main_model->get_data("agendas",null, array('usuario' => $id));
 
+		if ($agendas == null)
+			$agendas = $this->main_model->get_data("agendas",null, null);
+			
 		return $agendas;
 	}
 
@@ -432,6 +435,9 @@ class Main extends CI_Controller {
 			$agendas = $this->main_model->get_data("agendas",null, null);
 		else
 			$agendas = $this->main_model->get_data("agendas",null, array('usuario' => $especialista));
+
+		if ($agendas == null)
+			$agendas = $this->main_model->get_data("agendas",null, null);
 
 		foreach ($agendas as $key => $value) {
 			$data = array_merge($data, json_decode($value->especialidad));
