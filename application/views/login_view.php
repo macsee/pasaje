@@ -87,7 +87,7 @@
             type: "POST",
             url: base_url_log+'/check_login',
             data: form.serialize(),
-            dataType: "json",
+            // dataType: "json",
             success: function(response) {
                 console.log(response);
                 if (response != null) {

@@ -11,7 +11,7 @@ class Login_model extends CI_Model {
     public function check_login($array)
     {
         $query = $this->db->get_where("usuarios", array('usuario' => $array['usuario'], 'password' => $array['password']));
-		return $array;
+		
         if ($query->num_rows()>0) {
 					return $query->row();
 				}
