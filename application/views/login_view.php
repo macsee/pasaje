@@ -89,7 +89,7 @@
             data: form.serialize(),
             dataType: "json",
             success: function(response) {
-
+                console.log(response);
                 if (response != null) {
                     if (response.password == response.usuario) {
                         $("#cambiar").css('visibility', 'visible');
