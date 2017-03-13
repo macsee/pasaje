@@ -164,40 +164,45 @@ class Main extends CI_Controller {
 
 	public function pacientes()
 	{
-		$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
-		$data['agendas'] = $this->get_agendas("todos");
 
-		$arraybar = array (
-			'admin_act' 		=> "",
-			'admin_url' 		=> base_url('index.php/main/admin'),
-			'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-			'turnos_act' 		=> "",
-			'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
-			'turnos_show' 		=> true,
-			'pacientes_act' 	=> "active",
-			'pacientes_url' 	=> "#",
-			'pacientes_show' 	=> true,
-			'facturacion_act' 	=> "",
-			'facturacion_url' 	=> base_url('index.php/main/facturacion'),
-			'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-			'grupos_act' 	=> "",
-			'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
-			'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
-		);
+		if (!$this->main_model->rol($this->session->userdata('usuario'),"pacientes") || !$this->main_model->rol($this->session->userdata('usuario'),"admin"))
+			redirect('main');
+		else {
+			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
+			$data['agendas'] = $this->get_agendas("todos");
 
-		$navbar['navbar'] = $this->create_navbar($arraybar);
+			$arraybar = array (
+				'admin_act' 		=> "",
+				'admin_url' 		=> base_url('index.php/main/admin'),
+				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'turnos_act' 		=> "",
+				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
+				'turnos_show' 		=> true,
+				'pacientes_act' 	=> "active",
+				'pacientes_url' 	=> "#",
+				'pacientes_show' 	=> true,
+				'facturacion_act' 	=> "",
+				'facturacion_url' 	=> base_url('index.php/main/facturacion'),
+				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'grupos_act' 	=> "",
+				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
+				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+			);
 
-		$this->load->view('header', array('title' => "Pacientes"));
-			$this->load->view('navbar', $navbar);
-			$this->load->view('pacientes_view', $data);
-		$this->load->view('footer');
+			$navbar['navbar'] = $this->create_navbar($arraybar);
+
+			$this->load->view('header', array('title' => "Pacientes"));
+				$this->load->view('navbar', $navbar);
+				$this->load->view('pacientes_view', $data);
+			$this->load->view('footer');
+		}
 
 	}
 
 	public function facturacion()
 	{
 		if (!$this->main_model->rol($this->session->userdata('usuario'),"admin"))
-			redirect('main/agenda');
+			redirect('main');
 		else {
 
 			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
@@ -249,8 +254,8 @@ class Main extends CI_Controller {
 		// 		$data['especialidades'] = $this->get_especialidades("todos");
 		// }
 
-		if (!$this->main_model->rol($this->session->userdata('usuario'),"grupos"))
-			redirect('main/agenda');
+		if (!$this->main_model->rol($this->session->userdata('usuario'),"grupos") || !$this->main_model->rol($this->session->userdata('usuario'),"admin"))
+			redirect('main');
 		else {
 
 			// $data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
