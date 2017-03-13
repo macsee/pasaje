@@ -134,12 +134,14 @@
                                 <label class="col-sm-2 control-label">Apellido</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" id = "apellido" name = "apellido" style = "text-transform:capitalize" required autocomplete="off" autofocus>
+                                    <span class="glyphicon glyphicon-remove form-control-feedback error" style="right:10px;visibilityle:hidden"></span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Nombre</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" id = "nombre" name = "nombre" style = "text-transform:capitalize" required autocomplete="off">
+                                    <span class="glyphicon glyphicon-remove form-control-feedback error" style="right:10px;visibilityle:hidden"></span>
                                 </div>
                             </div>
                             <div class="form-group">

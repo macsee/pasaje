@@ -277,10 +277,10 @@ class Main_model extends CI_Model {
 		$this->db->update('turnos', array('estado' => $data['estado']), array('id_turno' => $data['id_turno']));
 	}
 
-	public function am_facturacion($data)
+	public function am_facturacion_turno($data)
 	{
 
-		$query = "	INSERT INTO facturacion (id_facturacion, id_turno, fecha, datos, usuario)
+		$query = "	INSERT INTO facturacion_turnos (id_facturacion, id_turno, fecha, datos, usuario)
 					VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE 	id_facturacion	= VALUES(id_facturacion),
 																id_turno		= VALUES(id_turno),
 																fecha	 		= VALUES(fecha),
@@ -289,22 +289,24 @@ class Main_model extends CI_Model {
 		$this->db->query($query, $data);
 	}
 
-	public function del_facturacion($id)
+	public function del_facturacion_turno($id)
 	{
-		$this->db->delete("facturacion", array('id_facturacion' => $id));
+		$this->db->delete("facturacion_turnos", array('id_facturacion' => $id));
 	}
 
 	public function am_paciente($data)
 	{
-		$query = "	INSERT INTO pacientes (id_paciente, nombre, apellido, dni, direccion, localidad, tel1, tel2, observaciones)
-					VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	nombre = VALUES(nombre),
+		$query = "	INSERT INTO pacientes (id_paciente, nombre, apellido, dni, direccion, localidad, obra_social, tel1, tel2, observaciones, data_extra)
+					VALUES (?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	nombre = VALUES(nombre),
 																			apellido 		= VALUES(apellido),
 																			dni 			= VALUES(dni),
 																			direccion 		= VALUES(direccion),
 																			localidad 		= VALUES(localidad),
+																			obra_social 	= VALUES(obra_social),
 																			tel1 			= VALUES(tel1),
 																			tel2 			= VALUES(tel2),
-																			observaciones	= VALUES(observaciones)";
+																			observaciones	= VALUES(observaciones),
+																			data_extra		= VALUES(data_extra)";
 
 		$this->db->query($query, $data);
 
@@ -445,6 +447,7 @@ class Main_model extends CI_Model {
 								"direccion" => $fila->direccion,
 								"localidad" => $fila->localidad,
 								"observaciones" => $fila->observaciones,
+								"obra_social" => $fila->obra_social,
 								"tel"		=> $fila->tel1,
 								"cel"		=> $fila->tel2,
  				);
@@ -484,10 +487,10 @@ class Main_model extends CI_Model {
 
 	public function am_nota($data)
 	{
-		$query = "	INSERT INTO notas (id_nota, texto, usuario, destinatario, fecha)
-					VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE 	texto 			= VALUES(texto),
-																usuario 		= VALUES(usuario),
-																destinatario 	= VALUES(destinatario)";
+		$query = "	INSERT INTO notas (id_nota, texto, usuario, destinatario, tipo, fecha)
+					VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	texto 			= VALUES(texto),
+																	usuario 		= VALUES(usuario),
+																	destinatario 	= VALUES(destinatario)";
 
 		$this->db->query($query, $data);
 	}
@@ -530,4 +533,134 @@ class Main_model extends CI_Model {
 		$this->db->delete("turnos", array('agenda' => $data['agenda'], 'fecha' => $data['fecha']));
 	}
 
+	public function get_info_miembros_grupo($id_grupo) {
+		$query = "SELECT * FROM pacientes INNER JOIN (SELECT * FROM grupos_miembros WHERE id_grupo = ".$id_grupo.") tabla WHERE tabla.id_socio = pacientes.id_paciente";
+		return $this->db->query($query)->result();
+	}
+
+	public function get_info_completa_grupo($tipo, $profesor, $group="") {
+
+		$tipo_sql = "grupos.tipo != ''";
+		$profesor_sql = "grupos.id_usuario != ''";
+		$group_sql = "";
+
+		if ($tipo != "todos")
+			$tipo_sql = "grupos.tipo = '".$tipo."'";
+
+		if ($profesor != "todos")
+			$profesor_sql = "grupos.id_usuario = '".$profesor."'";
+
+		if ($group != "")
+			$group_sql = " GROUP BY ".$group;
+
+		$query_1 = "(SELECT tipos_grupos.nombre as tipo_nombre, grupos.* FROM grupos, tipos_grupos WHERE tipos_grupos.id = grupos.tipo) grupos";
+		$query = "SELECT usuarios.nombre, usuarios.apellido, grupos.* FROM usuarios INNER JOIN ".$query_1." WHERE ".$tipo_sql." AND ".$profesor_sql." AND grupos.id_usuario = usuarios.usuario".$group_sql;
+		// $query = "SELECT usuarios.nombre, usuarios.apellido, grupos.* FROM usuarios, grupos WHERE ".$tipo_sql." AND ".$profesor_sql." AND grupos.id_usuario = usuarios.usuario".$group_sql;
+		return $this->db->query($query)->result();
+	}
+
+	public function get_grupos_integrante($integrante) {
+		$query = $this->db->get_where("grupos_miembros", array('id_socio' => $integrante));
+		return $query->result();
+	}
+
+	public function am_miembro_grupo($data) {
+
+		$query = "	INSERT INTO grupos_miembros (id_gm, id_grupo, id_socio)
+					VALUES (?,?,?) ON DUPLICATE KEY UPDATE 	id_grupo 	= VALUES(id_grupo),
+															id_socio	= VALUES(id_socio)";
+
+		$this->db->query($query, $data);
+
+		// if ($data['id_paciente'] != "")
+		// 	return $data['id_paciente'];
+		// else
+		// 	return $this->db->insert_id();
+
+	}
+
+	public function del_integrante_grupo($id_gm) {
+		$this->db->delete("grupos_miembros", array('id_gm' => $id_gm));
+	}
+
+	public function am_grupo($array)
+	{
+		$query = "	INSERT INTO grupos (id_grupo, id_usuario, dia, horario_desde, horario_hasta, tipo, cant_integrantes)
+					VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE 	id_usuario = VALUES(id_usuario),
+																	dia = VALUES(dia),
+																	horario_desde = VALUES(horario_desde),
+																	horario_hasta = VALUES(horario_hasta),
+																	tipo = VALUES(tipo),
+																	cant_integrantes = VALUES(cant_integrantes)";
+		$this->db->query($query, $array);
+	}
+
+	public function del_grupo($id) {
+		$this->db->delete("grupos", array('id_grupo' => $id));
+		$this->db->delete("grupos_miembros", array('id_grupo' => $id));
+	}
+
+	public function am_facturacion_grupo($data)
+	{
+
+		$query = "	INSERT INTO facturacion_grupos (id_socio, fecha, monto, concepto, usuario) VALUES (?,?,?,?,?)";
+
+		$this->db->query($query, $data);
+	}
+
+	public function del_facturacion_grupo($id)
+	{
+		$this->db->delete("facturacion_grupos", array('id_facturacion' => $id));
+	}
+
+	public function get_vencimientos($fecha_actual) {
+		$data = [];
+
+		if ($fecha_actual != date('Y-m-d'))
+			return $data;
+
+		$query = "SELECT * FROM pacientes INNER JOIN grupos_miembros WHERE pacientes.id_paciente = grupos_miembros.id_socio";
+		$result = $this->db->query($query);
+
+		if ($result->num_rows()>0)
+		{
+			foreach ($result->result() as $fila)
+			{
+				if ($fila->data_extra != "") {
+					$datos_extra = json_decode($fila->data_extra);
+					if (isset($datos_extra->prox_vencimiento)) {
+						$fecha		 = date(strtotime($fecha_actual));
+						$vencimiento = date(strtotime($datos_extra->prox_vencimiento));
+						$diff = ($vencimiento-$fecha) / (60 * 60 * 24);
+						if ($diff < 5 && $diff >=0)
+							$data[] = (object) array(
+								"socio" => $fila->apellido.", ".$fila->nombre,
+								"dias"	=> $diff
+							);
+					}
+				}
+			}
+		}
+		return $data;
+	}
+
+	public function get_facturacion_grupos($fecha_desde, $fecha_hasta) {
+
+		if ($fecha_desde != "" && $fecha_hasta != "") {
+			$fecha_sql = " AND fecha >= '".$fecha_desde."' AND fecha <= '".$fecha_hasta."'";
+		}
+		else if ($fecha_desde != ""){
+			$fecha_sql = " AND fecha >= '".$fecha_desde."'";
+		}
+		else if ($fecha_hasta != ""){
+			$fecha_sql = " AND fecha =< '".$fecha_hasta."'";
+		}
+		else {
+			$fecha_sql = "";
+		}
+
+		$sql = "SELECT facturacion_grupos.*, pacientes.nombre, pacientes.apellido FROM facturacion_grupos INNER JOIN pacientes WHERE facturacion_grupos.id_socio = pacientes.id_paciente".$fecha_sql." ORDER BY fecha DESC";
+
+		return $this->db->query($sql)->result();
+	}
 }

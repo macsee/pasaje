@@ -41,7 +41,8 @@
 <div class="container-fluid">
     <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a data-toggle="tab" href="#usuarios">Usuarios</a></li>
-        <li role="presentation"><a data-toggle="tab" href="#agendas">Agendas</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#turnos">Agendas de Turnos</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#grupos">Agendas de Grupos</a></li>
     </ul>
     <!-- <div class="col-md-2 sidebar" style = "background-color: white;border-color: #e7e7e7">
         <ul class="nav nav-sidebar">
@@ -81,11 +82,11 @@
 
         </div>
 
-        <div id = "agendas" class="tab-pane fade col-md-10">
-            <div class="col-md-2 page-header">
-                <h3>Agendas</h3>
+        <div id = "turnos" class="tab-pane fade col-md-10">
+            <div class="col-md-4 page-header">
+                <h3>Agendas de Turnos</h3>
             </div>
-            <div class="col-md-10 page-header" style = "padding-top:15px">
+            <div class="col-md-8 page-header" style = "padding-top:15px">
                 <button class="btn btn-primary dropdown-toggle" onclick = "return nueva_agenda()">Nueva Agenda</button>
             </div>
             <div class="col-md-12">
@@ -109,6 +110,42 @@
                 </div>
             </div>
         </div>
+
+        <div id = "grupos" class="tab-pane fade col-md-10">
+            <div class="col-md-4 page-header">
+                <h3>Agendas de Grupos</h3>
+            </div>
+            <div class="col-md-8 page-header" style = "padding-top:15px">
+                <button class="btn btn-primary dropdown-toggle" onclick = "return nuevo_grupo()">Nueva Agenda</button>
+            </div>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading heading">
+                        <div class="col-md-1">
+                            ID
+                        </div>
+                        <div class="col-md-3">
+                            Usuario
+                        </div>
+                        <div class="col-md-3">
+                            Dia y Horario
+                        </div>
+                        <div class="col-md-3">
+                            Tipo
+                        </div>
+                        <div class="col-md-1">
+                            Lugares
+                        </div>
+                        <div class="col-md-1">
+                            Acciones
+                        </div>
+                    </div>
+                    <div class="panel-body content_grupos">
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div><!--col-md-10-->
 </div>
 <script src="<?php echo base_url('libs/admin_helper.js')?>"></script>
@@ -117,6 +154,7 @@
     $(document).ready(function() {
         get_datos_usuarios();
         get_datos_agendas();
+        get_datos_grupos();
     });
 
 </script>

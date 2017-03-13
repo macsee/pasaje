@@ -50,6 +50,10 @@
                                 </div>
                             </div>
                             <div class="form-group admin">
+                                <label class="col-md-3 col-xs-4 control-label opciones">Grupos</label>
+                                <div class="col-md-1 col-xs-1 checkbox">
+                                    <input type="checkbox" id = "chk_gru" name = "usr_funciones[]" value = "grupos">
+                                </div>
                                 <label class="col-md-3 col-xs-4 control-label opciones">Admin</label>
                                 <div class="col-md-1 col-xs-1 checkbox">
                                     <input type="checkbox" id = "chk_adm" name = "usr_funciones[]" value = "admin">

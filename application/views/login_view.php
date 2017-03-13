@@ -158,7 +158,7 @@
             // dataType: "json",
             success: function(response) {
                 // console.log(response);
-                window.location = base_url+'/main';
+                window.location = base_url+'/main/'+response;
             },
             error: function(msg) {
                 $("#error_msg").html("Hubo algún error. Por favor intente más tarde");

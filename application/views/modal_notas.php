@@ -30,6 +30,7 @@
                                     <?php } ?>
                                 </div>
                             </div>
+                            <input type="hidden" name="tipo">
                             <input type="hidden" name="destinatario">
                             <input type="hidden" name="fecha">
                             <input type="hidden" name="id_nota">

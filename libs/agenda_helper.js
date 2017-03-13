@@ -20,6 +20,12 @@ function clear_fields(obj)
     obj.find("input[name='estado']").val("");
     obj.find("input[name='primera_vez']").prop('checked',true);
 
+    obj.find("#apellido").parent().removeClass('has-error');
+    obj.find("#apellido").parent().find(".error").css('visibility','hidden');
+
+    obj.find("#nombre").parent().removeClass('has-error');
+    obj.find("#nombre").parent().find(".error").css('visibility','hidden');
+
     obj.find("input[name='id_paciente']").val("");
     obj.find("input[name='nombre']").val("");
     obj.find("input[name='apellido']").val("");
@@ -534,6 +540,39 @@ function nuevo_turno(hora) {
     });
 }
 
+function validar_form(callback) {
+
+    if ($("#apellido").val() == "") {
+        $("#apellido").parent().addClass('has-error');
+        $("#apellido").parent().find(".error").css('visibility','visible');
+        return;
+    }
+    else {
+        $("#apellido").parent().removeClass('has-error');
+        $("#apellido").parent().find(".error").css('visibility','hidden');
+    }
+
+    if ($("#nombre").val() == "") {
+        $("#nombre").parent().addClass('has-error');
+        $("#nombre").parent().find(".error").css('visibility','visible');
+        return;
+    }
+    else {
+        $("#nombre").parent().removeClass('has-error');
+        $("#nombre").parent().find(".error").css('visibility','hidden');
+    }
+
+    if ($("#tel1").val() == "" || $("#tel2").val() == "") {
+        $("#tel1").closest(".form-group").addClass('has-error');
+        return;
+    }
+    else {
+        $("#tel1").closest(".form-group").removeClass('has-error');
+    }
+
+    callback();
+}
+
 function ok_nuevo_turno(event) {
     event.preventDefault();
 
@@ -543,18 +582,19 @@ function ok_nuevo_turno(event) {
 
     form = $("#modal_turno").find('form');
 
-    $.ajax({
-        type: "POST",
-        url: base_url+"/main/nuevo_turno/",
-        data: form.serialize(),
-        // dataType: 'json',
-        success:function(response)
-        {
-          // console.log(response);
-          PROX_TURNO = "";
-          get_turnos_mes();
-          $("#modal_turno").modal('hide');
-        }
+    validar_form(function() {
+        $.ajax({
+            type: "POST",
+            url: base_url+"/main/nuevo_turno/",
+            data: form.serialize(),
+            // dataType: 'json',
+            success:function(response)
+            {
+              PROX_TURNO = "";
+              get_turnos_mes();
+              $("#modal_turno").modal('hide');
+            }
+        });
     });
 }
 
@@ -668,17 +708,19 @@ function ok_modificar_datos(event) {
 
     form = $("#modal_datos").find('form');
 
-    $.ajax({
-        type: "POST",
-        url: base_url+"/main/modificar_datos/",
-        data: form.serialize(),
-        // dataType: 'json',
-        success:function(response)
-        {
-          // console.log(response);
-          get_turnos_mes();
-          $("#modal_datos").modal('hide');
-        }
+    validar_form(function() {
+        $.ajax({
+            type: "POST",
+            url: base_url+"/main/modificar_datos/",
+            data: form.serialize(),
+            // dataType: 'json',
+            success:function(response)
+            {
+              // console.log(response);
+              get_turnos_mes();
+              $("#modal_datos").modal('hide');
+            }
+        });
     });
 }
 
@@ -814,7 +856,7 @@ function add_notas() {
 
     $("#modal_notas").find('input[name="fecha"]').val(fecha);
     $("#modal_notas").find('select[name="destinatario_sel"]').val("todos");
-    // $("#modal_notas").find('input[name="destinatario"]').val(esp);
+    $("#modal_notas").find('input[name="tipo"]').val("turnos");
     $("#modal_notas").find('textarea[name="texto"]').val("");
     $("#modal_notas").find('input[name="id_nota"]').val("");
     $("#modal_notas").find('#eliminar_nota').css('visibility','hidden');
@@ -856,7 +898,7 @@ function get_notas() {
     fecha = format_date(FECHA_ACTUAL);
 
     $.ajax({
-        url: base_url+"/main/get_nota_json/todas"+"/"+fecha,
+        url: base_url+"/main/get_nota_json/turnos/todas"+"/"+fecha,
         dataType: "json",
         success:function(response)
         {
@@ -902,7 +944,7 @@ function get_notas() {
 function editar_nota(id) {
 
     $.ajax({
-        url: base_url+"/main/get_nota_json/"+id,
+        url: base_url+"/main/get_nota_json/"+id+"/turnos/",
         dataType: "json",
         success:function(response)
         {
@@ -912,6 +954,7 @@ function editar_nota(id) {
             // $("#modal_notas").find('input[name="destinatario"]').val(response.destinatario);
             $("#modal_notas").find('textarea[name="texto"]').val(response.texto);
             $("#modal_notas").find('input[name="id_nota"]').val(response.id_nota);
+            $("#modal_notas").find('input[name="tipo"]').val(response.tipo);
             $("#modal_notas").modal({
                 show: true
             });

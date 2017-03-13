@@ -32,4 +32,8 @@ class Login_model extends CI_Model {
         $this->db->update('usuarios', array('last_login' => date('Y-m-d H:i')), array('usuario' => $array['usuario']));
     }
 
+	public function check_function($usuario, $tipo) {
+		$query = $this->db->get_where("usuarios", array('usuario' => $usuario));
+		return stripos($query->result()[0]->funciones,$tipo) !== false;
+	}
 }

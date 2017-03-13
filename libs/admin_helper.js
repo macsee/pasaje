@@ -1,46 +1,40 @@
-function confirmar_admin(titulo, tipo, callback, form)
+function confirmar_admin(titulo, tipo, callback, id)
 {
     $("#modal_confirmacion").find("#titulo").html(titulo);
-        if (tipo == "usuario")
-            $("#modal_confirmacion").find("#aceptar").attr('onclick','ok_confirmar_usuario("'+callback+'","'+form+'")');
-        else
-            $("#modal_confirmacion").find("#aceptar").attr('onclick','ok_confirmar_agenda("'+callback+'","'+form+'")');
+    $("#modal_confirmacion").find("#aceptar").attr('onclick','ok_confirmar("'+callback+'","'+id+'","'+tipo+'")');
+    // ok_confirmar(callback, id, tipo);
 
     $("#modal_confirmacion").modal({
       show: true
     });
 }
 
-function ok_confirmar_usuario(callback, form_id)
-{
-  var form = $("#"+form_id);
-
-  $.ajax({
-      type: "POST",
-      url: base_url+"/main/"+callback,
-      data: form.serialize(),
-    //   dataType: 'json',
-      success:function(response)
-      {
-          console.log(response);
-          get_datos_usuarios();
-          $("#modal_confirmacion").modal('hide');
-      }
-  });
-
+function check_validity(object) {
+    if (object.val() == "") {
+        object.parent().addClass('has-error');
+        object.parent().find(".error").css('visibility','visible');
+    }
+    else {
+        object.parent().removeClass('has-error');
+        object.parent().find(".error").css('visibility','hidden');
+    }
 }
 
-function ok_confirmar_agenda(callback, form_id)
+function ok_confirmar(get, id, tipo)
 {
-  var form = $("#"+form_id);
+  // var form = $("#"+form_id);
 
   $.ajax({
-      type: "POST",
-      url: base_url+"/main/"+callback,
-      data: form.serialize(),
+      url: base_url+"/main/"+get+"/"+id,
       success:function(response)
       {
-          get_datos_agendas()
+          if (tipo == "usuario")
+              get_datos_usuarios();
+          else if (tipo == "turnos")
+              get_datos_agendas();
+          else
+              get_datos_grupos();
+
           $("#modal_confirmacion").modal('hide');
       }
   });
@@ -83,6 +77,57 @@ function get_datos_agendas() {
                 });
 
                 $(".content_agenda").html(html);
+            }
+        }
+    });
+}
+
+function get_datos_grupos() {
+
+    $.ajax({
+        url: base_url+"/main/get_grupos_json/todos/todos",
+        dataType: 'json',
+        success:function(response)
+        {
+            if (response != null) {
+                html = "";
+
+                $.each(response, function(key,value) {
+                    $.each(value, function(k,val) {
+
+                        html +=  '<div class="row" style = "height:50px;padding-top:10px;border-bottom: 1px solid #ddd;">'
+                                    +'<div class="col-md-1">'
+                                        +val.id_grupo
+                                    +'</div>'
+                                    +'<div class="col-md-3">'
+                                        +val.id_usuario
+                                    +'</div>'
+                                    +'<div class="col-md-3">'
+                                        // +val.especialidad.split(",").join(", ")
+                                        +val.dia+" - "+val.horario_desde.substring(0,5)+" a "+val.horario_hasta.substring(0,5)// +str_replace($replace," ",$value->especialidad);
+                                    +'</div>'
+                                    +'<div class="col-md-3" style ="text-transform:capitalize">'
+                                        // +val.especialidad.split(",").join(", ")
+                                        +val.tipo_nombre
+                                    +'</div>'
+                                    +'<div class="col-md-1">'
+                                        // +val.especialidad.split(",").join(", ")
+                                        +val.cant_integrantes
+                                    +'</div>'
+                                    +'<div class="col-md-1" style = "padding-top:0px">'
+                                        +'<div class = "dropdown">'
+                                            +'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button"><span class = "glyphicon glyphicon-menu-hamburger"></span></button>'
+                                            +'<ul class="dropdown-menu pull-right">'
+                                                +'<li><a href="#" onclick = "return modificar_datos_grupo_item(\''+val.id_grupo+'\')" data-toggle="modal">Modificar Datos</a></li>'
+                                                +'<li><a href="#" onclick = "return eliminar_grupo_item(\''+val.id_grupo+'\')" data-toggle="modal">Eliminar Grupo</a></li>'
+                                            +'</ul>'
+                                        +'</div>'
+                                    +'</div>'
+                                +'</div>'
+                    });
+                });
+
+                $(".content_grupos").html(html);
             }
         }
     });
@@ -177,6 +222,7 @@ function clear_agd() {
 }
 
 function clear_usr() {
+
     $("#usr_nombre").val("");
     $("#usr_apellido").val("");
     $("#usr_usuario").val("");
@@ -187,6 +233,23 @@ function clear_usr() {
     $("#chk_fac").prop('checked', false);
     $("#chk_esp").prop('checked', false);
     $("#chk_adm").prop('checked', false);
+    $("#chk_gru").prop('checked', false);
+}
+
+function clear_grupo() {
+
+    $("#modal_grupos").find("#agenda_horario_desde").parent().removeClass('has-error');
+    $("#modal_grupos").find("#agenda_horario_desde").parent().find(".error").css('visibility','hidden');
+
+    $("#modal_grupos").find("#agenda_horario_hasta").parent().removeClass('has-error');
+    $("#modal_grupos").find("#agenda_horario_hasta").parent().find(".error").css('visibility','hidden');
+
+    $("#modal_grupos").find("#agenda_id_grupo").val();
+    $("#modal_grupos").find("#agenda_usuario").empty();
+    $("#modal_grupos").find("#agenda_tipo").val("");
+    $("#modal_grupos").find("#agenda_dia").val("Lu");
+    $("#modal_grupos").find("#agenda_horario_desde").val("");
+    $("#modal_grupos").find("#agenda_horario_hasta").val("");
 }
 
 function nuevo_usuario() {
@@ -205,7 +268,7 @@ function eliminar_usuario_item(id) {
         +'<input type="text" name = "id_usuario" value="'+id+'">'
       +'</form>');
 
-    confirmar_admin("¿Eliminar Usuario?", "usuario", "del_usuario", "eliminar_usuario_"+id);
+    confirmar_admin("¿Eliminar Usuario?", "usuario", "del_usuario", id);
 }
 
 function reset_pass_item(id) {
@@ -214,7 +277,7 @@ function reset_pass_item(id) {
         +'<input type="text" name = "usr_usuario" value="'+id+'">'
       +'</form>');
 
-    confirmar_admin("¿Resetear Password Usuario?", "usuario", "reset_usuario", "reset_usuario_"+id);
+    confirmar_admin("¿Resetear Password Usuario?", "usuario", "reset_usuario", id);
 }
 
 function modificar_datos_usuario_item(id) {
@@ -252,6 +315,9 @@ function modificar_datos_usuario_item(id) {
                     case 'especialista':
                         $("#chk_esp").prop('checked', true);
                         break;
+                    case 'grupos':
+                        $("#chk_gru").prop('checked', true);
+                        break;
                     default:
                         $("#chk_adm").prop('checked', true);
 
@@ -282,41 +348,43 @@ function guardar_datos_usuario(){
             $("#modal_usuario").modal('hide');
         }
     });
-
 }
 
 function nueva_agenda() {
 
     clear_agd();
-    get_especialistas();
+    get_especialistas($("#modal_agenda"),"turnos");
 
     $("#modal_agenda").modal({
         show: true
     });
 }
 
-function eliminar_agenda_item(id) {
+function nuevo_grupo() {
 
-    $("#modal_confirmacion").find("#form_content").html(
-      '<form id = "eliminar_agenda_'+id+'">'
-        +'<input type="text" name = "id_agenda" value="'+id+'">'
-      +'</form>');
+    clear_grupo();
+    get_especialistas($("#modal_grupos"),"grupos");
 
-    confirmar_admin("¿Eliminar Agenda?", "agenda", "del_agenda", "eliminar_agenda_"+id);
-
+    $("#modal_grupos").modal({
+        show: true
+    });
 }
 
-function get_especialistas() {
+function eliminar_agenda_item(id) {
+    confirmar_admin("¿Eliminar Agenda?", "turnos", "del_agenda", id);
+}
+
+function get_especialistas(modal, tipo) {
+
     $.ajax({
-        url: base_url+"/main/get_especialistas_json/",
+        url: base_url+"/main/get_especialistas_json/"+tipo,
         dataType: 'json',
         success:function(response)
         {
             if (response != null) {
-
                 $.each(response, function(key,val) {
 
-                    $("#agenda_usuario").append($('<option>', {
+                    modal.find("#agenda_usuario").append($('<option>', {
                             value: val.usuario,
                             text : val.nombre
                     }));
@@ -329,7 +397,7 @@ function get_especialistas() {
 function modificar_datos_agenda_item(id){
 
     clear_agd();
-    get_especialistas();
+    get_especialistas($("#modal_agenda"),"turnos");
 
     $.ajax({
         url: base_url+"/main/get_agenda_json/"+id,
@@ -422,5 +490,56 @@ function guardar_datos_agenda(){
             $("#modal_agenda").modal('hide');
         }
     });
+
+}
+
+function modificar_datos_grupo_item(id){
+
+    clear_grupo();
+    get_especialistas($("#modal_grupos"),"grupos");
+
+    $.ajax({
+        url: base_url+"/main/get_grupo_by_id/"+id,
+        dataType: 'json',
+        success: function(response) {
+            $("#modal_grupos").find("#agenda_id_grupo").val(response.id_grupo);
+            $("#modal_grupos").find("#agenda_usuario").val(response.id_usuario);
+            $("#modal_grupos").find("#agenda_tipo").val(response.tipo);
+            $("#modal_grupos").find("#agenda_dia").val(response.dia);
+            $("#modal_grupos").find("#agenda_horario_desde").val(response.horario_desde);
+            $("#modal_grupos").find("#agenda_horario_hasta").val(response.horario_hasta);
+            $("#modal_grupos").find("#agenda_personas").val(response.cant_integrantes);
+
+            $("#modal_grupos").modal({
+                show: true
+            });
+        }
+    });
+}
+
+function guardar_datos_grupo() {
+    var form = $("#modal_grupos").find('form');
+
+    check_validity($("#modal_grupos").find("#agenda_horario_desde"));
+    check_validity($("#modal_grupos").find("#agenda_horario_hasta"));
+
+    if ($("#modal_grupos").find("#agenda_horario_desde").val() != "" && $("#modal_grupos").find("#agenda_horario_hasta").val() != "") {
+        $.ajax({
+            type: "POST",
+            url: base_url+"/main/am_grupo",
+            data: form.serialize(),
+            success:function(response)
+            {
+                get_datos_grupos();
+                $("#modal_grupos").modal('hide');
+            }
+        });
+    }
+
+}
+
+function eliminar_grupo_item(id) {
+
+    confirmar_admin("¿Eliminar Grupo?", "grupos", "del_grupo", id);
 
 }

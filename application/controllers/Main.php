@@ -1,6 +1,6 @@
 <?php
 // defined('BASEPATH') OR exit('No direct script access allowed');
-
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 class Main extends CI_Controller {
 
 	public function __construct()
@@ -33,7 +33,7 @@ class Main extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->agenda();
+		$this->agenda_turnos();
 	}
 
 	public function create_navbar($array)
@@ -42,25 +42,28 @@ class Main extends CI_Controller {
 
 		if ($array['admin_show'])
 			$navbar .= '<li class="'.$array['admin_act'].'"><a href="'.$array['admin_url'].'"><span class = "glyphicon glyphicon-dashboard"></span> Admin</a></li>';
-		if ($array['agenda_show'])
-			$navbar .= '<li class="'.$array['agenda_act'].'"><a href="'.$array['agenda_url'].'"><span class = "glyphicon glyphicon-list-alt"></span> Agenda</a></li>';
+		if ($array['turnos_show'])
+			$navbar .= '<li class="'.$array['turnos_act'].'"><a href="'.$array['turnos_url'].'"><span class = "glyphicon glyphicon-list-alt"></span> Turnos</a></li>';
+		if ($array['grupos_show'])
+				$navbar .= '<li class="'.$array['grupos_act'].'"><a href="'.$array['grupos_url'].'"><span class = "glyphicon glyphicon-star"></span> Grupos</a></li>';
+		if ($array['facturacion_show'])
+				$navbar .= '<li class="'.$array['facturacion_act'].'"><a href="'.$array['facturacion_url'].'"><span class = "glyphicon glyphicon-flag"></span> Facturación</a></li>';
 		if ($array['pacientes_show'])
 			$navbar .= '<li class="'.$array['pacientes_act'].'"><a href="'.$array['pacientes_url'].'"><span class = "glyphicon glyphicon-user"></span> Pacientes</a></li>';
-		if ($array['facturacion_show'])
-			$navbar .= '<li class="'.$array['facturacion_act'].'"><a href="'.$array['facturacion_url'].'"><span class = "glyphicon glyphicon-flag"></span> Facturación</a></li>';
+
 
 		$navbar .= '<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Opciones<span class="caret"></span></a>
-			<ul class="dropdown-menu">
-			  <li><a href="#"><span class = "glyphicon glyphicon-lock"></span> Bloquear Agenda</a></li>
-			  <li><a href="'.base_url('index.php/login/logout').'"><span class = "glyphicon glyphicon-log-out"></span> Salir</a></li>
+			<ul class="dropdown-menu">'.
+			//   <li><a href="#"><span class = "glyphicon glyphicon-lock"></span> Bloquear</a></li>
+			  '<li><a href="'.base_url('index.php/login/logout').'"><span class = "glyphicon glyphicon-log-out"></span> Salir</a></li>
 			</ul>
 		</li>';
 
 		return $navbar;
 	}
 
-	public function agenda()
+	public function agenda_turnos()
 	{
 		$data['especialista_sel'] = $this->session->userdata('especialista');
 		// $data['especialidad_sel'] = $this->session->userdata('especialidad');
@@ -88,20 +91,23 @@ class Main extends CI_Controller {
 			'admin_act' 		=> "",
 			'admin_url' 		=> base_url('index.php/main/admin'),
 			'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-			'agenda_act' 		=> "active",
-			'agenda_url' 		=> "#",
-			'agenda_show' 		=> true,
+			'turnos_act' 		=> "active",
+			'turnos_url' 		=> "#",
+			'turnos_show' 		=> true,
 			'pacientes_act' 	=> "",
 			'pacientes_url' 	=> base_url('index.php/main/pacientes'),
 			'pacientes_show' 	=> true,
 			'facturacion_act' 	=> "",
 			'facturacion_url' 	=> base_url('index.php/main/facturacion'),
-			'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin")
+			'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+			'grupos_act' 	=> "",
+			'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
+			'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
 		);
 
 		$navbar['navbar'] = $this->create_navbar($arraybar);
 
-		$this->load->view('header', array('title' => "Agenda"));
+		$this->load->view('header', array('title' => "Agenda Turnos"));
 			$this->load->view('navbar', $navbar);
 			$this->load->view('agenda_view',$data);
 			$this->load->view('modal_turno');
@@ -122,21 +128,25 @@ class Main extends CI_Controller {
 			$data['usuario'] = $this->session->userdata('usuario');
 			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
 			$data['agendas'] = $this->get_agendas("todos");
-			$data['especialistas'] = $this->get_especialistas();
+			$data["tipos"] = $this->main_model->get_data("tipos_grupos",null,null);
+			// $data['especialistas'] = $this->get_especialistas();
 
 			$arraybar = array (
 				'admin_act' 		=> "active",
 				'admin_url' 		=> "#",
 				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-				'agenda_act' 		=> "",
-				'agenda_url' 		=> base_url('index.php/main/agenda'),
-				'agenda_show' 		=> true,
+				'turnos_act' 		=> "",
+				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
+				'turnos_show' 		=> true,
 				'pacientes_act' 	=> "",
 				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
 				'pacientes_show' 	=> true,
 				'facturacion_act' 	=> "",
 				'facturacion_url' 	=> base_url('index.php/main/facturacion'),
-				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin")
+				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'grupos_act' 	=> "",
+				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
+				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -146,6 +156,7 @@ class Main extends CI_Controller {
 				$this->load->view('modal_confirmacion');
 				$this->load->view('modal_usuario',$data);
 				$this->load->view('modal_agenda',$data);
+				$this->load->view('modal_grupos',$data);
 				$this->load->view('admin_view', $data);
 			$this->load->view('footer');
 		}
@@ -160,15 +171,18 @@ class Main extends CI_Controller {
 			'admin_act' 		=> "",
 			'admin_url' 		=> base_url('index.php/main/admin'),
 			'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-			'agenda_act' 		=> "",
-			'agenda_url' 		=> base_url('index.php/main/agenda'),
-			'agenda_show' 		=> true,
+			'turnos_act' 		=> "",
+			'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
+			'turnos_show' 		=> true,
 			'pacientes_act' 	=> "active",
 			'pacientes_url' 	=> "#",
 			'pacientes_show' 	=> true,
 			'facturacion_act' 	=> "",
 			'facturacion_url' 	=> base_url('index.php/main/facturacion'),
-			'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin")
+			'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+			'grupos_act' 	=> "",
+			'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
+			'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
 		);
 
 		$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -193,15 +207,18 @@ class Main extends CI_Controller {
 				'admin_act' 		=> "",
 				'admin_url' 		=> base_url('index.php/main/admin'),
 				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
-				'agenda_act' 		=> "",
-				'agenda_url' 		=> base_url('index.php/main/agenda'),
-				'agenda_show' 		=> true,
+				'turnos_act' 		=> "",
+				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
+				'turnos_show' 		=> true,
 				'pacientes_act' 	=> "",
 				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
 				'pacientes_show' 	=> true,
 				'facturacion_act' 	=> "active",
 				'facturacion_url' 	=> "#",
-				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin")
+				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'grupos_act' 	=> "",
+				'grupos_url' 	=> base_url('index.php/main/agenda_grupos'),
+				'grupos_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
 			);
 
 			$navbar['navbar'] = $this->create_navbar($arraybar);
@@ -209,6 +226,75 @@ class Main extends CI_Controller {
 			$this->load->view('header', array('title' => "Facturación"));
 				$this->load->view('navbar', $navbar);
 				$this->load->view('facturacion_view', $data);
+			$this->load->view('footer');
+		}
+
+	}
+
+	public function agenda_grupos()
+	{
+
+		$data['especialista_sel'] = $this->session->userdata('especialista');
+		// $data['especialidad_sel'] = $this->session->userdata('especialidad');
+		$data['usuario'] = $this->session->userdata('usuario');
+		$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data('usuarios');
+		$data['is_admin'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? 1 : 0;
+
+		// if ($data['especialista_sel'] != "todos") {
+		// 		$data['agendas'] = $this->get_agendas($data['especialista_sel']);//$this->main_model->get_data('agendas', array('usuario' => $data['especialista_sel']));
+		// 		$data['especialidades'] = $this->get_especialidades($data['especialista_sel']);
+		// }
+		// else {
+		// 		$data['agendas'] = $this->get_agendas("todos");
+		// 		$data['especialidades'] = $this->get_especialidades("todos");
+		// }
+
+		if (!$this->main_model->rol($this->session->userdata('usuario'),"grupos"))
+			redirect('main/agenda');
+		else {
+
+			// $data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
+			// $data['agendas'] = $this->get_agendas("todos");
+
+			$data['profesor_sel'] = $this->main_model->rol($this->session->userdata('usuario'),"admin") ? "todos" : $this->session->userdata('usuario');
+			$data["profesores"] = $this->get_info_completa_grupo("todos",$data['profesor_sel'],"grupos.id_usuario");
+			$data["tipos"] = $this->get_info_completa_grupo("todos",$data['profesor_sel'],"grupos.tipo");
+			//
+			// foreach ($group_data as $key => $value) {
+			// 	$data['tipos'][] = $value->tipo;
+			// 	$data['profesores'][] = $value->
+			// }
+
+			// $data['grupos'] = $this->get_grupos("todos","todos");
+			$arraybar = array (
+				'admin_act' 		=> "",
+				'admin_url' 		=> base_url('index.php/main/admin'),
+				'admin_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'turnos_act' 		=> "",
+				'turnos_url' 		=> base_url('index.php/main/agenda_turnos'),
+				'turnos_show' 		=> true,
+				'pacientes_act' 	=> "",
+				'pacientes_url' 	=> base_url('index.php/main/pacientes'),
+				'pacientes_show' 	=> true,
+				'facturacion_act' 	=> "",
+				'facturacion_url' 	=> base_url('index.php/main/facturacion'),
+				'facturacion_show' 	=> $this->main_model->rol($this->session->userdata('usuario'),"admin"),
+				'grupos_act' 		=> "active",
+				'grupos_url' 		=> "#",
+				'grupos_show' 		=> $this->main_model->rol($this->session->userdata('usuario'),"grupos")
+			);
+
+			$navbar['navbar'] = $this->create_navbar($arraybar);
+
+			$this->load->view('header', array('title' => "Agenda Grupos"));
+				$this->load->view('navbar', $navbar);
+				$this->load->view('grupos_view', $data);
+				$this->load->view('modal_miembro', $data);
+				// $this->load->view('modal_datos');
+				// $this->load->view('modal_cambiar_turno');
+				$this->load->view('modal_notas', $data);
+				$this->load->view('modal_confirmacion');
+				$this->load->view('modal_error');
 			$this->load->view('footer');
 		}
 
@@ -230,18 +316,19 @@ class Main extends CI_Controller {
 		   	'funciones' => json_encode($_POST['usr_funciones'])
 		);
 
+		print_r($_POST['usr_funciones']);
 		$this->main_model->am_usuario($data);
 		// redirect('main/admin#usuarios');
 	}
 
-	public function reset_usuario()
+	public function reset_usuario($id)
 	{
-		$this->main_model->reset_usuario($_POST['usr_usuario']);
+		$this->main_model->reset_usuario($id);
 	}
 
-	public function del_usuario()
+	public function del_usuario($id)
 	{
-		$id = $_POST['id_usuario'];
+		// $id = $_POST['id_usuario'];
 		$this->main_model->del_usuario($id);
 		// redirect('main/admin#usuarios');
 	}
@@ -315,7 +402,7 @@ class Main extends CI_Controller {
 
 	public function del_agenda($id)
 	{
-		$id = $_POST['id_agenda'];
+		// $id = $_POST['id_agenda'];
 		$this->main_model->del_agenda($id);
 	}
 
@@ -358,12 +445,12 @@ class Main extends CI_Controller {
 		echo json_encode($this->get_especialidades($especialista));
 	}
 
-	public function get_especialistas()
+	public function get_especialistas($tipo)
 	{
 		$agendas = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
 
 		foreach ($agendas as $key => $value) {
-			if (stripos($value->funciones,"especialista") !== false)
+			if (stripos($value->funciones,"especialista") !== false && stripos($value->funciones,$tipo) !== false)
 				$data[] = (object) array('usuario' => $value->usuario,
 								'nombre' => $value->apellido.', '.$value->nombre[0]
 						);
@@ -372,9 +459,9 @@ class Main extends CI_Controller {
 		return $data;
 	}
 
-	public function get_especialistas_json()
+	public function get_especialistas_json($tipo)
 	{
-		echo json_encode($this->get_especialistas());
+		echo json_encode($this->get_especialistas($tipo));
 	}
 
 	public function get_agendas_by_esp($esp)
@@ -507,7 +594,7 @@ class Main extends CI_Controller {
 		$agenda = $this->main_model->get_data("agendas",null,array('id_agenda' => $turno->agenda))[0];
 		$especialista = $this->main_model->get_data("usuarios",null,array('usuario' => $agenda->usuario))[0];
 		$paciente = $this->get_paciente($turno->id_paciente);
-		$facturacion = $this->main_model->get_data("facturacion",null,array('id_turno' => $id))[0];
+		$facturacion = $this->main_model->get_data("facturacion_turnos",null,array('id_turno' => $id))[0];
 
 		$turno->name_especialista = $especialista->apellido.', '.$especialista->nombre[0];
 		//$turno->especialidades = $this->get_especialidades($turno->especialista);
@@ -542,12 +629,14 @@ class Main extends CI_Controller {
 	{
 		// $this->am_paciente($_POST);
 		$this->am_turno($_POST);
-		$this->am_facturacion($_POST);
+		$this->am_facturacion_turno($_POST);
 	}
 
 	public function am_turno($array)
 	{
 		$id = $this->am_paciente($array);
+
+		// $id = $array['id_paciente'];
 
 		$extra = array();
 
@@ -569,7 +658,6 @@ class Main extends CI_Controller {
 			'usuario'		=> $usuario
 		);
 
-		// echo json_encode($data_turno);
 		$this->main_model->am_turno($data_turno);
 	}
 
@@ -604,12 +692,16 @@ class Main extends CI_Controller {
 			'dni'			=> isset($data['dni']) ? $data['dni'] : "",
 			'direccion'		=> isset($data['direccion']) ? ucwords(strtolower($data['direccion'])) : "",
 			'localidad'		=> isset($data['localidad']) ? ucwords(strtolower($data['localidad'])) : "",
+			'obra_social'	=> isset($data['obra_social']) ? ucwords(strtolower($data['obra_social'])) : "",
 		  	'tel1' 			=> $tel1,
 		  	'tel2' 			=> $tel2,
-			'observaciones'	=> isset($data['observaciones_paciente']) ? $data['observaciones_paciente'] : ""
+			'observaciones'	=> isset($data['observaciones_paciente']) ? $data['observaciones_paciente'] : "",
+			'data_extra'	=> isset($data['data_extra']) ? $data['data_extra'] : "",
 		);
 
+		// print_r($data_paciente);
 		return $this->main_model->am_paciente($data_paciente);
+		// return 0;
 	}
 
 	public function get_paciente($id)
@@ -651,18 +743,19 @@ class Main extends CI_Controller {
 		$array['texto'] = $_POST['texto'];
 		$array['usuario'] = $this->session->userdata('usuario');
 		$array['destinatario'] = $_POST['destinatario_sel'];
+		$array['tipo'] = $_POST['tipo'];
 		$array['fecha'] = $_POST['fecha'];
 
 		$this->main_model->am_nota($array);
 	}
 
-	public function get_nota($id,$fecha="")
+	public function get_nota($id,$tipo,$fecha="")
 	{
 		$usr = $this->session->userdata('usuario');
 
 		if ($id == "todas") {
 			// $where = "fecha = '".$fecha."' AND (destinatario = 'todos' OR destinatario = '".$usr."' OR usuario = '".$usr."')";
-			$where = array("fecha" => $fecha);
+			$where = array("fecha" => $fecha,"tipo" => $tipo);
 			$notas = $this->main_model->get_data('notas', null, $where, array("last_update","desc"));
 
 			if ($notas != null) {
@@ -679,9 +772,9 @@ class Main extends CI_Controller {
 		return $notas;
 	}
 
-	public function get_nota_json($id,$fecha="")
+	public function get_nota_json($id,$tipo,$fecha="")
 	{
-		echo json_encode($this->get_nota($id,$fecha));
+		echo json_encode($this->get_nota($id,$tipo,$fecha));
 	}
 
 	public function del_nota()
@@ -693,7 +786,7 @@ class Main extends CI_Controller {
 	// public function modificar_datos()
 	// {
 	// 	$this->am_turno($_POST);
-	// 	$this->am_facturacion($_POST);
+	// 	$this->am_facturacion_turno($_POST);
 	//
 	// 	$data_turno = array(
 	// 		'id_turno' 	=> $_POST['id_turno'],
@@ -704,7 +797,7 @@ class Main extends CI_Controller {
 	//
 	// }
 
-	public function am_facturacion($array)
+	public function am_facturacion_turno($array)
 	{
 
 		// $this->am_paciente($_POST);
@@ -733,9 +826,9 @@ class Main extends CI_Controller {
 		);
 
 		if ($array['estado'] == "OK" && $array['total'] != "")
-			$this->main_model->am_facturacion($data_facturacion);
+			$this->main_model->am_facturacion_turno($data_facturacion);
 		else if ($array['estado'] != "OK" && $array['id_facturacion'] != "")
-			$this->main_model->del_facturacion($array['id_facturacion']);
+			$this->main_model->del_facturacion_turno($array['id_facturacion']);
 
 	}
 
@@ -826,4 +919,212 @@ class Main extends CI_Controller {
 		echo json_encode($result);
 	}
 
+	/********************************* GRUPOS *********************************/
+
+	function get_grupos($tipo, $profesor) {
+
+		$result_grupos = $this->main_model->get_info_completa_grupo($tipo, $profesor);
+		$grupos = [];
+
+		foreach ($result_grupos as $key => $value) {
+			$value->miembros = $this->main_model->get_info_miembros_grupo($value->id_grupo);
+			// $value->profesor = $this->get_usuarios($value->id_usuario);
+			if (!isset($grupos[$value->dia])) {
+				$grupos[$value->dia][] = $value;
+			}
+			else {
+				array_push($grupos[$value->dia], $value);
+			}
+		}
+
+		return $grupos;
+	}
+
+	function get_grupos_json($tipo, $profesor) {
+		echo json_encode($this->get_grupos($tipo, $profesor));
+	}
+
+	function get_grupo_by_id($id) {
+		echo json_encode($this->main_model->get_data("grupos",null, array('id_grupo' => $id))[0]);
+	}
+
+	// function get_grupos_by_profesor($profesor) {
+	// 	$this->main_model->get_data("grupos",null, array('id_usuario' => $profesor));
+	// }
+
+	function get_info_miembros_grupo($id_grupo) {
+		return $this->main_model->get_info_miembros_grupo($id_grupo);
+	}
+
+	function get_info_completa_grupo($tipo, $profesor, $group="") {
+		return $this->main_model->get_info_completa_grupo($tipo, $profesor, $group);
+	}
+
+	function get_profesores_tipo_json($tipo) {
+		echo json_encode($this->get_info_completa_grupo($tipo,"todos","grupos.id_usuario"));
+	}
+
+	function get_tipos_profesor_json($profesor) {
+		echo json_encode($this->get_info_completa_grupo("todos",$profesor,"grupos.tipo"));
+	}
+
+	function get_data_integrante($integrante) {
+		$data['grupos'] = $this->main_model->get_grupos_integrante($integrante);
+		$data['integrante'] = $this->get_paciente($integrante);
+		return $data;
+	}
+
+	function get_data_integrante_json($integrante) {
+		echo json_encode($this->get_data_integrante($integrante));
+	}
+
+	function guardar_datos() {
+		// $array["id_int_grupo"] = $_POST["id_int_grupo"];
+
+		$array["data_extra"] = array(
+						"valor_cuota" 		=> 	"",
+						"pagado" 			=> 	"",
+						"saldo"				=>	"",
+						"fecha_ultimo_pago"	=>	"",
+						"prox_vencimiento"	=> 	""
+					);
+
+		$array["id_paciente"] = $_POST["id_integrante"];
+
+		$array["grupo_1"] = $_POST["grupo_1"];
+		$array["grupo_2"] = $_POST["grupo_2"];
+		$array["grupo_3"] = $_POST["grupo_3"];
+
+		$array["id_int_grupo_1"] = $_POST["id_int_grupo_1"];
+		$array["id_int_grupo_2"] = $_POST["id_int_grupo_2"];
+		$array["id_int_grupo_3"] = $_POST["id_int_grupo_3"];
+
+		$array["observaciones_paciente"] = $_POST["observaciones"];
+		$array["apellido"] = $_POST["apellido"];
+		$array["nombre"] = $_POST["nombre"];
+		$array["direccion"] = $_POST["direccion"];
+		$array["dni"] = $_POST["dni"];
+		$array["obra_social"] = $_POST["obra_social"];
+		$array["cel1"] = $_POST["cel1"];
+		$array["cel2"] = $_POST["cel2"];
+		$array["tel1"] = $_POST["tel1"];
+		$array["tel2"] = $_POST["tel2"];
+
+		if ($_POST["concepto"] == "abono") {
+			$array["data_extra"] = array(
+							"valor_cuota" 		=> 	$_POST["valor"],
+							"pagado" 			=> 	$_POST["paga"],
+							"saldo"				=>	$_POST["saldo"],
+							"fecha_ultimo_pago"	=>	date('Y-m-d'),
+							"prox_vencimiento"	=> 	date("Y-m-d", strtotime("+1 month"))
+						);
+		}
+		else {
+			if ($array["id_paciente"] != "") {
+				$datos_integrante = $this->get_paciente($array["id_paciente"]);
+				if ($datos_integrante->data_extra != "") {
+					$array["data_extra"] = json_decode($datos_integrante->data_extra);
+					if ($_POST["concepto"] == "deuda") {
+						$array["data_extra"]->fecha_ultimo_pago = date('Y-m-d');
+						$array["data_extra"]->pagado = $_POST["paga"];
+						$array["data_extra"]->saldo = $_POST["saldo"];
+					}
+				}
+			}
+		}
+
+		$array["data_extra"] = json_encode($array["data_extra"]);
+		$id = $this->am_paciente($array);
+
+		$array["id_paciente"] = $id;
+		$this->am_miembro_grupo($array);
+
+		if ($_POST["concepto"] != "") {
+			$this->main_model->am_facturacion_grupo(array(
+						"id_socio" 	=> $id,
+						"fecha"		=> date('Y-m-d'),
+						"monto"		=> $_POST["paga"],
+						"concepto"	=> $_POST["concepto"],
+						"usuario"	=> $this->session->userdata('usuario')
+			));
+		}
+
+	}
+
+	function am_miembro_grupo($data) {
+
+		if ($data['grupo_1'] != "") {
+			$array["id_gm"] = $data["id_int_grupo_1"];
+			$array['id_grupo'] = $data['grupo_1'];
+			$array['id_socio'] = $data['id_paciente'];
+			$this->main_model->am_miembro_grupo($array);
+		}
+
+		if ($data['grupo_2'] != "") {
+			$array["id_gm"] = $data["id_int_grupo_2"];
+			$array['id_grupo'] = $data['grupo_2'];
+			$array['id_socio'] = $data['id_paciente'];
+			$this->main_model->am_miembro_grupo($array);
+		}
+
+		if ($data['grupo_3'] != "") {
+			$array["id_gm"] = $data["id_int_grupo_3"];
+			$array['id_grupo'] = $data['grupo_3'];
+			$array['id_socio'] = $data['id_paciente'];
+			$this->main_model->am_miembro_grupo($array);
+		}
+
+	}
+
+	function del_integrante_grupo($id) {
+		$this->main_model->del_integrante_grupo($id);
+	}
+
+	function am_grupo() {
+		$data = array(
+			'id_grupo'			=>	$_POST['agenda_id_grupo'],
+		   	'id_usuario' 		=> 	$_POST['agenda_usuario'],
+		   	'dia' 				=> 	$_POST['agenda_dia'],
+			'horario_desde'		=>	$_POST['agenda_horario_desde'],
+			'horario_hasta'		=>	$_POST['agenda_horario_hasta'],
+			'tipo'				=>	$_POST['agenda_tipo'],
+			'cant_integrantes'	=> 	$_POST['agenda_personas']
+		);
+		$this->main_model->am_grupo($data);
+	}
+
+	function del_grupo($id) {
+		$this->main_model->del_grupo($id);
+	}
+
+	function get_vencimientos($fecha) {
+		echo json_encode($this->main_model->get_vencimientos($fecha));
+	}
+
+	function get_facturacion_grupos($fecha_desde="", $fecha_hasta="") {
+		return $this->main_model->get_facturacion_grupos($fecha_desde, $fecha_hasta);
+	}
+
+	function get_facturacion_grupos_json($fecha_desde="", $fecha_hasta="") {
+		echo json_encode($this->get_facturacion_grupos($fecha_desde, $fecha_hasta));
+	}
+
+	function get_deudores_grupo() {
+		$data = $this->main_model->get_data("pacientes",null, null);
+		$deudores = [];
+
+		foreach ($data as $key => $value) {
+			if ($value->data_extra != "") {
+				$data_extra = json_decode($value->data_extra);
+				if (isset($data_extra->saldo) && $data_extra->saldo < 0)
+					$deudores[] = $value;
+			}
+		}
+
+		return $deudores;
+	}
+
+	function get_deudores_grupo_json() {
+		echo json_encode($this->get_deudores_grupo());
+	}
 }
