@@ -123,7 +123,7 @@ class Main extends CI_Controller {
 	public function admin()
 	{
 		if (!$this->main_model->rol($this->session->userdata('usuario'),"admin"))
-			redirect('main/agenda');
+			redirect('main');
 		else {
 			$data['usuario'] = $this->session->userdata('usuario');
 			$data['usuarios'] = $this->get_usuarios("todos");//$this->main_model->get_data("usuarios");
@@ -415,7 +415,7 @@ class Main extends CI_Controller {
 
 		if ($agendas == null)
 			$agendas = $this->main_model->get_data("agendas",null, null);
-			
+
 		return $agendas;
 	}
 

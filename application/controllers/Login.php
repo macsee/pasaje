@@ -54,7 +54,7 @@ class Login extends CI_Controller {
 
 		$loginArray = array(
 			'usuario' 			=> $_POST['usuario'],
-			'nombre' 				=> $_POST['nombre'],
+			'nombre' 			=> $_POST['nombre'],
 			'apellido' 			=> $_POST['apellido'],
 			'is_logged' 		=> true,
 			'especialista'	=> ($this->main_model->rol($_POST['usuario'],"especialista") ? $_POST['usuario'] : "todos"),
