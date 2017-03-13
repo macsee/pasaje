@@ -1156,11 +1156,13 @@ class Main extends CI_Controller {
 		echo json_encode($this->main_model->get_vencimientos($fecha));
 	}
 
-	function get_facturacion_grupos($fecha_desde="", $fecha_hasta="") {
+	function get_facturacion_grupos($fecha_desde, $fecha_hasta) {
 		return $this->main_model->get_facturacion_grupos($fecha_desde, $fecha_hasta);
 	}
 
-	function get_facturacion_grupos_json($fecha_desde="", $fecha_hasta="") {
+	function get_facturacion_grupos_json() {
+		$fecha_desde= isset($_POST['fecha_desde']) ? $_POST['fecha_desde'] : "";
+		$fecha_hasta= isset($_POST['fecha_hasta']) ? $_POST['fecha_hasta'] : "";
 		echo json_encode($this->get_facturacion_grupos($fecha_desde, $fecha_hasta));
 	}
 

@@ -653,7 +653,7 @@ class Main_model extends CI_Model {
 			$fecha_sql = " AND fecha >= '".$fecha_desde."'";
 		}
 		else if ($fecha_hasta != ""){
-			$fecha_sql = " AND fecha =< '".$fecha_hasta."'";
+			$fecha_sql = " AND fecha <= '".$fecha_hasta."'";
 		}
 		else {
 			$fecha_sql = "";

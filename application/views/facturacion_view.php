@@ -77,22 +77,19 @@
     }
 
     function get_facturacion(desde, hasta) {
-        var data="";
+        var contenido="";
+
         $(".content_facturacion").empty();
 
         $.ajax({
-            url: base_url+"/main/get_facturacion_grupos_json/"+desde+"/"+hasta,
+            type: "POST",
+            url: base_url+"/main/get_facturacion_grupos_json/",
+            data: {fecha_hasta:hasta,fecha_desde:desde},
             dataType: 'json',
             success:function(response)
             {
                 if (response.length != 0) {
-                    data =
-                        // '<div class="row">'+
-                        //     '<div class="col-md-3" style="font-weight:700">Fecha</div>'+
-                        //     '<div class="col-md-2" style="font-weight:700">Valor</div>'+
-                        //     '<div class="col-md-2" style="font-weight:700">Concepto</div>'+
-                        //     '<div class="col-md-2" style="font-weight:700">Socio</div>'+
-                        // '</div>'+
+                    contenido =
                         '<div class="row" style ="overflow-y:scroll;height:490px">'+
                                 '<table class="table table-striped">'+
                                     '<thead>'+
@@ -106,7 +103,7 @@
                                     '<tbody>';
                                     $.each(response, function(key, value)
                                     {
-                                        data += '<tr id = "'+value.id_facturacion+'">'+
+                                        contenido += '<tr id = "'+value.id_facturacion+'">'+
                                                     '<td>'+
                                                         value.fecha+
                                                     '</td>'+
@@ -122,16 +119,16 @@
                                                 '</tr>';
                                     });
 
-                                    data +=
+                                    contenido +=
                                     '</tbody>'+
                                 '</table>'+
                             '</div>';
                 }
                 else {
-                    data = "No hay informacion para el periodo suministrado";
+                    contenido = "No hay informacion para el periodo suministrado";
                 }
 
-                $(".content_facturacion").html(data);
+                $(".content_facturacion").html(contenido);
             }
         });
 
