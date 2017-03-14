@@ -89,7 +89,7 @@
             data: form.serialize(),
             dataType: "json",
             success: function(response) {
-                
+
                 if (response != null) {
                     if (response.password == response.usuario) {
                         $("#cambiar").css('visibility', 'visible');
@@ -150,7 +150,7 @@
     }
 
     function set_credentials(values) {
-
+        $("#ingresar").text("Ingresando....");
         $.ajax({
             type: "POST",
             url: base_url_log+'/set_credentials',
