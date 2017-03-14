@@ -203,7 +203,7 @@ function html_tab_body(content)
 
     if (!text) {
         tab_content += '<div class="panel panel-default text-muted" style="padding:50px;overflow:inherit;margin-bottom:30px;height:150px;font-size:30px;text-align:center">'+
-            '<i>No existen grupos para seleccion actual</i>'+
+            '<i>No existen grupos para la seleccion actual</i>'+
         '</div>';
     }
 
