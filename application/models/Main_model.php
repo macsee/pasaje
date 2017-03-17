@@ -554,7 +554,7 @@ class Main_model extends CI_Model {
 			$group_sql = " GROUP BY ".$group;
 
 		$query_1 = "(SELECT tipos_grupos.nombre as tipo_nombre, grupos.* FROM grupos, tipos_grupos WHERE tipos_grupos.id = grupos.tipo) grupos";
-		$query = "SELECT usuarios.nombre, usuarios.apellido, grupos.* FROM usuarios INNER JOIN ".$query_1." WHERE ".$tipo_sql." AND ".$profesor_sql." AND grupos.id_usuario = usuarios.usuario".$group_sql;
+		$query = "SELECT usuarios.nombre, usuarios.apellido, grupos.* FROM usuarios INNER JOIN ".$query_1." WHERE ".$tipo_sql." AND ".$profesor_sql." AND grupos.id_usuario = usuarios.usuario".$group_sql." ORDER BY horario_desde ASC";
 		// $query = "SELECT usuarios.nombre, usuarios.apellido, grupos.* FROM usuarios, grupos WHERE ".$tipo_sql." AND ".$profesor_sql." AND grupos.id_usuario = usuarios.usuario".$group_sql;
 		return $this->db->query($query)->result();
 	}

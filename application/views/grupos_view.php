@@ -251,10 +251,10 @@
                   <!-- </div> -->
                 </div>
                 <div class = "col-md-12 col-xs-12">
-                    <div class = "col-md-2 col-xs-6" style = "padding-top:20px;">
+                    <div class = "col-md-2 col-xs-6" style = "padding-top:15px;">
                         <label class = "label-control">Grupo</label>
                     </div>
-                    <div class = "col-md-3 col-xs-6" style = "padding-top:15px;">
+                    <div class = "col-md-3 col-xs-6" style = "padding-top:7px;">
                         <select class = "form-control" id = "tipo">
                             <!-- <option value="todos">Todos</option> -->
                             <!-- <option value="yoga">Yoga</option>
