@@ -540,34 +540,33 @@ function nuevo_turno(hora) {
     });
 }
 
-function validar_form(callback) {
-
-    if ($("#apellido").val() == "") {
-        $("#apellido").parent().addClass('has-error');
-        $("#apellido").parent().find(".error").css('visibility','visible');
+function validar_form(modal, callback) {
+    if (modal.find("#apellido").val() == "") {
+        modal.find("#apellido").parent().addClass('has-error');
+        modal.find("#apellido").parent().find(".error").css('visibility','visible');
         return;
     }
     else {
-        $("#apellido").parent().removeClass('has-error');
-        $("#apellido").parent().find(".error").css('visibility','hidden');
+        modal.find("#apellido").parent().removeClass('has-error');
+        modal.find("#apellido").parent().find(".error").css('visibility','hidden');
     }
 
-    if ($("#nombre").val() == "") {
-        $("#nombre").parent().addClass('has-error');
-        $("#nombre").parent().find(".error").css('visibility','visible');
+    if (modal.find("#nombre").val() == "") {
+        modal.find("#nombre").parent().addClass('has-error');
+        modal.find("#nombre").parent().find(".error").css('visibility','visible');
         return;
     }
     else {
-        $("#nombre").parent().removeClass('has-error');
-        $("#nombre").parent().find(".error").css('visibility','hidden');
+        modal.find("#nombre").parent().removeClass('has-error');
+        modal.find("#nombre").parent().find(".error").css('visibility','hidden');
     }
 
-    if ($("#tel1").val() == "" || $("#tel2").val() == "") {
-        $("#tel1").closest(".form-group").addClass('has-error');
+    if (modal.find("#cel1").val() == "" || modal.find("#cel2").val() == "") {
+        modal.find("#cel1").closest(".form-group").addClass('has-error');
         return;
     }
     else {
-        $("#tel1").closest(".form-group").removeClass('has-error');
+        modal.find("#cel1").closest(".form-group").removeClass('has-error');
     }
 
     callback();
@@ -582,7 +581,7 @@ function ok_nuevo_turno(event) {
 
     form = $("#modal_turno").find('form');
 
-    validar_form(function() {
+    validar_form($("#modal_turno"), function() {
         $.ajax({
             type: "POST",
             url: base_url+"/main/nuevo_turno/",
@@ -708,7 +707,7 @@ function ok_modificar_datos(event) {
 
     form = $("#modal_datos").find('form');
 
-    validar_form(function() {
+    validar_form($("#modal_datos"), function() {
         $.ajax({
             type: "POST",
             url: base_url+"/main/modificar_datos/",
