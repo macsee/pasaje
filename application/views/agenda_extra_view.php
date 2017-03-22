@@ -17,6 +17,7 @@
                   <option value="40">40min</option>
                   <option value="60">60min</option>
                   <option value="90">90min</option>
+                  <option value="120">120min</option>
               </select>
           </div>
         </div>
