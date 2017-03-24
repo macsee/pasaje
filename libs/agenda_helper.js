@@ -897,7 +897,7 @@ function get_notas() {
     fecha = format_date(FECHA_ACTUAL);
 
     $.ajax({
-        url: base_url+"/main/get_nota_json/turnos/todas"+"/"+fecha,
+        url: base_url+"/main/get_nota_json/todas/turnos"+"/"+fecha,
         dataType: "json",
         success:function(response)
         {
