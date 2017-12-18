@@ -64,10 +64,11 @@ class Login extends CI_Controller {
 
 		$this->session->set_userdata($loginArray);
 		$this->login_model->update_time($loginArray);
-		if ($this->login_model->check_function($_POST['usuario'],"grupos"))
-			echo "agenda_grupos";
-		else
-			echo "agenda_turnos";
+		// if ($this->login_model->check_function($_POST['usuario'],"grupos"))
+		// 	echo "agenda_grupos";
+		// else
+		// 	echo "agenda_turnos";
+		echo "agenda_turnos";
 	}
 
 	public function change_pass()
